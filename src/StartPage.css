@@ -171,6 +171,11 @@
   z-index: 10;
 }
 
+.viking-animation-container.viking-running {
+  animation: none;
+  top: calc(100vh - 200px);
+}
+
 @keyframes viking-fall {
   0% {
     top: -200px;

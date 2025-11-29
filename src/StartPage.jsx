@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking } from './vikingSprites';
+import { start_viking, viking_run } from './vikingSprites';
 
 function StartPage() {
   const [gameStarted, setGameStarted] = useState(false);
+  const [vikingReachedBottom, setVikingReachedBottom] = useState(false);
 
   const handleStartGame = () => {
     setGameStarted(true);
+    // After 2 seconds (animation duration), switch to running animation
+    setTimeout(() => {
+      setVikingReachedBottom(true);
+    }, 2000);
   };
 
   const handleRecords = () => {
@@ -31,11 +36,11 @@ function StartPage() {
         </>
       ) : (
         <>
-          <div className="viking-animation-container">
+          <div className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : ''}`}>
             <AnimatedSprite
-              images={start_viking}
-              frameDuration={200}
-              alt="Viking start animation"
+              images={vikingReachedBottom ? viking_run : start_viking}
+              frameDuration={vikingReachedBottom ? 150 : 200}
+              alt={vikingReachedBottom ? "Viking running" : "Viking start animation"}
               width="150px"
               height="150px"
               className="viking-start-animation"
