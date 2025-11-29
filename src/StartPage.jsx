@@ -34,20 +34,12 @@ function StartPage() {
     }
   };
 
-  const getCurrentImages = () => {
-    if (!vikingReachedBottom) return start_viking;
-    if (isJumping) return viking_jump;
-    return viking_run;
-  };
-
-  const getCurrentFrameDuration = () => {
-    if (!vikingReachedBottom) return 200;
-    if (isJumping) return 120;
-    return 150;
-  };
 
   return (
     <div className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`} onClick={handlePageClick}>
+      <div className="background-scroll">
+        <div className="background-layer"></div>
+      </div>
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>
@@ -62,18 +54,26 @@ function StartPage() {
         </>
       ) : (
         <>
-          <div className="background-scroll">
-            <div className="background-layer"></div>
-          </div>
           <div className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : ''} ${isJumping ? 'viking-jumping' : ''}`}>
-            <AnimatedSprite
-              images={getCurrentImages()}
-              frameDuration={getCurrentFrameDuration()}
-              alt={isJumping ? "Viking jumping" : vikingReachedBottom ? "Viking running" : "Viking start animation"}
-              width="75px"
-              height="75px"
-              className="viking-start-animation"
-            />
+            {!vikingReachedBottom ? (
+              <AnimatedSprite
+                images={start_viking}
+                frameDuration={200}
+                alt="Viking start animation"
+                width="75px"
+                height="75px"
+                className="viking-start-animation"
+              />
+            ) : (
+              <AnimatedSprite
+                images={isJumping ? viking_jump : viking_run}
+                frameDuration={isJumping ? 120 : 150}
+                alt={isJumping ? "Viking jumping" : "Viking running"}
+                width="75px"
+                height="75px"
+                className="viking-start-animation"
+              />
+            )}
           </div>
           <div className="pixel-floor"></div>
         </>
