@@ -12,6 +12,8 @@
   padding: 20px;
   box-sizing: border-box;
   width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
 .start-page.game-active {
@@ -233,6 +235,39 @@
   background-size: 20px 20px;
   border-top: 3px solid #ff0000;
   z-index: 5;
+}
+
+/* Scrolling background */
+.background-scroll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.background-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-image: url('https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/background.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2JhY2tncm91bmQucG5nIiwiaWF0IjoxNzY0NDIwNDI3LCJleHAiOjE3NzczODA0Mjd9.9UvALoo0lbXpEZgKC0kB5xioD5rKczBtG8GEMp0S8F0');
+  background-repeat: repeat-x;
+  background-size: auto 100%;
+  background-position: 0 0;
+  animation: background-scroll-left 20s linear infinite;
+}
+
+@keyframes background-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 
 /* Responsive adjustments for animation */
