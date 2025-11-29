@@ -23,7 +23,7 @@ function StartPage() {
     console.log('Records clicked');
   };
 
-  const handlePageClick = () => {
+  const handlePageClick = (e) => {
     // Only allow jumping if game has started and viking has reached bottom
     if (gameStarted && vikingReachedBottom && !isJumping) {
       setIsJumping(true);
@@ -34,9 +34,18 @@ function StartPage() {
     }
   };
 
+  const handlePageTouch = (e) => {
+    e.preventDefault();
+    handlePageClick(e);
+  };
+
 
   return (
-    <div className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`} onClick={handlePageClick}>
+    <div 
+      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`} 
+      onClick={handlePageClick}
+      onTouchStart={handlePageTouch}
+    >
       <div className="background-scroll">
         <div className="background-layer"></div>
       </div>
