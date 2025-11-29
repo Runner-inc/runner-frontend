@@ -62,6 +62,9 @@ function StartPage() {
         </>
       ) : (
         <>
+          <div className="background-scroll">
+            <div className="background-layer"></div>
+          </div>
           <div className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : ''} ${isJumping ? 'viking-jumping' : ''}`}>
             <AnimatedSprite
               images={getCurrentImages()}
