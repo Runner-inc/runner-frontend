@@ -1,0 +1,36 @@
+.animated-sprite-container {
+  display: inline-block;
+  overflow: hidden;
+}
+
+.animated-sprite {
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  object-fit: contain;
+}
+
+/* Smooth animation alternative using CSS */
+.animated-sprite-container.css-animation {
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-sprite-container.css-animation .animated-sprite {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  animation: sprite-fade 1s infinite;
+}
+
+@keyframes sprite-fade {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
