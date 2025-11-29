@@ -260,7 +260,7 @@
   height: 100%;
   background-image: url('https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/background.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2JhY2tncm91bmQucG5nIiwiaWF0IjoxNzY0NDIwNDI3LCJleHAiOjE3NzczODA0Mjd9.9UvALoo0lbXpEZgKC0kB5xioD5rKczBtG8GEMp0S8F0');
   background-repeat: repeat-x;
-  background-size: 100% 100vh;
+  background-size: 200% 100vh;
   background-position: 0 0;
   animation: background-scroll-left 20s linear infinite;
 }
