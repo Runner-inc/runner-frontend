@@ -173,7 +173,7 @@
 
 .viking-animation-container.viking-running {
   animation: none;
-  top: calc(100vh - 200px);
+  top: calc(100vh - 125px);
 }
 
 @keyframes viking-fall {
@@ -181,7 +181,7 @@
     top: -200px;
   }
   100% {
-    top: calc(100vh - 200px);
+    top: calc(100vh - 125px);
   }
 }
 

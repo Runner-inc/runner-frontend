@@ -41,8 +41,8 @@ function StartPage() {
               images={vikingReachedBottom ? viking_run : start_viking}
               frameDuration={vikingReachedBottom ? 150 : 200}
               alt={vikingReachedBottom ? "Viking running" : "Viking start animation"}
-              width="150px"
-              height="150px"
+              width="75px"
+              height="75px"
               className="viking-start-animation"
             />
           </div>
