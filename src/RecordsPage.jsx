@@ -45,7 +45,8 @@ function RecordsPage() {
         return scoreB - scoreA;
       });
       
-      setRecords(recordsArray);
+      // Take only the top score (first record after sorting)
+      setRecords(recordsArray.length > 0 ? [recordsArray[0]] : []);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching records:', err);
@@ -80,26 +81,23 @@ function RecordsPage() {
         {!loading && !error && (
           <div className="records-list">
             {records && records.length > 0 ? (
-              <table className="records-table">
-                <thead>
-                  <tr>
-                    <th>Rank</th>
-                    <th>User</th>
-                    <th>Score</th>
-                    <th>Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {records.map((record, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{record.username || record.user || record.name || 'Anonymous'}</td>
-                      <td>{record.result !== undefined ? record.result : (record.score !== undefined ? record.score : 'N/A')}</td>
-                      <td>{record.created_at ? new Date(record.created_at).toLocaleDateString() : (record.date ? new Date(record.date).toLocaleDateString() : 'N/A')}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+              <div className="top-score-card">
+                <h2 className="top-score-title">Top Score</h2>
+                <div className="score-details">
+                  <div className="score-item">
+                    <span className="score-label">User:</span>
+                    <span className="score-value">{records[0].username || records[0].user || records[0].name || 'Anonymous'}</span>
+                  </div>
+                  <div className="score-item">
+                    <span className="score-label">Score:</span>
+                    <span className="score-value highlight">{records[0].result !== undefined ? records[0].result : (records[0].score !== undefined ? records[0].score : 'N/A')}</span>
+                  </div>
+                  <div className="score-item">
+                    <span className="score-label">Date:</span>
+                    <span className="score-value">{records[0].created_at ? new Date(records[0].created_at).toLocaleDateString() : (records[0].date ? new Date(records[0].date).toLocaleDateString() : 'N/A')}</span>
+                  </div>
+                </div>
+              </div>
             ) : (
               <div className="no-records">No records found</div>
             )}
