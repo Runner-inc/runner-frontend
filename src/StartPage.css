@@ -73,9 +73,11 @@
 
 /* Viking animation container */
 .viking-animation-container {
-  position: relative;
+  position: absolute;
   z-index: 9999;
   transition: transform 0.3s ease;
+  left: 10%;
+  bottom: 0;
 }
 
 .viking-animation-container img {
@@ -83,44 +85,118 @@
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
   object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 .viking-animation-container.viking-running {
-  animation: slideDown 2s ease-out forwards;
+  animation: slideDownLeft 2s ease-out forwards;
 }
 
 .viking-animation-container.viking-jumping {
-  animation: jump 0.6s ease-in-out;
+  animation: jumpLeft 0.6s ease-in-out;
 }
 
-@keyframes slideDown {
+@keyframes slideDownLeft {
   0% {
-    transform: translateY(-100vh);
-  }
-  100% {
-    transform: translateY(0);
-  }
-}
-
-@keyframes jump {
-  0%, 100% {
-    transform: translateY(0);
+    transform: translateY(-100vh) translateX(0);
+    opacity: 0;
+    bottom: 40px;
   }
   50% {
-    transform: translateY(-30px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) translateX(0);
+    bottom: 40px;
   }
 }
 
-/* Pixel floor */
+@keyframes jumpLeft {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-30px) translateX(0);
+  }
+}
+
+/* Pixel floor - Left side design */
 .pixel-floor {
   position: absolute;
   bottom: 0;
   left: 0;
+  width: 30%;
+  min-width: 200px;
+  max-width: 400px;
+  height: 40px;
+  z-index: 9998;
+  background-color: #1a0a2e;
+  border-top: 3px solid #ff0000;
+  box-shadow: 
+    0 -2px 0 #8b0000,
+    0 -4px 0 #ff0000,
+    inset 0 2px 0 rgba(255, 0, 0, 0.3);
+  /* Pixelated pattern */
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 4px,
+      rgba(255, 0, 0, 0.1) 4px,
+      rgba(255, 0, 0, 0.1) 8px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      #1a0a2e 0px,
+      #1a0a2e 8px,
+      #2d1b3d 8px,
+      #2d1b3d 16px,
+      #1a0a2e 16px,
+      #1a0a2e 24px,
+      #2d1b3d 24px,
+      #2d1b3d 32px
+    );
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Pixel floor decorative blocks */
+.pixel-floor::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 0;
   width: 100%;
-  height: 20px;
-  background-color: #2d1b3d;
-  z-index: 5;
-  border-top: 2px solid #ff0000;
+  height: 8px;
+  background: repeating-linear-gradient(
+    90deg,
+    #ff0000 0px,
+    #ff0000 8px,
+    #8b0000 8px,
+    #8b0000 16px
+  );
+  image-rendering: pixelated;
+}
+
+.pixel-floor::after {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 10%;
+  width: 8px;
+  height: 4px;
+  background: #ff0000;
+  box-shadow: 
+    16px 0 0 #ff0000,
+    32px 0 0 #ff0000,
+    48px 0 0 #ff0000,
+    64px 0 0 #ff0000,
+    80px 0 0 #ff0000,
+    96px 0 0 #ff0000;
+  image-rendering: pixelated;
 }
 
 /* Background layers with slow scrolling */
@@ -188,9 +264,34 @@
     padding: 18px 35px;
   }
 
+  .viking-animation-container {
+    left: 8%;
+  }
+
   .viking-animation-container img {
     width: clamp(60px, 8vw, 75px) !important;
     height: clamp(60px, 8vw, 75px) !important;
+  }
+
+  .pixel-floor {
+    width: 35%;
+    min-width: 180px;
+    height: 35px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 35px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 35px;
+    }
   }
 }
 
@@ -227,22 +328,43 @@
     border-width: 2px;
   }
 
+  .viking-animation-container {
+    left: 5%;
+  }
+
   .viking-animation-container img {
     width: clamp(50px, 12vw, 65px) !important;
     height: clamp(50px, 12vw, 65px) !important;
   }
 
   .pixel-floor {
-    height: 15px;
-    border-top-width: 1px;
+    width: 40%;
+    min-width: 150px;
+    height: 30px;
+    border-top-width: 2px;
   }
 
-  @keyframes jump {
-    0%, 100% {
-      transform: translateY(0);
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 30px;
     }
     50% {
-      transform: translateY(-20px);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 30px;
+    }
+  }
+
+  @keyframes jumpLeft {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+    }
+    50% {
+      transform: translateY(-20px) translateX(0);
     }
   }
 }
@@ -270,13 +392,34 @@
     max-width: min(260px, 80vw);
   }
 
+  .viking-animation-container {
+    left: 3%;
+  }
+
   .viking-animation-container img {
     width: clamp(40px, 15vw, 55px) !important;
     height: clamp(40px, 15vw, 55px) !important;
   }
 
   .pixel-floor {
-    height: 12px;
+    width: 45%;
+    min-width: 120px;
+    height: 25px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 25px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 25px;
+    }
   }
 }
 
@@ -305,9 +448,34 @@
     max-width: 45%;
   }
 
+  .viking-animation-container {
+    left: 5%;
+  }
+
   .viking-animation-container img {
     width: clamp(35px, 10vh, 50px) !important;
     height: clamp(35px, 10vh, 50px) !important;
+  }
+
+  .pixel-floor {
+    width: 35%;
+    min-width: 150px;
+    height: 25px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 25px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 25px;
+    }
   }
 }
 
@@ -323,8 +491,33 @@
     padding: 22px 45px;
   }
 
+  .viking-animation-container {
+    left: 12%;
+  }
+
   .viking-animation-container img {
     width: 85px !important;
     height: 85px !important;
+  }
+
+  .pixel-floor {
+    width: 28%;
+    min-width: 250px;
+    height: 45px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 45px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 45px;
+    }
   }
 }
