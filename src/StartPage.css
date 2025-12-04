@@ -110,7 +110,7 @@
   }
 }
 
-/* Pixel floor - Full width design with pixel art ground */
+/* Pixel floor - Full width design matching pixel art image exactly */
 .pixel-floor {
   position: fixed;
   bottom: 0;
@@ -118,7 +118,7 @@
   width: 100%;
   height: 120px;
   z-index: 9998;
-  /* Brown earth/sand base layer (lower two-thirds) */
+  /* Medium brown earth/sand base layer (lower two-thirds) */
   background-color: #8d6e63;
   background-image: 
     repeating-linear-gradient(
@@ -126,16 +126,14 @@
       #8d6e63 0px,
       #8d6e63 8px,
       #6d4c41 8px,
-      #6d4c41 16px,
-      #795548 16px,
-      #795548 24px
+      #6d4c41 16px
     );
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
 }
 
-/* Green grass layer on top (upper third) with jagged bottom edge */
+/* Light green grass layer on top (upper third) with jagged top AND bottom edges - pixelated style */
 .pixel-floor::before {
   content: '';
   position: absolute;
@@ -143,44 +141,52 @@
   left: 0;
   width: 100%;
   height: 40px; /* Upper third of 120px */
-  background-color: #7cb342;
+  background-color: #9ccc65; /* Light green like in image */
   background-image: 
     repeating-linear-gradient(
       90deg,
-      #7cb342 0px,
-      #7cb342 8px,
-      #689f38 8px,
-      #689f38 16px
+      #9ccc65 0px,
+      #9ccc65 8px,
+      #8bc34a 8px,
+      #8bc34a 16px
     );
-  /* Jagged bottom edge using clip-path */
+  /* Jagged top AND bottom edges - large pixelated blocks matching image */
   clip-path: polygon(
-    0% 0%,
-    4% 0%,
-    8% 100%,
-    12% 0%,
-    16% 100%,
-    20% 0%,
-    24% 100%,
-    28% 0%,
-    32% 100%,
-    36% 0%,
-    40% 100%,
-    44% 0%,
-    48% 100%,
-    52% 0%,
-    56% 100%,
-    60% 0%,
-    64% 100%,
-    68% 0%,
-    72% 100%,
-    76% 0%,
-    80% 100%,
-    84% 0%,
-    88% 100%,
-    92% 0%,
-    96% 100%,
+    /* Jagged top edge - large blocky pixels */
+    0% 30%,
+    6.25% 0%,
+    12.5% 35%,
+    18.75% 10%,
+    25% 0%,
+    31.25% 32%,
+    37.5% 5%,
+    43.75% 30%,
+    50% 0%,
+    56.25% 33%,
+    62.5% 8%,
+    68.75% 28%,
+    75% 0%,
+    81.25% 31%,
+    87.5% 6%,
+    93.75% 34%,
     100% 0%,
+    /* Jagged bottom edge - large blocky transition to brown */
     100% 100%,
+    93.75% 70%,
+    87.5% 100%,
+    81.25% 75%,
+    75% 100%,
+    68.75% 68%,
+    62.5% 100%,
+    56.25% 80%,
+    50% 100%,
+    43.75% 72%,
+    37.5% 100%,
+    31.25% 78%,
+    25% 100%,
+    18.75% 70%,
+    12.5% 100%,
+    6.25% 82%,
     0% 100%
   );
   image-rendering: pixelated;
