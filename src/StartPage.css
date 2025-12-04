@@ -241,8 +241,8 @@
   z-index: 5;
 }
 
-/* Scrolling background */
-.background-scroll {
+/* Valhalla Pixel Art Background */
+.valhalla-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -250,28 +250,188 @@
   height: 100%;
   overflow: hidden;
   z-index: 1;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
-.background-layer {
+/* Sky layer with mystical dark gradient and stars */
+.sky-layer {
   position: absolute;
   top: 0;
   left: 0;
-  width: 300%;
+  width: 100%;
   height: 100%;
-  background-image: url('https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/background.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2JhY2tncm91bmQucG5nIiwiaWF0IjoxNzY0NDIwNDI3LCJleHAiOjE3NzczODA0Mjd9.9UvALoo0lbXpEZgKC0kB5xioD5rKczBtG8GEMp0S8F0');
-  background-repeat: repeat-x;
-  background-size: 55% 100vh;
-  background-position: 0 0;
-  animation: background-scroll-left 20s linear infinite;
+  background: linear-gradient(
+    to bottom,
+    #0a0a1a 0%,
+    #1a0a2e 25%,
+    #2d1b3d 50%,
+    #1a0a2e 75%,
+    #0a0a1a 100%
+  );
 }
 
-@keyframes background-scroll-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+/* Stars - pixel art style using repeating patterns */
+.sky-layer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Stars pattern - white and red tinted */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 98px,
+      rgba(255, 255, 255, 0.8) 98px,
+      rgba(255, 255, 255, 0.8) 100px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 98px,
+      rgba(255, 255, 255, 0.8) 98px,
+      rgba(255, 255, 255, 0.8) 100px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 148px,
+      rgba(255, 170, 170, 0.6) 148px,
+      rgba(255, 170, 170, 0.6) 150px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 148px,
+      rgba(255, 170, 170, 0.6) 148px,
+      rgba(255, 170, 170, 0.6) 150px
+    );
+  background-size: 100px 100px, 100px 100px, 150px 150px, 150px 150px;
+  background-position: 20px 30px, 20px 30px, 50px 80px, 50px 80px;
+  opacity: 0.7;
+}
+
+/* Mountains layer - far mountains */
+.mountains-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 65%;
+  background-color: #1a1a2e;
+}
+
+/* Far mountain range */
+.mountains-layer::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right,
+    #0d0d1a 0%, #0d0d1a 15%,
+    #1a1a2e 15%, #1a1a2e 30%,
+    #0d0d1a 30%, #0d0d1a 45%,
+    #1a1a2e 45%, #1a1a2e 60%,
+    #0d0d1a 60%, #0d0d1a 75%,
+    #1a1a2e 75%, #1a1a2e 90%,
+    #0d0d1a 90%, #0d0d1a 100%
+  );
+  clip-path: polygon(
+    0 100%,
+    0 88%,
+    5% 85%,
+    10% 82%,
+    18% 78%,
+    25% 75%,
+    32% 72%,
+    40% 68%,
+    48% 65%,
+    55% 62%,
+    62% 60%,
+    70% 58%,
+    78% 56%,
+    85% 54%,
+    92% 52%,
+    100% 50%,
+    100% 100%
+  );
+}
+
+/* Mid mountain range with snow caps */
+.mountains-layer::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 85%;
+  background: linear-gradient(to right,
+    #1a1a2e 0%, #1a1a2e 20%,
+    #2d1b3d 20%, #2d1b3d 40%,
+    #1a1a2e 40%, #1a1a2e 60%,
+    #2d1b3d 60%, #2d1b3d 80%,
+    #1a1a2e 80%, #1a1a2e 100%
+  );
+  clip-path: polygon(
+    0 100%,
+    0 92%,
+    8% 88%,
+    15% 84%,
+    22% 80%,
+    30% 76%,
+    38% 72%,
+    45% 70%,
+    52% 68%,
+    60% 66%,
+    68% 64%,
+    75% 62%,
+    82% 60%,
+    90% 58%,
+    100% 56%,
+    100% 100%
+  );
+  /* Snow caps effect */
+  background-image: 
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 15px,
+      rgba(255, 255, 255, 0.3) 15px,
+      rgba(255, 255, 255, 0.3) 16px
+    );
+}
+
+/* Clouds layer - pixelated clouds */
+.clouds-layer {
+  position: absolute;
+  top: 15%;
+  left: 0;
+  width: 100%;
+  height: 35%;
+  opacity: 0.5;
+  background-image: 
+    /* Cloud 1 - left side */
+    radial-gradient(ellipse 60px 30px at 15% 20%, rgba(120, 120, 160, 0.7) 0%, rgba(120, 120, 160, 0.7) 50%, transparent 50%),
+    radial-gradient(ellipse 80px 40px at 20% 20%, rgba(120, 120, 160, 0.7) 0%, rgba(120, 120, 160, 0.7) 50%, transparent 50%),
+    radial-gradient(ellipse 60px 30px at 25% 20%, rgba(120, 120, 160, 0.7) 0%, rgba(120, 120, 160, 0.7) 50%, transparent 50%),
+    /* Cloud 2 - center */
+    radial-gradient(ellipse 50px 25px at 55% 35%, rgba(100, 100, 150, 0.6) 0%, rgba(100, 100, 150, 0.6) 50%, transparent 50%),
+    radial-gradient(ellipse 70px 35px at 60% 35%, rgba(100, 100, 150, 0.6) 0%, rgba(100, 100, 150, 0.6) 50%, transparent 50%),
+    radial-gradient(ellipse 50px 25px at 65% 35%, rgba(100, 100, 150, 0.6) 0%, rgba(100, 100, 150, 0.6) 50%, transparent 50%),
+    /* Cloud 3 - right side */
+    radial-gradient(ellipse 45px 22px at 82% 15%, rgba(110, 110, 155, 0.5) 0%, rgba(110, 110, 155, 0.5) 50%, transparent 50%),
+    radial-gradient(ellipse 65px 32px at 87% 15%, rgba(110, 110, 155, 0.5) 0%, rgba(110, 110, 155, 0.5) 50%, transparent 50%);
+  background-size: 200px 100px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
 /* Responsive adjustments for animation */

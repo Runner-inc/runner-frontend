@@ -47,8 +47,10 @@ function StartPage() {
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
-      <div className="background-scroll">
-        <div className="background-layer"></div>
+      <div className="valhalla-background">
+        <div className="sky-layer"></div>
+        <div className="mountains-layer"></div>
+        <div className="clouds-layer"></div>
       </div>
       {!gameStarted ? (
         <>
