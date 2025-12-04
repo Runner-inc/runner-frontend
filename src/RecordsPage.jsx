@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './RecordsPage.css';
 
 function RecordsPage() {
@@ -7,16 +7,30 @@ function RecordsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
     fetchRecords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchRecords = async () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('https://runner-backend-sandy.vercel.app/api/users/');
+      
+      // Get telegram_id from URL params or localStorage
+      const telegramId = searchParams.get('telegram_id') || 
+                         localStorage.getItem('telegram_id') || 
+                         '';
+      
+      if (!telegramId) {
+        throw new Error('Telegram ID is required');
+      }
+      
+      // Build the endpoint URL
+      const endpoint = `https://runner-backend-sandy.vercel.app/api/users/${telegramId}`;
+      const response = await fetch(endpoint);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
