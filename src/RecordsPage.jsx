@@ -16,7 +16,7 @@ function RecordsPage() {
     try {
       setLoading(true);
       setError(null);
-      const response = await fetch('https://runner-backend-8y6udc9sk-kanshandirs-projects.vercel.app/users.result');
+      const response = await fetch('https://runner-backend-sandy.vercel.app/api/users/');
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
