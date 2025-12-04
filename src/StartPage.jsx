@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
 import { start_viking, viking_run, viking_jump } from './vikingSprites';
 
 function StartPage() {
+  const navigate = useNavigate();
   const [gameStarted, setGameStarted] = useState(false);
   const [vikingReachedBottom, setVikingReachedBottom] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
@@ -19,8 +21,7 @@ function StartPage() {
 
   const handleRecords = (e) => {
     e.stopPropagation();
-    // TODO: Navigate to records
-    console.log('Records clicked');
+    navigate('/records');
   };
 
   const handlePageClick = (e) => {
