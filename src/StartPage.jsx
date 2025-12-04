@@ -13,10 +13,7 @@ function StartPage() {
   const handleStartGame = (e) => {
     e.stopPropagation();
     setGameStarted(true);
-    // After 2 seconds (animation duration), switch to running animation
-    setTimeout(() => {
-      setVikingReachedBottom(true);
-    }, 2000);
+    setTimeout(() => setVikingReachedBottom(true), 2000);
   };
 
   const handleRecords = (e) => {
@@ -24,22 +21,17 @@ function StartPage() {
     navigate('/records');
   };
 
-  const handlePageClick = (e) => {
-    // Only allow jumping if game has started and viking has reached bottom
+  const handlePageClick = () => {
     if (gameStarted && vikingReachedBottom && !isJumping) {
       setIsJumping(true);
-      // Jump animation duration is about 0.6 seconds
-      setTimeout(() => {
-        setIsJumping(false);
-      }, 600);
+      setTimeout(() => setIsJumping(false), 600);
     }
   };
 
   const handlePageTouch = (e) => {
     e.preventDefault();
-    handlePageClick(e);
+    handlePageClick();
   };
-
 
   return (
     <div 
@@ -52,16 +44,13 @@ function StartPage() {
         <div className="mountains-layer"></div>
         <div className="clouds-layer"></div>
       </div>
+
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>
           <div className="button-container">
-            <button className="start-button" onClick={handleStartGame}>
-              Start Game
-            </button>
-            <button className="records-button" onClick={handleRecords}>
-              Records
-            </button>
+            <button className="start-button" onClick={handleStartGame}>Start Game</button>
+            <button className="records-button" onClick={handleRecords}>Records</button>
           </div>
         </>
       ) : (
@@ -74,7 +63,6 @@ function StartPage() {
                 alt="Viking start animation"
                 width="75px"
                 height="75px"
-                className="viking-start-animation"
               />
             ) : (
               <AnimatedSprite
@@ -83,7 +71,6 @@ function StartPage() {
                 alt={isJumping ? "Viking jumping" : "Viking running"}
                 width="75px"
                 height="75px"
-                className="viking-start-animation"
               />
             )}
           </div>
@@ -95,4 +82,3 @@ function StartPage() {
 }
 
 export default StartPage;
-
