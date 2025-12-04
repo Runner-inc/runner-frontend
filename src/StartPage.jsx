@@ -15,7 +15,16 @@ function StartPage() {
   const animationFrameRef = useRef(null);
   const velocityRef = useRef(0);
   const gravity = 0.8;
-  const floorHeight = 40; // Height of the floor
+  
+  // Get floor height based on screen size (responsive)
+  const getFloorHeight = () => {
+    const width = window.innerWidth;
+    if (width >= 1440) return 140;
+    if (width >= 769 && width <= 1024) return 100;
+    if (width <= 480) return 80;
+    if (window.innerHeight <= 500) return 70;
+    return 120; // Default for desktop
+  };
 
   useEffect(() => {
     if (gameStarted && !vikingReachedBottom) {
@@ -28,6 +37,7 @@ function StartPage() {
             
             // Calculate floor position (bottom of viewport - floor height)
             const viewportHeight = window.innerHeight;
+            const floorHeight = getFloorHeight();
             const floorTop = viewportHeight - floorHeight;
             
             // Collision detection: stop when viking reaches floor
