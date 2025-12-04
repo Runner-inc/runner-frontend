@@ -23,7 +23,29 @@ function RecordsPage() {
       }
       
       const data = await response.json();
-      setRecords(data);
+      console.log('API Response:', data);
+      
+      // Handle different response structures
+      // If response has a 'result' property, use it; otherwise use the data directly
+      const recordsData = data.result || data.results || data;
+      
+      // Ensure it's an array
+      let recordsArray = [];
+      if (Array.isArray(recordsData)) {
+        recordsArray = recordsData;
+      } else if (recordsData && typeof recordsData === 'object') {
+        // If it's an object, try to convert to array
+        recordsArray = [recordsData];
+      }
+      
+      // Sort by result/score in descending order (highest first)
+      recordsArray.sort((a, b) => {
+        const scoreA = a.result !== undefined ? a.result : (a.score !== undefined ? a.score : 0);
+        const scoreB = b.result !== undefined ? b.result : (b.score !== undefined ? b.score : 0);
+        return scoreB - scoreA;
+      });
+      
+      setRecords(recordsArray);
     } catch (err) {
       setError(err.message);
       console.error('Error fetching records:', err);
@@ -71,9 +93,9 @@ function RecordsPage() {
                   {records.map((record, index) => (
                     <tr key={index}>
                       <td>{index + 1}</td>
-                      <td>{record.username || record.user || 'Anonymous'}</td>
-                      <td>{record.score || record.result || 'N/A'}</td>
-                      <td>{record.date ? new Date(record.date).toLocaleDateString() : 'N/A'}</td>
+                      <td>{record.username || record.user || record.name || 'Anonymous'}</td>
+                      <td>{record.result !== undefined ? record.result : (record.score !== undefined ? record.score : 'N/A')}</td>
+                      <td>{record.created_at ? new Date(record.created_at).toLocaleDateString() : (record.date ? new Date(record.date).toLocaleDateString() : 'N/A')}</td>
                     </tr>
                   ))}
                 </tbody>
