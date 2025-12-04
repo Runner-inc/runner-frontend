@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
@@ -9,11 +9,61 @@ function StartPage() {
   const [gameStarted, setGameStarted] = useState(false);
   const [vikingReachedBottom, setVikingReachedBottom] = useState(false);
   const [isJumping, setIsJumping] = useState(false);
+  const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
+  const vikingRef = useRef(null);
+  const floorRef = useRef(null);
+  const animationFrameRef = useRef(null);
+  const velocityRef = useRef(0);
+  const gravity = 0.8;
+  const floorHeight = 40; // Height of the floor
+
+  useEffect(() => {
+    if (gameStarted && !vikingReachedBottom) {
+      // Start falling animation
+      const startFalling = () => {
+        const animate = () => {
+          setVikingPosition(prev => {
+            const newTop = prev.top + velocityRef.current;
+            velocityRef.current += gravity;
+            
+            // Calculate floor position (bottom of viewport - floor height)
+            const viewportHeight = window.innerHeight;
+            const floorTop = viewportHeight - floorHeight;
+            
+            // Collision detection: stop when viking reaches floor
+            if (newTop + 75 >= floorTop) {
+              const finalTop = floorTop - 75;
+              setVikingReachedBottom(true);
+              velocityRef.current = 0;
+              return { top: finalTop, left: 0 };
+            }
+            
+            return { ...prev, top: newTop };
+          });
+          
+          if (!vikingReachedBottom) {
+            animationFrameRef.current = requestAnimationFrame(animate);
+          }
+        };
+        
+        animationFrameRef.current = requestAnimationFrame(animate);
+      };
+      
+      startFalling();
+    }
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [gameStarted, vikingReachedBottom]);
 
   const handleStartGame = (e) => {
     e.stopPropagation();
     setGameStarted(true);
-    setTimeout(() => setVikingReachedBottom(true), 2000);
+    setVikingPosition({ top: -100, left: 0 });
+    velocityRef.current = 0;
   };
 
   const handleRecords = (e) => {
@@ -39,12 +89,6 @@ function StartPage() {
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
-      <div className="valhalla-background">
-        <div className="sky-layer"></div>
-        <div className="mountains-layer"></div>
-        <div className="clouds-layer"></div>
-      </div>
-
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>
@@ -55,12 +99,19 @@ function StartPage() {
         </>
       ) : (
         <>
-          <div className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : ''} ${isJumping ? 'viking-jumping' : ''}`}>
+          <div 
+            ref={vikingRef}
+            className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : 'viking-falling'} ${isJumping ? 'viking-jumping' : ''}`}
+            style={{
+              top: `${vikingPosition.top}px`,
+              left: `${vikingPosition.left}px`
+            }}
+          >
             {!vikingReachedBottom ? (
               <AnimatedSprite
                 images={start_viking}
                 frameDuration={200}
-                alt="Viking start animation"
+                alt="Viking falling"
                 width="75px"
                 height="75px"
               />
@@ -74,7 +125,7 @@ function StartPage() {
               />
             )}
           </div>
-          <div className="pixel-floor"></div>
+          <div ref={floorRef} className="pixel-floor"></div>
         </>
       )}
     </div>
