@@ -6,30 +6,66 @@ function RecordsPage() {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [userId, setUserId] = useState(null);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
+  // Get Telegram user ID from Telegram WebApp
   useEffect(() => {
-    fetchRecords();
+    const tg = window.Telegram?.WebApp;
+
+    if (!tg) {
+      console.warn("Telegram WebApp API is unavailable in this environment");
+      // Fallback to URL params or localStorage
+      const telegramId = searchParams.get('telegram_id') || 
+                         localStorage.getItem('telegram_id');
+      if (telegramId) {
+        setUserId(String(telegramId));
+      } else {
+        setError('Telegram ID is required. Please provide telegram_id in URL or ensure Telegram WebApp is available.');
+        setLoading(false);
+      }
+      return;
+    }
+
+    tg.ready();
+
+    const telegramUserId = tg.initDataUnsafe?.user?.id;
+    if (telegramUserId) {
+      setUserId(String(telegramUserId));
+    } else {
+      console.warn("User ID not found in Telegram WebApp data");
+      // Fallback to URL params or localStorage
+      const telegramId = searchParams.get('telegram_id') || 
+                         localStorage.getItem('telegram_id');
+      if (telegramId) {
+        setUserId(String(telegramId));
+      } else {
+        setError('User ID not found in Telegram WebApp data');
+        setLoading(false);
+      }
+    }
+  }, [searchParams]);
+
+  // Fetch records when userId is available
+  useEffect(() => {
+    if (userId) {
+      fetchRecords();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [userId]);
 
   const fetchRecords = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Get telegram_id from URL params or localStorage
-      const telegramId = searchParams.get('telegram_id') || 
-                         localStorage.getItem('telegram_id') || 
-                         '';
-      
-      if (!telegramId) {
+      if (!userId) {
         throw new Error('Telegram ID is required');
       }
       
       // Build the endpoint URL
-      const endpoint = `https://runner-backend-sandy.vercel.app/api/users/${telegramId}`;
+      const endpoint = `https://runner-backend-sandy.vercel.app/api/users/${userId}`;
       const response = await fetch(endpoint);
       
       if (!response.ok) {
