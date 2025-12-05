@@ -102,6 +102,85 @@
   animation-fill-mode: forwards;
 }
 
+/* Skeleton container */
+.skeleton-container {
+  position: absolute;
+  z-index: 99998;
+  will-change: left;
+}
+
+.skeleton-container img {
+  width: clamp(50px, 10vw, 75px) !important;
+  height: clamp(50px, 10vw, 75px) !important;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* Game Over Overlay */
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  gap: clamp(30px, 5vh, 50px);
+  pointer-events: auto;
+}
+
+.game-over-text {
+  font-size: clamp(2rem, 8vw, 4rem);
+  color: #ff0000;
+  text-align: center;
+  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.5);
+  margin: 0;
+  animation: gameOverPulse 1s ease-in-out infinite;
+}
+
+@keyframes gameOverPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+.restart-button {
+  background-color: #000;
+  color: #ff0000;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.8rem, 3vw, 1.2rem);
+  padding: clamp(15px, 3vh, 20px) clamp(25px, 5vw, 40px);
+  border: 3px solid #ff0000;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: min(200px, 70vw);
+  text-transform: uppercase;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.restart-button:hover {
+  background-color: #ff0000;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.restart-button:active {
+  transform: scale(0.98);
+}
+
 @keyframes jumpLeft {
   0%, 100% {
     transform: translateY(0) translateX(0);
