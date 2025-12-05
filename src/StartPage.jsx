@@ -123,7 +123,7 @@ function StartPage() {
   // Skeleton spawning and animation
   useEffect(() => {
     if (gameStarted && vikingReachedBottom && !gameOver) {
-      // Randomly spawn skeletons
+      // Randomly spawn skeletons in groups of 1-3
       const spawnSkeleton = () => {
         const viewportHeight = window.innerHeight;
         const floorHeight = getFloorHeight();
@@ -131,14 +131,24 @@ function StartPage() {
         const skeletonHeight = 75; // Same as viking
         const skeletonTop = floorTop - skeletonHeight;
         
-        const newSkeleton = {
-          id: Date.now() + Math.random(),
-          left: window.innerWidth + 50, // Start off-screen right
-          top: skeletonTop,
-          speed: 2 + Math.random() * 2 // Random speed between 2-4
-        };
+        // Randomly determine how many skeletons to spawn (1-3)
+        const skeletonCount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        const skeletonSpacing = 80; // Space between skeletons
+        const baseSpeed = 2 + Math.random() * 2; // Random speed between 2-4 (same for group)
         
-        setSkeletons(prev => [...prev, newSkeleton]);
+        const newSkeletons = [];
+        const baseLeft = window.innerWidth + 50; // Start off-screen right
+        
+        for (let i = 0; i < skeletonCount; i++) {
+          newSkeletons.push({
+            id: Date.now() + Math.random() + i, // Unique ID for each skeleton
+            left: baseLeft + (i * skeletonSpacing), // Stagger horizontally
+            top: skeletonTop,
+            speed: baseSpeed // Same speed for all skeletons in the group
+          });
+        }
+        
+        setSkeletons(prev => [...prev, ...newSkeletons]);
       };
 
       // Spawn skeletons randomly every 2-5 seconds
