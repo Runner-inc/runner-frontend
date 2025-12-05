@@ -68,11 +68,6 @@ function RecordsPage() {
   return (
     <div className="records-page">
       <h1 className="records-title">Records</h1>
-      {telegramId && (
-        <p style={{ color: '#888', fontSize: '14px', marginBottom: '10px' }}>
-          Telegram ID: {telegramId}
-        </p>
-      )}
       {loading ? (
         <div className="loading-container">
           <p className="loading-text">Loading...</p>

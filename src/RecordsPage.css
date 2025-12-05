@@ -4,110 +4,93 @@
   background-color: #000;
   color: #ff0000;
   font-family: 'Press Start 2P', cursive;
-  min-height: 100vh;
+  height: 100svh; /* Чтобы весь экран без скролла */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 20px;
+  justify-content: flex-start;
+  padding: 10px;
   box-sizing: border-box;
+  overflow: hidden; /* Убираем скроллы */
   width: 100%;
-  position: relative;
 }
 
 .records-title {
-  font-size: clamp(2rem, 6vw, 4rem);
+  font-size: clamp(1.4rem, 5vw, 2.2rem);
   color: #ff0000;
-  margin-bottom: clamp(40px, 8vh, 60px);
   text-align: center;
-  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.3);
-  line-height: 1.4;
-  word-wrap: break-word;
-  padding: 0 10px;
+  text-shadow: 3px 3px 0 rgba(255, 0, 0, 0.3);
+  margin: 10px 0 20px 0; /* уменьшаем отступы */
 }
 
 .loading-container,
 .error-container,
 .no-record-container {
+  flex: 1; /* чтобы центрировалось */
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  gap: 20px;
+  gap: 10px;
 }
 
 .loading-text,
 .error-text,
 .no-record-text {
-  font-size: clamp(0.8rem, 2.5vw, 1.2rem);
-  color: #ff0000;
+  font-size: clamp(0.7rem, 2.5vw, 1rem);
+  line-height: 1.4;
   text-align: center;
-  line-height: 1.6;
-  padding: 0 20px;
 }
 
 .error-hint {
-  font-size: clamp(0.6rem, 2vw, 0.9rem);
+  font-size: clamp(0.6rem, 2vw, 0.8rem);
   color: #ff6666;
+  line-height: 1.4;
   text-align: center;
-  line-height: 1.6;
-  padding: 0 20px;
-  margin-top: 10px;
 }
 
 .record-container {
+  flex: 1; /* занимает центр без скролла */
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 600px;
-  padding: 20px;
 }
 
 .record-card {
   background-color: rgba(255, 0, 0, 0.1);
-  border: 3px solid #ff0000;
-  padding: clamp(30px, 5vh, 50px);
-  width: 100%;
+  border: 2px solid #ff0000;
+  padding: 15px;
+  width: 95%;
+  max-width: 380px;
   text-align: center;
-  box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
 }
 
 .record-label {
-  font-size: clamp(1rem, 3vw, 1.5rem);
-  color: #ff0000;
-  margin-bottom: clamp(20px, 4vh, 30px);
-  text-transform: uppercase;
+  font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+  margin-bottom: 10px;
 }
 
 .record-value {
-  font-size: clamp(2.5rem, 8vw, 5rem);
-  color: #ff0000;
-  font-weight: bold;
-  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.5);
-  margin-bottom: clamp(20px, 4vh, 30px);
-  line-height: 1.2;
+  font-size: clamp(1.6rem, 10vw, 3rem);
+  margin-bottom: 10px;
+  text-shadow: 3px 3px 0 rgba(255, 0, 0, 0.5);
 }
 
 .record-username {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: clamp(20px, 4vh, 30px);
-  padding-top: clamp(20px, 4vh, 30px);
-  border-top: 2px solid rgba(255, 0, 0, 0.3);
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 0, 0, 0.3);
 }
 
 .username-label {
-  font-size: clamp(0.7rem, 2vw, 1rem);
+  font-size: clamp(0.6rem, 2vw, 0.9rem);
   color: #ff6666;
-  text-transform: uppercase;
 }
 
 .username-value {
-  font-size: clamp(0.9rem, 2.5vw, 1.3rem);
+  font-size: clamp(0.8rem, 3vw, 1rem);
   color: #ff0000;
 }
 
@@ -115,74 +98,21 @@
   background-color: #000;
   color: #ff0000;
   font-family: 'Press Start 2P', cursive;
-  font-size: clamp(0.7rem, 2.5vw, 1.2rem);
-  padding: clamp(15px, 3vh, 20px) clamp(25px, 5vw, 40px);
-  border: 3px solid #ff0000;
+  font-size: clamp(0.6rem, 2.5vw, 0.9rem);
+  padding: 12px 18px;
+  border: 2px solid #ff0000;
   cursor: pointer;
-  transition: all 0.2s;
-  min-width: min(250px, 85vw);
-  max-width: min(300px, 90vw);
-  width: 100%;
-  text-transform: uppercase;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  margin-top: clamp(30px, 5vh, 50px);
+  transition: 0.15s;
+  width: 90%;
+  max-width: 260px;
+  margin-top: 15px;
 }
 
 .back-button:hover {
   background-color: #ff0000;
   color: #000;
-  transform: scale(1.05);
 }
 
 .back-button:active {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
-
-/* Responsive Design - Mobile */
-@media screen and (max-width: 768px) {
-  .records-title {
-    font-size: clamp(1.5rem, 6vw, 2.5rem);
-    margin-bottom: clamp(30px, 6vh, 40px);
-  }
-
-  .record-card {
-    padding: clamp(20px, 4vh, 30px);
-  }
-
-  .record-value {
-    font-size: clamp(2rem, 10vw, 3.5rem);
-  }
-
-  .back-button {
-    font-size: clamp(0.6rem, 3vw, 0.9rem);
-    padding: clamp(12px, 2.5vh, 18px) clamp(20px, 4vw, 30px);
-    min-width: min(220px, 80vw);
-    max-width: min(280px, 85vw);
-    border-width: 2px;
-  }
-}
-
-/* Responsive Design - Small Mobile */
-@media screen and (max-width: 480px) {
-  .records-title {
-    font-size: clamp(1.2rem, 7vw, 2rem);
-    margin-bottom: clamp(25px, 5vh, 35px);
-  }
-
-  .record-card {
-    padding: clamp(15px, 3vh, 25px);
-  }
-
-  .record-value {
-    font-size: clamp(1.8rem, 12vw, 3rem);
-  }
-
-  .back-button {
-    font-size: clamp(0.5rem, 3.5vw, 0.75rem);
-    padding: clamp(10px, 2vh, 15px) clamp(15px, 3vw, 25px);
-    min-width: min(200px, 75vw);
-    max-width: min(260px, 80vw);
-  }
-}
-
