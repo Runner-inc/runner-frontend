@@ -14,6 +14,7 @@ function StartPage() {
   const floorRef = useRef(null);
   const animationFrameRef = useRef(null);
   const velocityRef = useRef(0);
+  const jumpTimeoutRef = useRef(null);
   const gravity = 0.8;
   
   // Get floor height based on screen size (responsive)
@@ -66,6 +67,9 @@ function StartPage() {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
+      if (jumpTimeoutRef.current) {
+        clearTimeout(jumpTimeoutRef.current);
+      }
     };
   }, [gameStarted, vikingReachedBottom]);
 
@@ -82,9 +86,30 @@ function StartPage() {
   };
 
   const handlePageClick = () => {
-    if (gameStarted && vikingReachedBottom && !isJumping) {
+    if (gameStarted && vikingReachedBottom) {
+      // Clear any existing timeout to allow immediate re-triggering
+      if (jumpTimeoutRef.current) {
+        clearTimeout(jumpTimeoutRef.current);
+      }
+      
+      // Force animation restart by manipulating the DOM directly
+      if (vikingRef.current) {
+        const element = vikingRef.current;
+        element.classList.remove('viking-jumping');
+        // Force reflow to ensure class removal is processed
+        void element.offsetWidth;
+        element.classList.add('viking-jumping');
+      }
+      
       setIsJumping(true);
-      setTimeout(() => setIsJumping(false), 600);
+      
+      jumpTimeoutRef.current = setTimeout(() => {
+        setIsJumping(false);
+        if (vikingRef.current) {
+          vikingRef.current.classList.remove('viking-jumping');
+        }
+        jumpTimeoutRef.current = null;
+      }, 600);
     }
   };
 
