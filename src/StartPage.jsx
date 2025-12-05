@@ -95,8 +95,8 @@ function StartPage() {
     const vikingWidth = 75;
     const vikingHeight = 75;
     
-    // Account for jump animation offset
-    const jumpOffset = jumping ? -30 : 0;
+    // Account for jump animation offset (3x skeleton height = 225px)
+    const jumpOffset = jumping ? -225 : 0;
     const vikingActualTop = vikingTop + jumpOffset;
     
     return skeletonList.some(skeleton => {
@@ -264,7 +264,7 @@ function StartPage() {
           vikingRef.current.classList.remove('viking-jumping');
         }
         jumpTimeoutRef.current = null;
-      }, 600);
+      }, 800);
     }
   };
 
