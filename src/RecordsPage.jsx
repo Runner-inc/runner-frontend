@@ -13,7 +13,6 @@ function RecordsPage() {
     const tg = window.Telegram?.WebApp;
 
     if (!tg) {
-      console.warn("Telegram WebApp API is unavailable in this environment");
       setError('Telegram WebApp API is unavailable. Please open this app in Telegram.');
       setLoading(false);
       return;
@@ -22,43 +21,40 @@ function RecordsPage() {
     tg.ready();
 
     const telegramUserId = tg.initDataUnsafe?.user?.id;
+
     if (telegramUserId) {
       setTelegramId(String(telegramUserId));
     } else {
-      console.warn("User ID not found in Telegram WebApp data");
       setError('User ID not found in Telegram WebApp data');
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!telegramId) {
-      return;
-    }
+    if (!telegramId) return;
 
     const fetchRecord = async () => {
       try {
         setLoading(true);
+        setError(null);
+
         const response = await fetch(
           `https://runner-backend-sandy.vercel.app/api/users/${telegramId}`
         );
 
         if (!response.ok) {
-          if (response.status === 404) {
-            setError('No record found for this user');
-          } else {
-            setError('Failed to fetch record');
-          }
-          setLoading(false);
+          setError(response.status === 404 
+            ? 'No record found for this user' 
+            : 'Failed to fetch record');
           return;
         }
 
         const data = await response.json();
         setRecord(data);
-        setError(null);
+
       } catch (err) {
-        setError('Error fetching record. Please try again.');
         console.error('Error fetching record:', err);
+        setError('Error fetching record. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -67,14 +63,12 @@ function RecordsPage() {
     fetchRecord();
   }, [telegramId]);
 
-  const handleBack = () => {
-    navigate('/');
-  };
+  const handleBack = () => navigate('/');
 
   return (
     <div className="records-page">
       <h1 className="records-title">Records</h1>
-      
+
       {loading ? (
         <div className="loading-container">
           <p className="loading-text">Loading...</p>
@@ -91,9 +85,7 @@ function RecordsPage() {
           <div className="record-card">
             <h2 className="record-label">Highest Score</h2>
             <div className="record-value">
-              {record.result !== undefined && record.result !== null
-                ? record.result.toLocaleString()
-                : 'N/A'}
+              {record.result != null ? record.result.toLocaleString() : 'N/A'}
             </div>
             {record.username && (
               <div className="record-username">
@@ -117,4 +109,3 @@ function RecordsPage() {
 }
 
 export default RecordsPage;
-
