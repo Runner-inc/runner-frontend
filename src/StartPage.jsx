@@ -12,6 +12,7 @@ function StartPage() {
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
+  const [telegramUserId, setTelegramUserId] = useState(null);
   const vikingRef = useRef(null);
   const floorRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -31,6 +32,25 @@ function StartPage() {
   useEffect(() => {
     isJumpingRef.current = isJumping;
   }, [isJumping]);
+
+  // Get Telegram User ID from WebApp API
+  useEffect(() => {
+    const tg = window.Telegram?.WebApp;
+
+    if (!tg) {
+      console.warn("Telegram WebApp API is unavailable in this environment");
+      return;
+    }
+
+    tg.ready();
+
+    const telegramUserId = tg.initDataUnsafe?.user?.id;
+    if (telegramUserId) {
+      setTelegramUserId(String(telegramUserId));
+    } else {
+      console.warn("User ID not found in Telegram WebApp data");
+    }
+  }, []);
   
   // Get floor height based on screen size (responsive)
   const getFloorHeight = () => {
