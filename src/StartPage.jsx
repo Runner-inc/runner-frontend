@@ -90,20 +90,25 @@ function StartPage() {
 
   // Helper function to check collision
   const checkCollision = (vikingPos, skeletonList, jumping) => {
-    const vikingLeft = vikingPos.left;
-    const vikingTop = vikingPos.top;
-    const vikingWidth = 75;
-    const vikingHeight = 75;
+    // Use smaller collision boxes (60% of sprite size) for more forgiving gameplay
+    const spriteSize = 75;
+    const collisionSize = 45; // 60% of 75px
+    const collisionPadding = (spriteSize - collisionSize) / 2; // 15px padding on each side
+    
+    const vikingLeft = vikingPos.left + collisionPadding;
+    const vikingTop = vikingPos.top + collisionPadding;
+    const vikingWidth = collisionSize;
+    const vikingHeight = collisionSize;
     
     // Account for jump animation offset (3x skeleton height = 225px)
     const jumpOffset = jumping ? -225 : 0;
     const vikingActualTop = vikingTop + jumpOffset;
     
     return skeletonList.some(skeleton => {
-      const skeletonLeft = skeleton.left;
-      const skeletonTop = skeleton.top;
-      const skeletonWidth = 75;
-      const skeletonHeight = 75;
+      const skeletonLeft = skeleton.left + collisionPadding;
+      const skeletonTop = skeleton.top + collisionPadding;
+      const skeletonWidth = collisionSize;
+      const skeletonHeight = collisionSize;
       
       // Check if rectangles overlap
       return (
