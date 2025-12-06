@@ -51,7 +51,7 @@ function StartPage() {
       console.warn("User ID not found in Telegram WebApp data");
     }
   }, []);
-  
+
   // Get floor height based on screen size (responsive)
   const getFloorHeight = () => {
     const width = window.innerWidth;
@@ -70,12 +70,12 @@ function StartPage() {
           setVikingPosition(prev => {
             const newTop = prev.top + velocityRef.current;
             velocityRef.current += gravity;
-            
+
             // Calculate floor position (bottom of viewport - floor height)
             const viewportHeight = window.innerHeight;
             const floorHeight = getFloorHeight();
             const floorTop = viewportHeight - floorHeight;
-            
+
             // Collision detection: stop when viking reaches floor
             if (newTop + 75 >= floorTop) {
               const finalTop = floorTop - 75;
@@ -83,21 +83,21 @@ function StartPage() {
               velocityRef.current = 0;
               return { top: finalTop, left: 0 };
             }
-            
+
             return { ...prev, top: newTop };
           });
-          
+
           if (!vikingReachedBottom && !gameOver) {
             animationFrameRef.current = requestAnimationFrame(animate);
           }
         };
-        
+
         animationFrameRef.current = requestAnimationFrame(animate);
       };
-      
+
       startFalling();
     }
-    
+
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -114,22 +114,22 @@ function StartPage() {
     const spriteSize = 75;
     const collisionSize = 45; // 60% of 75px
     const collisionPadding = (spriteSize - collisionSize) / 2; // 15px padding on each side
-    
+
     const vikingLeft = vikingPos.left + collisionPadding;
     const vikingTop = vikingPos.top + collisionPadding;
     const vikingWidth = collisionSize;
     const vikingHeight = collisionSize;
-    
+
     // Account for jump animation offset (3x skeleton height = 225px)
     const jumpOffset = jumping ? -225 : 0;
     const vikingActualTop = vikingTop + jumpOffset;
-    
+
     return skeletonList.some(skeleton => {
       const skeletonLeft = skeleton.left + collisionPadding;
       const skeletonTop = skeleton.top + collisionPadding;
       const skeletonWidth = collisionSize;
       const skeletonHeight = collisionSize;
-      
+
       // Check if rectangles overlap
       return (
         vikingLeft < skeletonLeft + skeletonWidth &&
@@ -150,15 +150,15 @@ function StartPage() {
         const floorTop = viewportHeight - floorHeight;
         const skeletonHeight = 75; // Same as viking
         const skeletonTop = floorTop - skeletonHeight;
-        
+
         // Randomly determine how many skeletons to spawn (1-3)
         const skeletonCount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
         const skeletonSpacing = 80; // Space between skeletons
         const baseSpeed = 2 + Math.random() * 2; // Random speed between 2-4 (same for group)
-        
+
         const newSkeletons = [];
         const baseLeft = window.innerWidth + 50; // Start off-screen right
-        
+
         for (let i = 0; i < skeletonCount; i++) {
           newSkeletons.push({
             id: Date.now() + Math.random() + i, // Unique ID for each skeleton
@@ -167,7 +167,7 @@ function StartPage() {
             speed: baseSpeed // Same speed for all skeletons in the group
           });
         }
-        
+
         setSkeletons(prev => [...prev, ...newSkeletons]);
       };
 
@@ -188,7 +188,7 @@ function StartPage() {
       // Animate skeletons moving left and check collisions
       const animateSkeletons = () => {
         if (gameOver) return;
-        
+
         setSkeletons(prev => {
           const updatedSkeletons = prev
             .map(skeleton => ({
@@ -196,7 +196,7 @@ function StartPage() {
               left: skeleton.left - skeleton.speed
             }))
             .filter(skeleton => skeleton.left > -100); // Remove when off-screen left
-          
+
           // Check collision after updating skeleton positions using refs for current values
           if (!gameOver && checkCollision(vikingPositionRef.current, updatedSkeletons, isJumpingRef.current)) {
             setGameOver(true);
@@ -209,15 +209,15 @@ function StartPage() {
             }
             return updatedSkeletons;
           }
-          
+
           return updatedSkeletons;
         });
-        
+
         if (!gameOver) {
           skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
         }
       };
-      
+
       skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
     } else {
       // Clear skeletons when game stops
@@ -254,7 +254,7 @@ function StartPage() {
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
     velocityRef.current = 0;
-    
+
     // Clear all timeouts and animation frames
     if (skeletonAnimationRef.current) {
       cancelAnimationFrame(skeletonAnimationRef.current);
@@ -281,7 +281,7 @@ function StartPage() {
       if (jumpTimeoutRef.current) {
         clearTimeout(jumpTimeoutRef.current);
       }
-      
+
       // Force animation restart by manipulating the DOM directly
       if (vikingRef.current) {
         const element = vikingRef.current;
@@ -290,9 +290,9 @@ function StartPage() {
         void element.offsetWidth;
         element.classList.add('viking-jumping');
       }
-      
+
       setIsJumping(true);
-      
+
       jumpTimeoutRef.current = setTimeout(() => {
         setIsJumping(false);
         if (vikingRef.current) {
@@ -309,8 +309,8 @@ function StartPage() {
   };
 
   return (
-    <div 
-      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`} 
+    <div
+      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
@@ -324,7 +324,7 @@ function StartPage() {
         </>
       ) : (
         <>
-          <div 
+          <div
             ref={vikingRef}
             className={`viking-animation-container ${vikingReachedBottom ? 'viking-running' : 'viking-falling'} ${isJumping ? 'viking-jumping' : ''}`}
             style={{
