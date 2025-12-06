@@ -13,11 +13,14 @@ function StartPage() {
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const vikingRef = useRef(null);
   const floorRef = useRef(null);
   const animationFrameRef = useRef(null);
   const skeletonAnimationRef = useRef(null);
   const skeletonSpawnIntervalRef = useRef(null);
+  const timerIntervalRef = useRef(null);
+  const scoreSubmittedRef = useRef(false);
   const velocityRef = useRef(0);
   const jumpTimeoutRef = useRef(null);
   const vikingPositionRef = useRef(vikingPosition);
@@ -32,6 +35,12 @@ function StartPage() {
   useEffect(() => {
     isJumpingRef.current = isJumping;
   }, [isJumping]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('telegramId');
+    if (id) setTelegramUserId(id);
+  }, []);
 
   // Get floor height based on screen size (responsive)
   const getFloorHeight = () => {
@@ -90,6 +99,39 @@ function StartPage() {
       }
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
+
+  useEffect(() => {
+    if (gameStarted && !gameOver) {
+      if (!timerIntervalRef.current) {
+        timerIntervalRef.current = setInterval(() => {
+          setElapsedSeconds(prev => prev + 1);
+        }, 1000);
+      }
+    } else {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    }
+    return () => {
+      if (timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+        timerIntervalRef.current = null;
+      }
+    };
+  }, [gameStarted, gameOver]);
+
+  const submitScore = async () => {
+    if (!telegramUserId || scoreSubmittedRef.current) return;
+    scoreSubmittedRef.current = true;
+    try {
+      await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ result: elapsedSeconds })
+      });
+    } catch (e) {}
+  };
 
   // Helper function to check collision
   const checkCollision = (vikingPos, skeletonList, jumping) => {
@@ -182,6 +224,7 @@ function StartPage() {
           // Check collision after updating skeleton positions using refs for current values
           if (!gameOver && checkCollision(vikingPositionRef.current, updatedSkeletons, isJumpingRef.current)) {
             setGameOver(true);
+            submitScore();
             // Cancel all animations
             if (skeletonSpawnIntervalRef.current) {
               clearTimeout(skeletonSpawnIntervalRef.current);
@@ -225,6 +268,8 @@ function StartPage() {
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
     velocityRef.current = 0;
+    setElapsedSeconds(0);
+    scoreSubmittedRef.current = false;
   };
 
   const handleRestart = (e) => {
@@ -236,6 +281,8 @@ function StartPage() {
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
     velocityRef.current = 0;
+    setElapsedSeconds(0);
+    scoreSubmittedRef.current = false;
 
     // Clear all timeouts and animation frames
     if (skeletonAnimationRef.current) {
@@ -292,7 +339,7 @@ function StartPage() {
 
   return (
     <div
-      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''}`}
+      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
@@ -307,6 +354,7 @@ function StartPage() {
           preload="auto"
         />
       </div>
+      <div className="score-timer">{elapsedSeconds}s</div>
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>

@@ -149,6 +149,24 @@
   to { background-position-x: -1000px; }
 }
 
+.game-paused .pixel-floor {
+  animation-play-state: paused;
+}
+
+.score-timer {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 100001;
+  background: rgba(0,0,0,0.7);
+  color: #ff0000;
+  border: 3px solid #ff0000;
+  padding: 10px 14px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.7rem, 2.5vw, 1rem);
+  pointer-events: none;
+}
+
 /* Skeleton container */
 .skeleton-container {
   position: absolute;
