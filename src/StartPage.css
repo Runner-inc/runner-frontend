@@ -1,245 +1,69 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
-/* Base styles for the start page */
-.start-page {
-  background-color: #000;
-  color: #ff0000;
-  font-family: 'Press Start 2P', cursive;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  box-sizing: border-box;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+font-family: 'Press Start 2P';
+cursor: pointer;
+transition: 0.2s;
 }
 
-.start-page.game-active {
-  cursor: pointer;
-}
-
-.app-title {
-  font-size: clamp(1.5rem, 5vw, 3rem);
-  color: #ff0000;
-  margin-bottom: clamp(30px, 8vh, 60px);
-  text-align: center;
-  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.3);
-  z-index: 10;
-  line-height: 1.4;
-  word-wrap: break-word;
-  padding: 0 10px;
-}
-
-.button-container {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(20px, 4vh, 30px);
-  align-items: center;
-  width: 100%;
-  max-width: 500px;
-  z-index: 10;
-  padding: 0 10px;
-}
-
-.start-button, .records-button {
-  background-color: #000;
-  color: #ff0000;
-  font-family: 'Press Start 2P', cursive;
-  font-size: clamp(0.7rem, 2.5vw, 1.2rem);
-  padding: clamp(15px, 3vh, 20px) clamp(25px, 5vw, 40px);
-  border: 3px solid #ff0000;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-width: min(250px, 85vw);
-  max-width: min(300px, 90vw);
-  width: 100%;
-  text-transform: uppercase;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
 
 .start-button:hover, .records-button:hover {
-  background-color: #ff0000;
-  color: #000;
-  transform: scale(1.05);
-}
-
-.start-button:active, .records-button:active {
-  transform: scale(0.98);
-}
-
-/* -------------------------------------------------------------------------- */
-/*                          NEW DARK PIXEL ART FLOOR                          */
-/* -------------------------------------------------------------------------- */
-
-/* === PIXEL ART GROUND === */
-.pixel-floor {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 140px;
-  z-index: 9998;
-
-  /* Базовая земля */
-  background:
-    /* слой: редкие черепа */
-    radial-gradient(circle at 15% 60%, #e8e8e8 0 3px, transparent 4px),
-    radial-gradient(circle at 70% 75%, #dcdcdc 0 3px, transparent 4px),
-
-    /* слой: большие камни */
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 18px,
-      #5a463d 18px 20px,
-      transparent 20px 42px
-    ),
-
-    /* слой: маленькие камешки */
-    repeating-linear-gradient(
-      45deg,
-      transparent 0 6px,
-      #6b5448 6px 7px,
-      transparent 7px 14px
-    ),
-
-    /* основной слой земли */
-    repeating-linear-gradient(
-      90deg,
-      #8c6a53 0 12px,
-      #7b5c47 12px 24px
-    );
-
-  image-rendering: pixelated;
-}
-
-/* трава сверху */
-.pixel-floor::before {
-  content: "";
-  position: absolute;
-  top: -28px;
-  left: 0;
-  width: 100%;
-  height: 40px;
-
-  background:
-    /* слой тёмных пикселей — глубина травы */
-    repeating-linear-gradient(
-      90deg,
-      #355e2c 0 10px,
-      #2e5227 10px 20px
-    );
-
-  clip-path: polygon(
-    0% 60%, 5% 30%, 10% 55%, 15% 25%, 20% 60%,
-    25% 35%, 30% 60%, 35% 20%, 40% 60%, 45% 30%,
-    50% 60%, 55% 25%, 60% 55%, 65% 30%, 70% 60%,
-    75% 25%, 80% 50%, 85% 30%, 90% 55%, 95% 25%, 100% 60%
-  );
-
-  image-rendering: pixelated;
-}
-
-/* нижний слой: камни тяжёлые */
-.pixel-floor::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 100%;
-  height: 35px;
-
-  background:
-    repeating-linear-gradient(
-      90deg,
-      #4a3a33 0 16px,
-      #3d2e28 16px 32px
-    );
-  image-rendering: pixelated;
+background: red;
+color: black;
 }
 
 
-/* -------------------------------------------------------------------------- */
-/*                The rest of the styles remain unchanged below               */
-/* -------------------------------------------------------------------------- */
-
-/* Viking animation */
+/* Викинг */
 .viking-animation-container {
-  position: absolute;
-  z-index: 99999;
-  left: 0;
-  will-change: top;
+position: absolute;
+z-index: 999;
 }
 
-.viking-animation-container img {
-  width: clamp(50px, 10vw, 75px) !important;
-  height: clamp(50px, 10vw, 75px) !important;
-  object-fit: contain;
-  image-rendering: pixelated;
+
+.viking-jumping {
+animation: jump 0.8s ease-in-out;
 }
 
-.viking-animation-container.viking-jumping {
-  animation: jumpLeft 0.8s ease-in-out;
-  animation-fill-mode: forwards;
+
+@keyframes jump {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-225px); }
 }
 
-@keyframes jumpLeft {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-225px); }
-}
 
-/* Skeletons */
+/* Скелеты */
 .skeleton-container {
-  position: absolute;
-  z-index: 99998;
+position: absolute;
+z-index: 998;
 }
 
-.skeleton-container img {
-  width: clamp(50px, 10vw, 75px) !important;
-  height: clamp(50px, 10vw, 75px) !important;
-  image-rendering: pixelated;
-}
 
-/* Game Over screen */
+/* Game Over */
 .game-over-overlay {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  background-color: rgba(0,0,0,0.8);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 100000;
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.8);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+z-index: 1000;
 }
+
 
 .game-over-text {
-  font-size: clamp(2rem, 8vw, 4rem);
-  color: #ff0000;
-  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.5);
-  animation: gameOverPulse 1s infinite;
+font-size: 3rem;
+color: red;
+margin-bottom: 20px;
 }
 
-@keyframes gameOverPulse {
-  0%,100% { transform: scale(1); opacity: 1; }
-  50% { opacity: 0.9; transform: scale(1.05); }
-}
 
 .restart-button {
-  background: #000;
-  color: #ff0000;
-  border: 3px solid #ff0000;
-  padding: 20px 40px;
-  font-family: 'Press Start 2P', cursive;
-  cursor: pointer;
-  transition: .2s;
-  text-transform: uppercase;
-}
-.restart-button:hover {
-  transform: scale(1.05);
-  background: #ff0000;
-  color: #000;
+background: black;
+color: red;
+border: 3px solid red;
+padding: 20px 40px;
+font-family: 'Press Start 2P';
+cursor: pointer;
 }
