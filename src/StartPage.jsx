@@ -107,7 +107,7 @@ function StartPage() {
       await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ result: String(elapsedSeconds) })
+        body: JSON.stringify({ result: elapsedSeconds })
       });
     } catch (err) {
       console.warn("Score submit failed:", err);
