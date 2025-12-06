@@ -32,9 +32,24 @@ function StartPage() {
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('telegramId');
-    if (id) setTelegramUserId(id);
+    const tg = window.Telegram?.WebApp;
+
+    if (!tg) {
+      setError('Telegram WebApp API is unavailable. Please open this app in Telegram.');
+      setLoading(false);
+      return;
+    }
+
+    tg.ready();
+
+    const telegramUserId = tg.initDataUnsafe?.user?.id;
+
+    if (telegramUserId) {
+      setTelegramId(String(telegramUserId));
+    } else {
+      setError('User ID not found in Telegram WebApp data');
+      setLoading(false);
+    }
   }, []);
 
   const getFloorHeight = () => {
