@@ -105,7 +105,7 @@ function StartPage() {
 
     try {
       await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
-        method: 'PUT',
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ result: String(elapsedSeconds) })
       });
