@@ -57,7 +57,7 @@ function StartPage() {
             // Calculate floor position (bottom of viewport - floor height)
             const viewportHeight = window.innerHeight;
             const floorHeight = getFloorHeight();
-            const floorTop = viewportHeight - floorHeight + 33;
+            const floorTop = viewportHeight - floorHeight + 29;
 
             // Collision detection: stop when viking reaches floor
             if (newTop + 75 >= floorTop) {
@@ -132,10 +132,10 @@ function StartPage() {
         const floorHeight = getFloorHeight();
         const floorTop = viewportHeight - floorHeight;
         const skeletonHeight = 75; // Same as viking
-        const skeletonTop = floorTop + 34 - skeletonHeight;
+        const skeletonTop = floorTop + 29 - skeletonHeight;
 
         const skeletonCount = 1 + Math.floor(Math.random() * 3);
-        const skeletonSpacing = 30; // Space between skeletons
+        const skeletonSpacing = 25; // Space between skeletons
         const baseSpeed = 2 + Math.random() * 2; // Random speed between 2-4 (same for group)
 
         const newSkeletons = [];
