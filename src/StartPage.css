@@ -2,7 +2,7 @@
 
 /* Base styles for the start page */
 .start-page {
-  background-color: #0a3d91;
+  background-color: #000;
   color: #ff0000;
   font-family: 'Press Start 2P', cursive;
   min-height: 100vh;
@@ -108,7 +108,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 0;
+
   pointer-events: none;
   overflow: hidden;
 }
@@ -123,95 +123,9 @@
 }
 
 .parallax-layer {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  will-change: background-position;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  display: none;
 }
 
-.parallax-layer.bg-sky {
-  background-image: linear-gradient(#0a3d91, #0c54c9);
-  background-size: 100% 100%;
-}
-
-.parallax-layer.bg-clouds {
-  background-image: 
-    repeating-linear-gradient(0deg, rgba(255,255,255,0) 0 20px, rgba(255,255,255,0.9) 20px 28px, rgba(255,255,255,0) 28px 48px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0) 0 16px, rgba(255,255,255,0.8) 16px 22px, rgba(255,255,255,0) 22px 40px);
-  background-size: 220px 100%, 160px 100%;
-  background-position: 0 18%, 0 28%;
-  animation: scrollClouds 35s linear infinite;
-  opacity: 0.6;
-}
-
-@keyframes scrollClouds {
-  from { background-position: 0 12%, 0 22%; }
-  to { background-position: -800px 12%, -600px 22%; }
-}
-
-.parallax-layer.bg-scanlines {
-  background-image: repeating-linear-gradient(180deg, rgba(255,0,0,0.08) 0 2px, rgba(0,0,0,0) 2px 4px);
-  background-size: 100% 4px;
-  background-position: 0 0;
-  animation: scanlines 8s linear infinite;
-  opacity: 0.15;
-}
-
-@keyframes scanlines {
-  from { background-position-y: 0; }
-  to { background-position-y: -400px; }
-}
-
-.parallax-layer.bg-mountains-far {
-  background-image:
-    linear-gradient(135deg, transparent 70%, #0b2c51 70%),
-    linear-gradient(225deg, transparent 70%, #0b2c51 70%),
-    linear-gradient(to top, #0b2c51 0, #0b2c51 30%);
-  background-size:
-    160px 160px,
-    160px 160px,
-    100% 30%;
-  background-position:
-    0 100%,
-    80px 100%,
-    0 100%;
-  background-repeat: repeat-x;
-  animation: scrollMountainsFar 90s linear infinite;
-  opacity: 0.8;
-}
-
-@keyframes scrollMountainsFar {
-  from { background-position: 0 100%, 80px 100%, 0 100%; }
-  to { background-position: -960px 100%, -880px 100%, 0 100%; }
-}
-
-.parallax-layer.bg-mountains {
-  background-image:
-    linear-gradient(135deg, transparent 65%, #0e4176 65%),
-    linear-gradient(225deg, transparent 65%, #0e4176 65%),
-    linear-gradient(to top, #0e4176 0, #0e4176 40%);
-  background-size:
-    128px 128px,
-    128px 128px,
-    100% 40%;
-  background-position:
-    0 100%,
-    64px 100%,
-    0 100%;
-  background-repeat: repeat-x;
-  animation: scrollMountains 60s linear infinite;
-  opacity: 0.95;
-}
-
-@keyframes scrollMountains {
-  from { background-position: 0 100%, 64px 100%, 0 100%; }
-  to { background-position: -1024px 100%, -960px 100%, 0 100%; }
-}
 
 /* Pixel floor base styles and rotating ground image */
 .pixel-floor {

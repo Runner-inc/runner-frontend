@@ -306,10 +306,6 @@ function StartPage() {
           playsInline
           preload="auto"
         />
-        <div className="parallax-layer bg-mountains-far"></div>
-        <div className="parallax-layer bg-clouds"></div>
-        <div className="parallax-layer bg-mountains"></div>
-        <div className="parallax-layer bg-scanlines"></div>
       </div>
       {!gameStarted ? (
         <>
