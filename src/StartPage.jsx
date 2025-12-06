@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
 import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
-const GROUND_IMAGE_URL = 'https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/ground.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2dyb3VuZC5wbmciLCJpYXQiOjE3NjUwMTU1MDcsImV4cCI6Nzc1Njg1NTUwN30.HKLsIY2bnYMqLEtTERgNy9NzWJ7-gDHLNwWEsGSNASc';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -350,9 +349,7 @@ function StartPage() {
               />
             </div>
           ))}
-          <div ref={floorRef} className="pixel-floor">
-            <img src={GROUND_IMAGE_URL} alt="Ground" className="ground-rotating" />
-          </div>
+          <div ref={floorRef} className="pixel-floor"></div>
           {gameOver && (
             <div className="game-over-overlay">
               <h2 className="game-over-text">GAME OVER</h2>
