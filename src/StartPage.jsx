@@ -298,6 +298,7 @@ function StartPage() {
       <div className="parallax-bg">
         <div className="parallax-layer bg-stars"></div>
         <div className="parallax-layer bg-clouds"></div>
+        <div className="parallax-layer bg-scanlines"></div>
       </div>
       {!gameStarted ? (
         <>
