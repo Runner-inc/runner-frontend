@@ -127,7 +127,7 @@
 
 .parallax-layer.bg-stars {
   background-image: radial-gradient(#ff0000 1px, transparent 1px), radial-gradient(#990000 1px, transparent 1px);
-  background-size: 64px 64px, 64px 64px;
+  background-size: 164px 14px, 164px 164px;
   background-position: 0 0, 32px 32px;
   animation: scrollStars 60s linear infinite;
   opacity: 0.35;
