@@ -31,23 +31,16 @@ function StartPage() {
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
 
-  // ✅ Telegram WebApp API для получения user ID
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
-
     if (!tg) {
       setError('Telegram WebApp API is unavailable. Please open this app in Telegram.');
       return;
     }
-
     tg.ready();
-
     const telegramUserId = tg.initDataUnsafe?.user?.id;
-    if (telegramUserId) {
-      setTelegramUserId(String(telegramUserId));
-    } else {
-      setError('User ID not found in Telegram WebApp data');
-    }
+    if (telegramUserId) setTelegramUserId(String(telegramUserId));
+    else setError('User ID not found in Telegram WebApp data');
   }, []);
 
   const getFloorHeight = () => {
@@ -68,24 +61,19 @@ function StartPage() {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
-
           if (newTop + 75 >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
             return { top: floorTop - 75, left: 0 };
           }
-
           return { ...prev, top: newTop };
         });
-
         if (!vikingReachedBottom && !gameOver) {
           animationFrameRef.current = requestAnimationFrame(animateFall);
         }
       };
-
       animationFrameRef.current = requestAnimationFrame(animateFall);
     }
-
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
@@ -96,12 +84,10 @@ function StartPage() {
     if (gameStarted && !gameOver && !timerIntervalRef.current) {
       timerIntervalRef.current = setInterval(() => setElapsedSeconds(prev => prev + 1), 1000);
     }
-
     if (!gameStarted || gameOver) {
       clearInterval(timerIntervalRef.current);
       timerIntervalRef.current = null;
     }
-
     return () => clearInterval(timerIntervalRef.current);
   }, [gameStarted, gameOver]);
 
@@ -110,11 +96,21 @@ function StartPage() {
     scoreSubmittedRef.current = true;
 
     try {
-      await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ result: elapsedSeconds })
-      });
+      // Получаем текущий рекорд
+      const res = await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`);
+      const data = await res.json();
+      const currentBest = data?.result || 0;
+
+      if (elapsedSeconds > currentBest) {
+        await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ result: elapsedSeconds })
+        });
+        console.log(`New highscore submitted: ${elapsedSeconds}`);
+      } else {
+        console.log(`Score ${elapsedSeconds} not higher than current best ${currentBest}, not submitted.`);
+      }
     } catch (err) {
       console.warn("Score submit failed:", err);
     }
@@ -198,7 +194,6 @@ function StartPage() {
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
 
-  // 🔥 Submit score strictly on Game Over
   useEffect(() => {
     if (gameOver) submitScore();
   }, [gameOver]);
