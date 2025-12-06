@@ -33,25 +33,6 @@ function StartPage() {
     isJumpingRef.current = isJumping;
   }, [isJumping]);
 
-  // Get Telegram User ID from WebApp API
-  useEffect(() => {
-    const tg = window.Telegram?.WebApp;
-
-    if (!tg) {
-      console.warn("Telegram WebApp API is unavailable in this environment");
-      return;
-    }
-
-    tg.ready();
-
-    const telegramUserId = tg.initDataUnsafe?.user?.id;
-    if (telegramUserId) {
-      setTelegramUserId(String(telegramUserId));
-    } else {
-      console.warn("User ID not found in Telegram WebApp data");
-    }
-  }, []);
-
   // Get floor height based on screen size (responsive)
   const getFloorHeight = () => {
     const width = window.innerWidth;
@@ -152,7 +133,7 @@ function StartPage() {
         const skeletonTop = floorTop - skeletonHeight;
 
         // Randomly determine how many skeletons to spawn (1-3)
-        const skeletonCount = Math.floor(Math.random() * 3) + 1; // 1, 2, or 3
+        const skeletonCount = Math.floor(Math.random()); // 1, 2, or 3
         const skeletonSpacing = 80; // Space between skeletons
         const baseSpeed = 2 + Math.random() * 2; // Random speed between 2-4 (same for group)
 
