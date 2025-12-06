@@ -57,7 +57,7 @@ function StartPage() {
             // Calculate floor position (bottom of viewport - floor height)
             const viewportHeight = window.innerHeight;
             const floorHeight = getFloorHeight();
-            const floorTop = viewportHeight - floorHeight;
+            const floorTop = viewportHeight - floorHeight + 75;
 
             // Collision detection: stop when viking reaches floor
             if (newTop + 75 >= floorTop) {
