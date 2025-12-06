@@ -295,6 +295,10 @@ function StartPage() {
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
+      <div className="parallax-bg">
+        <div className="parallax-layer bg-stars"></div>
+        <div className="parallax-layer bg-clouds"></div>
+      </div>
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>

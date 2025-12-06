@@ -102,6 +102,55 @@
   animation-fill-mode: forwards;
 }
 
+.parallax-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  will-change: background-position;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.parallax-layer.bg-stars {
+  background-image: radial-gradient(#ff0000 1px, transparent 1px), radial-gradient(#990000 1px, transparent 1px);
+  background-size: 64px 64px, 64px 64px;
+  background-position: 0 0, 32px 32px;
+  animation: scrollStars 60s linear infinite;
+  opacity: 0.35;
+}
+
+@keyframes scrollStars {
+  from { background-position: 0 0, 32px 32px; }
+  to { background-position: -512px 0, -480px 32px; }
+}
+
+.parallax-layer.bg-clouds {
+  background-image: repeating-linear-gradient(0deg, rgba(255,0,0,0) 0 28px, rgba(255,0,0,0.12) 28px 34px, rgba(255,0,0,0) 34px 60px), repeating-linear-gradient(0deg, rgba(255,0,0,0) 0 22px, rgba(255,0,0,0.08) 22px 26px, rgba(255,0,0,0) 26px 50px);
+  background-size: 240px 100%, 180px 100%;
+  background-position: 0 12%, 0 22%;
+  animation: scrollClouds 40s linear infinite;
+  opacity: 0.25;
+}
+
+@keyframes scrollClouds {
+  from { background-position: 0 12%, 0 22%; }
+  to { background-position: -800px 12%, -600px 22%; }
+}
+
 /* Pixel floor base styles and rotating ground image */
 .pixel-floor {
   position: fixed;
