@@ -1,69 +1,430 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-font-family: 'Press Start 2P';
-cursor: pointer;
-transition: 0.2s;
+
+/* Base styles for the start page */
+.start-page {
+  background-color: #000;
+  color: #ff0000;
+  font-family: 'Press Start 2P', cursive;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
 
+.start-page.game-active {
+  cursor: pointer;
+}
+
+.app-title {
+  font-size: clamp(1.5rem, 5vw, 3rem);
+  color: #ff0000;
+  margin-bottom: clamp(30px, 8vh, 60px);
+  text-align: center;
+  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.3);
+  z-index: 10;
+  line-height: 1.4;
+  word-wrap: break-word;
+  padding: 0 10px;
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 4vh, 30px);
+  align-items: center;
+  width: 100%;
+  max-width: 500px;
+  z-index: 10;
+  padding: 0 10px;
+}
+
+.start-button, .records-button {
+  background-color: #000;
+  color: #ff0000;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.7rem, 2.5vw, 1.2rem);
+  padding: clamp(15px, 3vh, 20px) clamp(25px, 5vw, 40px);
+  border: 3px solid #ff0000;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: min(250px, 85vw);
+  max-width: min(300px, 90vw);
+  width: 100%;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 
 .start-button:hover, .records-button:hover {
-background: red;
-color: black;
+  background-color: #ff0000;
+  color: #000;
+  transform: scale(1.05);
 }
 
+.start-button:active, .records-button:active {
+  transform: scale(0.98);
+}
 
-/* Викинг */
+/* Viking animation container */
 .viking-animation-container {
-position: absolute;
-z-index: 999;
+  position: absolute;
+  z-index: 99999;
+  left: 0;
+  will-change: top;
 }
 
-
-.viking-jumping {
-animation: jump 0.8s ease-in-out;
+.viking-animation-container img {
+  width: clamp(50px, 10vw, 75px) !important;
+  height: clamp(50px, 10vw, 75px) !important;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
 }
 
-
-@keyframes jump {
-0%, 100% { transform: translateY(0); }
-50% { transform: translateY(-225px); }
+.viking-animation-container.viking-falling {
+  transition: none;
 }
 
+.viking-animation-container.viking-running {
+  transition: transform 0.3s ease;
+}
 
-/* Скелеты */
+.viking-animation-container.viking-jumping {
+  animation: jumpLeft 0.8s ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+/* Skeleton container */
 .skeleton-container {
-position: absolute;
-z-index: 998;
+  position: absolute;
+  z-index: 99998;
+  will-change: left;
 }
 
+.skeleton-container img {
+  width: clamp(50px, 10vw, 75px) !important;
+  height: clamp(50px, 10vw, 75px) !important;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
 
-/* Game Over */
+/* Game Over Overlay */
 .game-over-overlay {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background: rgba(0,0,0,0.8);
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-z-index: 1000;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  gap: clamp(30px, 5vh, 50px);
+  pointer-events: auto;
 }
-
 
 .game-over-text {
-font-size: 3rem;
-color: red;
-margin-bottom: 20px;
+  font-size: clamp(2rem, 8vw, 4rem);
+  color: #ff0000;
+  text-align: center;
+  text-shadow: 4px 4px 0 rgba(255, 0, 0, 0.5);
+  margin: 0;
+  animation: gameOverPulse 1s ease-in-out infinite;
 }
 
+@keyframes gameOverPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
 
 .restart-button {
-background: black;
-color: red;
-border: 3px solid red;
-padding: 20px 40px;
-font-family: 'Press Start 2P';
-cursor: pointer;
+  background-color: #000;
+  color: #ff0000;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.8rem, 3vw, 1.2rem);
+  padding: clamp(15px, 3vh, 20px) clamp(25px, 5vw, 40px);
+  border: 3px solid #ff0000;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: min(200px, 70vw);
+  text-transform: uppercase;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.restart-button:hover {
+  background-color: #ff0000;
+  color: #000;
+  transform: scale(1.05);
+}
+
+.restart-button:active {
+  transform: scale(0.98);
+}
+
+@keyframes jumpLeft {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-225px) translateX(0);
+  }
+}
+
+/* Responsive Design - Tablet */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  .app-title {
+    font-size: clamp(2rem, 4vw, 2.5rem);
+    margin-bottom: 50px;
+  }
+
+  .start-button, .records-button {
+    font-size: clamp(0.9rem, 2vw, 1.1rem);
+    padding: 18px 35px;
+  }
+
+  .viking-animation-container {
+    left: 0;
+  }
+
+  .viking-animation-container img {
+    width: clamp(60px, 8vw, 75px) !important;
+    height: clamp(60px, 8vw, 75px) !important;
+  }
+
+  .pixel-floor {
+    width: 100%;
+    height: 100px;
+  }
+
+  .pixel-floor::before {
+    height: 33px;
+  }
+}
+
+/* Responsive Design - Mobile */
+@media screen and (max-width: 768px) {
+  .start-page {
+    padding: 15px;
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+
+  /* Ensure minimum touch target size (44x44px) */
+  .start-button, .records-button {
+    min-height: 44px;
+  }
+
+  .app-title {
+    font-size: clamp(1.2rem, 6vw, 1.8rem);
+    margin-bottom: clamp(25px, 6vh, 40px);
+    line-height: 1.5;
+    padding: 0 15px;
+  }
+
+  .button-container {
+    gap: clamp(15px, 3vh, 25px);
+    max-width: 100%;
+  }
+
+  .start-button, .records-button {
+    font-size: clamp(0.6rem, 3vw, 0.9rem);
+    padding: clamp(12px, 2.5vh, 18px) clamp(20px, 4vw, 30px);
+    min-width: min(220px, 80vw);
+    max-width: min(280px, 85vw);
+    border-width: 2px;
+  }
+
+  .viking-animation-container {
+    left: 0;
+  }
+
+  .viking-animation-container img {
+    width: clamp(50px, 12vw, 65px) !important;
+    height: clamp(50px, 12vw, 65px) !important;
+  }
+
+  .pixel-floor {
+    width: 100%;
+    height: 90px;
+  }
+
+  .pixel-floor::before {
+    height: 30px;
+  }
+
+  @keyframes jumpLeft {
+    0%, 100% {
+      transform: translateY(0) translateX(0);
+    }
+    50% {
+      transform: translateY(-225px) translateX(0);
+    }
+  }
+}
+
+/* Responsive Design - Small Mobile */
+@media screen and (max-width: 480px) {
+  .start-page {
+    padding: 10px;
+  }
+
+  .app-title {
+    font-size: clamp(1rem, 7vw, 1.4rem);
+    margin-bottom: clamp(20px, 5vh, 30px);
+    text-shadow: 2px 2px 0 rgba(255, 0, 0, 0.3);
+  }
+
+  .button-container {
+    gap: clamp(12px, 2.5vh, 20px);
+  }
+
+  .start-button, .records-button {
+    font-size: clamp(0.5rem, 3.5vw, 0.75rem);
+    padding: clamp(10px, 2vh, 15px) clamp(15px, 3vw, 25px);
+    min-width: min(200px, 75vw);
+    max-width: min(260px, 80vw);
+  }
+
+  .viking-animation-container {
+    left: 0;
+  }
+
+  .viking-animation-container img {
+    width: clamp(40px, 15vw, 55px) !important;
+    height: clamp(40px, 15vw, 55px) !important;
+  }
+
+  .pixel-floor {
+    width: 100%;
+    height: 80px;
+  }
+
+  .pixel-floor::before {
+    height: 27px;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .start-page {
+    padding: 10px;
+  }
+
+  .app-title {
+    font-size: clamp(1rem, 4vh, 1.5rem);
+    margin-bottom: clamp(15px, 3vh, 25px);
+  }
+
+  .button-container {
+    gap: clamp(10px, 2vh, 20px);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .start-button, .records-button {
+    font-size: clamp(0.5rem, 2.5vh, 0.8rem);
+    padding: clamp(8px, 1.5vh, 12px) clamp(15px, 3vw, 25px);
+    min-width: auto;
+    max-width: 45%;
+  }
+
+  .viking-animation-container {
+    left: 5%;
+  }
+
+  .viking-animation-container img {
+    width: clamp(35px, 10vh, 50px) !important;
+    height: clamp(35px, 10vh, 50px) !important;
+  }
+
+  .pixel-floor {
+    width: 100%;
+    height: 70px;
+  }
+
+  .pixel-floor::before {
+    height: 23px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 25px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 25px;
+    }
+  }
+}
+
+/* Large screens optimization */
+@media screen and (min-width: 1440px) {
+  .app-title {
+    font-size: 3.5rem;
+    margin-bottom: 70px;
+  }
+
+  .start-button, .records-button {
+    font-size: 1.3rem;
+    padding: 22px 45px;
+  }
+
+  .viking-animation-container {
+    left: 12%;
+  }
+
+  .viking-animation-container img {
+    width: 85px !important;
+    height: 85px !important;
+  }
+
+  .pixel-floor {
+    width: 100%;
+    height: 140px;
+  }
+
+  .pixel-floor::before {
+    height: 47px;
+  }
+
+  @keyframes slideDownLeft {
+    0% {
+      transform: translateY(-100vh) translateX(0);
+      opacity: 0;
+      bottom: 45px;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0) translateX(0);
+      bottom: 45px;
+    }
+  }
 }
