@@ -36,11 +36,13 @@ function StartPage() {
   // Get floor height based on screen size (responsive)
   const getFloorHeight = () => {
     const width = window.innerWidth;
+    const height = window.innerHeight;
     if (width >= 1440) return 140;
     if (width >= 769 && width <= 1024) return 100;
+    if (height <= 500) return 70;
     if (width <= 480) return 80;
-    if (window.innerHeight <= 500) return 70;
-    return 120; // Default for desktop
+    if (width <= 768) return 90;
+    return 120;
   };
 
   useEffect(() => {
@@ -132,8 +134,7 @@ function StartPage() {
         const skeletonHeight = 75; // Same as viking
         const skeletonTop = floorTop - skeletonHeight;
 
-        // Randomly determine how many skeletons to spawn (1-3)
-        const skeletonCount = Math.floor(Math.random()); // 1, 2, or 3
+        const skeletonCount = 1 + Math.floor(Math.random() * 3);
         const skeletonSpacing = 80; // Space between skeletons
         const baseSpeed = 2 + Math.random() * 2; // Random speed between 2-4 (same for group)
 
