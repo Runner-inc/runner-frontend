@@ -126,6 +126,7 @@ function StartPage() {
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
 
+    // Collision box follows the sprite position during jumps
     const vTop = vPos.top + padding + (jumping ? -225 : 0);
     const vLeft = vPos.left + padding;
 
