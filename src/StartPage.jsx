@@ -27,6 +27,7 @@ function StartPage() {
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
   const gravity = 0.8;
+  const lastTouchTimeRef = useRef(0);
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
@@ -231,7 +232,14 @@ function StartPage() {
     }
   };
 
-  const handlePageTouch = e => { e.preventDefault(); handlePageClick(); };
+  const handlePageTouch = e => {
+    e.preventDefault();
+    const now = Date.now();
+    if (now - lastTouchTimeRef.current > 100) { // 100ms debounce
+      lastTouchTimeRef.current = now;
+      handlePageClick();
+    }
+  };
 
   if (error) return <div className="error">{error}</div>;
 

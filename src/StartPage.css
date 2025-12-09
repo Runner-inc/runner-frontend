@@ -1,5 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
+/* Prevent all selection and focus outlines */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+*:focus {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Base styles for the start page */
 .start-page {
   background-color: #000;
@@ -15,6 +30,13 @@
   width: 100%;
   position: relative;
   overflow: hidden;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .start-page.game-active {
@@ -77,18 +99,34 @@
   z-index: 99999;
   left: 0;
   will-change: top;
+  border: none;
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .viking-animation-container img {
   width: clamp(50px, 10vw, 75px) !important;
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
-  /* object-fit: contain;
-  image-rendering: pixelated; */
-  /* image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges; */
-  /* border: none;
-  outline: none; */
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  border: none;
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .viking-animation-container.viking-falling {
@@ -173,18 +211,34 @@
   position: absolute;
   z-index: 99998;
   will-change: left;
+  border: none;
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .skeleton-container img {
   width: clamp(50px, 10vw, 75px) !important;
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
-  /* object-fit: contain; */
-  /* image-rendering: pixelated;
+  object-fit: contain;
+  image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   border: none;
-  outline: none; */
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Game Over Overlay */
