@@ -20,20 +20,21 @@ function StartPage() {
 
   const vikingRef = useRef(null);
   const animationFrameRef = useRef(null);
-  const skeletonAnimationRef = useRef(null);
-  const skeletonSpawnIntervalRef = useRef(null);
+  const enemyAnimationRef = useRef(null);
+  const spawnIntervalRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const scoreSubmittedRef = useRef(false);
   const velocityRef = useRef(0);
   const jumpTimeoutRef = useRef(null);
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
-  const gravity = 0.8;
   const lastTouchTimeRef = useRef(0);
+  const gravity = 0.8;
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
 
+  // Telegram WebApp init
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) {
@@ -57,6 +58,7 @@ function StartPage() {
     return 120;
   };
 
+  // Viking falling
   useEffect(() => {
     if (gameStarted && !vikingReachedBottom && !gameOver) {
       const animateFall = () => {
@@ -83,6 +85,7 @@ function StartPage() {
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
 
+  // Timer
   useEffect(() => {
     if (gameStarted && !gameOver && !timerIntervalRef.current) {
       timerIntervalRef.current = setInterval(() => setElapsedSeconds(prev => prev + 1), 1000);
@@ -97,12 +100,10 @@ function StartPage() {
   const submitScore = async () => {
     if (!telegramUserId || scoreSubmittedRef.current) return;
     scoreSubmittedRef.current = true;
-
     try {
       const res = await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`);
       const data = await res.json();
       const currentBest = data?.result || 0;
-
       if (elapsedSeconds > currentBest) {
         await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`, {
           method: 'POST',
@@ -118,19 +119,18 @@ function StartPage() {
     }
   };
 
-  const checkCollision = (vPos, enemyList) => {
+  // Collision detection
+  const checkCollision = (vPos, allEnemies) => {
     const vWidth = 45;
     const vHeight = 45;
     const vLeft = vPos.left;
-    // Adjust Viking's collision position during jump (CSS transform moves sprite up by 225px)
-    const vTop = vPos.top + (isJumping ? -225 : 0);
+    const vTop = vPos.top + (isJumpingRef.current ? -225 : 0);
 
-    return enemyList.some(enemy => {
+    return allEnemies.some(enemy => {
       const eWidth = 45;
       const eHeight = 45;
       const eLeft = enemy.left;
       const eTop = enemy.top;
-
       return (
         vLeft < eLeft + eWidth &&
         vLeft + vWidth > eLeft &&
@@ -140,112 +140,90 @@ function StartPage() {
     });
   };
 
+  // Enemy spawn and animation
   useEffect(() => {
-    if (gameStarted && !gameOver) {
-      if (!gameStartTime) setGameStartTime(Date.now());
+    if (!gameStarted || gameOver) {
+      setSkeletons([]);
+      setFlyingEnemies([]);
+      return;
+    }
 
-      const spawnSkeleton = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const baseLeft = window.innerWidth + 50;
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedIncrease = Math.floor(gameDuration / 5);
-        const baseSpeed = 2 + speedIncrease * 0.8;
+    if (!gameStartTime) setGameStartTime(Date.now());
 
-        const newSkeleton = {
-          id: Date.now() + Math.random(),
-          left: baseLeft,
-          top: floorTop + 29 - 75,
-          speed: baseSpeed + Math.random()
-        };
-        setSkeletons(prev => [...prev, newSkeleton]);
+    const spawnEnemy = () => {
+      const floorTop = window.innerHeight - getFloorHeight();
+      const baseLeft = window.innerWidth + 50;
+      const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+      const speedIncrease = Math.floor(gameDuration / 5);
+
+      // Skeleton
+      const newSkeleton = {
+        id: Date.now() + Math.random(),
+        left: baseLeft,
+        top: floorTop + 29 - 75,
+        speed: 2 + speedIncrease * 0.8 + Math.random()
       };
+      setSkeletons(prev => [...prev, newSkeleton]);
 
-      const spawnFlyingEnemy = () => {
-        const baseLeft = window.innerWidth + 50;
-        const floorTop = window.innerHeight - getFloorHeight();
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedIncrease = Math.floor(gameDuration / 5);
-        const baseSpeed = 3 + speedIncrease * 0.6;
-
+      // Flying enemy
+      if (Math.random() < 0.5) {
         const jumpHeight = 225;
         const positions = [
           floorTop - jumpHeight * 0.3,
           floorTop - jumpHeight * 0.6,
           floorTop - jumpHeight * 0.9
         ];
-
         const randomY = positions[Math.floor(Math.random() * positions.length)];
-
-        const newFlyingEnemy = {
+        const newFlying = {
           id: Date.now() + Math.random(),
           left: baseLeft,
           top: randomY,
-          speed: baseSpeed + Math.random() * 1.5
+          speed: 3 + speedIncrease * 0.6 + Math.random() * 1.5
         };
+        setFlyingEnemies(prev => [...prev, newFlying]);
+      }
 
-        setFlyingEnemies(prev => [...prev, newFlyingEnemy]);
-      };
+      // Schedule next spawn
+      const baseInterval = 3000;
+      const decreasePer5Seconds = 300;
+      const maxDecreases = Math.floor(gameDuration / 5);
+      const currentInterval = Math.max(600, baseInterval - maxDecreases * decreasePer5Seconds);
+      const randomVariation = Math.random() * 1000 - 500;
+      const finalInterval = Math.max(500, currentInterval + randomVariation);
 
-      const scheduleSpawn = () => {
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const baseInterval = 3000;
-        const decreasePer5Seconds = 300;
-        const maxDecreases = Math.floor(gameDuration / 5);
-        const currentInterval = Math.max(600, baseInterval - maxDecreases * decreasePer5Seconds);
-        const randomVariation = Math.random() * 1000 - 500;
-        const finalInterval = Math.max(500, currentInterval + randomVariation);
+      spawnIntervalRef.current = setTimeout(() => {
+        if (!gameOver) spawnEnemy();
+      }, finalInterval);
+    };
 
-        skeletonSpawnIntervalRef.current = setTimeout(() => {
-          if (!gameOver) {
-            spawnSkeleton();
-            if (Math.random() < 0.5) spawnFlyingEnemy();
-            scheduleSpawn();
-          }
-        }, finalInterval);
-      };
+    spawnEnemy();
 
-      scheduleSpawn();
+    const animateEnemies = () => {
+      if (gameOver) return;
 
-      const animateEnemies = () => {
-        if (gameOver) return;
+      setSkeletons(prev => prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100));
+      setFlyingEnemies(prev => prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100));
 
-        setSkeletons(prev => {
-          const updatedSkeletons = prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100);
+      const allEnemies = [...skeletons, ...flyingEnemies];
+      if (checkCollision(vikingPositionRef.current, allEnemies)) {
+        setGameOver(true);
+        clearTimeout(spawnIntervalRef.current);
+        cancelAnimationFrame(enemyAnimationRef.current);
+        return;
+      }
 
-          setFlyingEnemies(flyingPrev => {
-            const updatedFlying = flyingPrev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100);
+      enemyAnimationRef.current = requestAnimationFrame(animateEnemies);
+    };
 
-            const allEnemies = [...updatedSkeletons, ...updatedFlying];
-            if (checkCollision(vikingPositionRef.current, allEnemies)) {
-              setGameOver(true);
-              clearTimeout(skeletonSpawnIntervalRef.current);
-              cancelAnimationFrame(animationFrameRef.current);
-            }
-
-            return updatedFlying;
-          });
-
-          return updatedSkeletons;
-        });
-
-        if (!gameOver) skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
-      };
-
-      skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
-    } else {
-      setSkeletons([]);
-      setFlyingEnemies([]);
-    }
+    enemyAnimationRef.current = requestAnimationFrame(animateEnemies);
 
     return () => {
-      if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
-      if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
+      clearTimeout(spawnIntervalRef.current);
+      cancelAnimationFrame(enemyAnimationRef.current);
     };
   }, [gameStarted, gameOver, gameStartTime]);
 
-  useEffect(() => {
-    if (gameOver) submitScore();
-  }, [gameOver]);
+  useEffect(() => { if (gameOver) submitScore(); }, [gameOver]);
 
   const handleStartGame = () => {
     setGameStarted(true);
@@ -299,10 +277,7 @@ function StartPage() {
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
-      <div className="parallax-bg">
-        <div className="bg-image"></div>
-      </div>
-
+      <div className="parallax-bg"><div className="bg-image"></div></div>
       <div className="score-timer"> SCORE: {elapsedSeconds}</div>
 
       {!gameStarted ? (
@@ -340,8 +315,8 @@ function StartPage() {
             </div>
           ))}
 
-          {flyingEnemies.map(enemy => (
-            <div key={enemy.id} className="flying-enemy-container" style={{ top: `${enemy.top}px`, left: `${enemy.left}px` }}>
+          {flyingEnemies.map(f => (
+            <div key={f.id} className="flying-enemy-container" style={{ top: `${f.top}px`, left: `${f.left}px` }}>
               <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
             </div>
           ))}
