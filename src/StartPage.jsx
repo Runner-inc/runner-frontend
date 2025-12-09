@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking, viking_run, viking_jump, skeleton, valkyrie } from './vikingSprites';
+import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -11,18 +11,16 @@ function StartPage() {
   const [isJumping, setIsJumping] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
-  const [skeletons, setSkeletons] = useState([]);
-  const [flyingEnemies, setFlyingEnemies] = useState([]);
+  const [enemies, setEnemies] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
   const [gameStartTime, setGameStartTime] = useState(null);
 
   const vikingRef = useRef(null);
-  const animationFrameRef = useRef(null);
-  const enemyAnimationRef = useRef(null);
-  const skeletonSpawnRef = useRef(null);
-  const valkyrieSpawnRef = useRef(null);
+    const animationFrameRef = useRef(null);
+    const enemyAnimationRef = useRef(null);
+    const enemySpawnRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const scoreSubmittedRef = useRef(false);
   const velocityRef = useRef(0);
@@ -142,66 +140,51 @@ function StartPage() {
 
   useEffect(() => {
     if (!gameStarted || gameOver) {
-      setSkeletons([]);
-      setFlyingEnemies([]);
+      setEnemies([]);
       return;
     }
 
     if (!gameStartTime) setGameStartTime(Date.now());
 
-    const spawnSkeleton = () => {
-      if (!gameOver && skeletons.length === 0) {
+    const spawnEnemy = () => {
+      if (!gameOver && enemies.length === 0) {
         const floorTop = window.innerHeight - getFloorHeight();
         const baseLeft = window.innerWidth + 50;
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
         const speedIncrease = Math.floor(gameDuration / 5);
 
-        const newSkeleton = {
-          id: Date.now() + Math.random(),
-          left: baseLeft,
-          top: floorTop + 29 - 75,
-          speed: 2 + speedIncrease * 0.8 + Math.random()
-        };
-        setSkeletons([newSkeleton]);
-      }
-      skeletonSpawnRef.current = setTimeout(spawnSkeleton, 2000);
-    };
-    spawnSkeleton();
-
-    const spawnValkyrie = () => {
-      if (!gameOver && flyingEnemies.length === 0) {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const baseLeft = window.innerWidth + 50;
+        // Different heights: ground, low, medium, high
         const positions = [
-          floorTop - 225 * 0.3,
-          floorTop - 225 * 0.6,
-          floorTop - 225 * 0.9
+          floorTop + 29 - 75,      // Ground level
+          floorTop - 225 * 0.3,    // Low jump height
+          floorTop - 225 * 0.6,    // Medium jump height
+          floorTop - 225 * 0.9     // High jump height
         ];
+
         const randomY = positions[Math.floor(Math.random() * positions.length)];
 
-        const newFlying = {
+        const newEnemy = {
           id: Date.now() + Math.random(),
           left: baseLeft,
           top: randomY,
-          speed: 3 + Math.random() * 1.5
+          speed: 2 + speedIncrease * 0.8 + Math.random()
         };
-        setFlyingEnemies([newFlying]);
+
+        setEnemies([newEnemy]);
       }
-      valkyrieSpawnRef.current = setTimeout(spawnValkyrie, 4000 + Math.random() * 2000);
+
+      enemySpawnRef.current = setTimeout(spawnEnemy, 2000);
     };
-    spawnValkyrie();
+    spawnEnemy();
 
     const animateEnemies = () => {
       if (gameOver) return;
 
-      setSkeletons(prev => prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100));
-      setFlyingEnemies(prev => prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100));
+      setEnemies(prev => prev.map(enemy => ({ ...enemy, left: enemy.left - enemy.speed })).filter(enemy => enemy.left > -100));
 
-      const allEnemies = [...skeletons, ...flyingEnemies];
-      if (checkCollision(vikingPositionRef.current, allEnemies)) {
+      if (checkCollision(vikingPositionRef.current, enemies)) {
         setGameOver(true);
-        clearTimeout(skeletonSpawnRef.current);
-        clearTimeout(valkyrieSpawnRef.current);
+        clearTimeout(enemySpawnRef.current);
         cancelAnimationFrame(enemyAnimationRef.current);
         return;
       }
@@ -211,11 +194,10 @@ function StartPage() {
     enemyAnimationRef.current = requestAnimationFrame(animateEnemies);
 
     return () => {
-      clearTimeout(skeletonSpawnRef.current);
-      clearTimeout(valkyrieSpawnRef.current);
+      clearTimeout(enemySpawnRef.current);
       cancelAnimationFrame(enemyAnimationRef.current);
     };
-  }, [gameStarted, gameOver, gameStartTime, skeletons, flyingEnemies]);
+  }, [gameStarted, gameOver, gameStartTime, enemies]);
 
   useEffect(() => { if (gameOver) submitScore(); }, [gameOver]);
 
@@ -225,8 +207,7 @@ function StartPage() {
     setVikingReachedBottom(false);
     setIsJumping(false);
     setVikingPosition({ top: -100, left: 0 });
-    setSkeletons([]);
-    setFlyingEnemies([]);
+    setEnemies([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
     setGameStartTime(null);
@@ -303,15 +284,9 @@ function StartPage() {
             )}
           </div>
 
-          {skeletons.map(s => (
-            <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
+          {enemies.map(enemy => (
+            <div key={enemy.id} className="enemy-container" style={{ top: `${enemy.top}px`, left: `${enemy.left}px` }}>
               <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
-            </div>
-          ))}
-
-          {flyingEnemies.map(f => (
-            <div key={f.id} className="flying-enemy-container" style={{ top: `${f.top}px`, left: `${f.left}px` }}>
-              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
             </div>
           ))}
 
