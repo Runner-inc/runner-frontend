@@ -119,19 +119,18 @@ function StartPage() {
     }
   };
 
-  // Collision detection
+  // Простая коллизия: пересечение bounding box всех врагов
   const checkCollision = (vPos, allEnemies) => {
-    // Use larger collision boxes that match the sprite size for easier collision
-    const vWidth = 60;
-    const vHeight = 60;
-    const vLeft = vPos.left + 7.5; // Center the collision box in the 75px sprite (75-60)/2 = 7.5
-    const vTop = vPos.top + 7.5 + (isJumpingRef.current ? -225 : 0);
+    const vWidth = 75;
+    const vHeight = 75;
+    const vLeft = vPos.left;
+    const vTop = vPos.top;
 
     return allEnemies.some(enemy => {
-      const eWidth = 60;
-      const eHeight = 60;
-      const eLeft = enemy.left + 7.5; // Center collision box in enemy sprite
-      const eTop = enemy.top + 7.5;
+      const eLeft = enemy.left;
+      const eTop = enemy.top;
+      const eWidth = 75;
+      const eHeight = 75;
 
       return (
         vLeft < eLeft + eWidth &&
@@ -167,7 +166,7 @@ function StartPage() {
       };
       setSkeletons(prev => [...prev, newSkeleton]);
 
-      // Flying enemy
+      // Flying enemy (валькирия)
       if (Math.random() < 0.5) {
         const jumpHeight = 225;
         const positions = [
@@ -185,7 +184,6 @@ function StartPage() {
         setFlyingEnemies(prev => [...prev, newFlying]);
       }
 
-      // Schedule next spawn
       const baseInterval = 3000;
       const decreasePer5Seconds = 300;
       const maxDecreases = Math.floor(gameDuration / 5);
@@ -203,21 +201,10 @@ function StartPage() {
     const animateEnemies = () => {
       if (gameOver) return;
 
-      let updatedSkeletons = [];
-      let updatedFlying = [];
+      setSkeletons(prev => prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100));
+      setFlyingEnemies(prev => prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100));
 
-      setSkeletons(prev => {
-        updatedSkeletons = prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100);
-        return updatedSkeletons;
-      });
-
-      setFlyingEnemies(prev => {
-        updatedFlying = prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100);
-        return updatedFlying;
-      });
-
-      // Check collision with ALL updated enemy positions
-      const allEnemies = [...updatedSkeletons, ...updatedFlying];
+      const allEnemies = [...skeletons, ...flyingEnemies];
       if (checkCollision(vikingPositionRef.current, allEnemies)) {
         setGameOver(true);
         clearTimeout(spawnIntervalRef.current);
@@ -234,7 +221,7 @@ function StartPage() {
       clearTimeout(spawnIntervalRef.current);
       cancelAnimationFrame(enemyAnimationRef.current);
     };
-  }, [gameStarted, gameOver, gameStartTime]);
+  }, [gameStarted, gameOver, gameStartTime, skeletons, flyingEnemies]);
 
   useEffect(() => { if (gameOver) submitScore(); }, [gameOver]);
 
