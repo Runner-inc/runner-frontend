@@ -118,24 +118,33 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, allEnemies) => {
-    const vWidth = 45;
-    const vHeight = 45;
-    const vLeft = vPos.left;
+    const vWidth = 55;
+    const vHeight = 55;
+    const vLeft = vPos.left + 10; // Center collision box in 75px sprite
     // Account for jump animation (CSS transform moves sprite up by 225px)
-    const vTop = vPos.top + (isJumping ? -225 : 0);
+    const vTop = vPos.top + 10 + (isJumping ? -225 : 0);
 
     return allEnemies.some(enemy => {
-      const eLeft = enemy.left;
-      const eTop = enemy.top;
-      const eWidth = 45;
-      const eHeight = 45;
+      const eLeft = enemy.left + 10; // Center enemy collision box
+      const eTop = enemy.top + 10;
+      const eWidth = 55;
+      const eHeight = 55;
 
-      return (
+      const collision = (
         vLeft < eLeft + eWidth &&
         vLeft + vWidth > eLeft &&
         vTop < eTop + eHeight &&
         vTop + vHeight > eTop
       );
+
+      if (collision) {
+        console.log('COLLISION DETECTED!', {
+          viking: { left: vLeft, top: vTop, jumping: isJumping },
+          enemy: { left: eLeft, top: eTop }
+        });
+      }
+
+      return collision;
     });
   };
 
@@ -154,20 +163,13 @@ function StartPage() {
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
         const speedIncrease = Math.floor(gameDuration / 5);
 
-        // Different heights: ground, low, medium, high
-        const positions = [
-          floorTop + 29 - 75,      // Ground level
-          floorTop - 225 * 0.3,    // Low jump height
-          floorTop - 225 * 0.6,    // Medium jump height
-          floorTop - 225 * 0.9     // High jump height
-        ];
-
-        const randomY = positions[Math.floor(Math.random() * positions.length)];
+        // Only ground level
+        const groundY = floorTop + 29 - 75;
 
         const newEnemy = {
           id: Date.now() + Math.random(),
           left: baseLeft,
-          top: randomY,
+          top: groundY,
           speed: 2 + speedIncrease * 0.8 + Math.random()
         };
 
