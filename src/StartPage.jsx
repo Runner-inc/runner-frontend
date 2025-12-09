@@ -119,20 +119,22 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, enemyList) => {
-    const spriteSize = 75;
-    const collisionSize = 45;
-    const padding = (spriteSize - collisionSize) / 2;
-    const vTop = vPos.top + padding;
-    const vLeft = vPos.left + padding;
+    const vWidth = 75;
+    const vHeight = 75;
+    const vLeft = vPos.left;
+    const vTop = vPos.top;
 
     return enemyList.some(enemy => {
-      const eTop = enemy.top + padding;
-      const eLeft = enemy.left + padding;
+      const eWidth = 75;
+      const eHeight = 75;
+      const eLeft = enemy.left;
+      const eTop = enemy.top;
+
       return (
-        vLeft < eLeft + collisionSize &&
-        vLeft + collisionSize > eLeft &&
-        vTop < eTop + collisionSize &&
-        vTop + collisionSize > eTop
+        vLeft < eLeft + eWidth &&
+        vLeft + vWidth > eLeft &&
+        vTop < eTop + eHeight &&
+        vTop + vHeight > eTop
       );
     });
   };
