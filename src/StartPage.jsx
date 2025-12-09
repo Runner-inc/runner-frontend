@@ -119,23 +119,36 @@ function StartPage() {
     }
   };
 
-  const checkCollision = (vPos, skeletonList, jumping) => {
+  const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 75;
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
+  
+    // Верх и левая границы зоны коллизии викинга
     const vTop = vPos.top + padding + (jumping ? -225 : 0);
     const vLeft = vPos.left + padding;
-
-    return skeletonList.some(skel => {
-      const sTop = skel.top + padding;
-      const sLeft = skel.left + padding;
+  
+    // Функция проверки пересечения двух прямоугольников
+    const isColliding = (objTop, objLeft) => {
       return (
-        vLeft < sLeft + collisionSize &&
-        vLeft + collisionSize > sLeft &&
-        vTop < sTop + collisionSize &&
-        vTop + collisionSize > sTop
+        vLeft < objLeft + collisionSize &&
+        vLeft + collisionSize > objLeft &&
+        vTop < objTop + collisionSize &&
+        vTop + collisionSize > objTop
       );
-    });
+    };
+  
+    // Проверяем скелетов
+    if (skeletonList.some(skel => isColliding(skel.top + padding, skel.left + padding))) {
+      return true;
+    }
+  
+    // Проверяем валькирий
+    if (valkyrieList.some(valk => isColliding(valk.top + padding, valk.left + padding))) {
+      return true;
+    }
+  
+    return false;
   };
 
   useEffect(() => {
