@@ -36,6 +36,12 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .start-page.game-active {
@@ -103,8 +109,9 @@
   z-index: 99997;
   left: 20px;
   will-change: top;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -112,6 +119,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 .viking-animation-container img {
@@ -122,8 +132,9 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -131,6 +142,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 .viking-animation-container.viking-falling {
@@ -224,8 +238,9 @@
   position: absolute;
   z-index: 99998;
   will-change: left;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -233,6 +248,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 .skeleton-container img {
@@ -243,8 +261,9 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -252,6 +271,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 /* Flying enemy container */
@@ -259,8 +281,9 @@
   position: absolute;
   z-index: 99997;
   will-change: left;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -268,6 +291,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 .flying-enemy-container img {
@@ -278,8 +304,9 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none;
-  outline: none;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -287,6 +314,9 @@
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  -webkit-focus-ring-color: transparent;
+  -moz-focus-ring-color: transparent;
+  focus-ring-color: transparent;
 }
 
 /* Game Over Overlay */

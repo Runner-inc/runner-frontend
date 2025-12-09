@@ -295,7 +295,7 @@ function StartPage() {
   const handleRecords = () => navigate('/records');
 
   const handlePageClick = () => {
-    if (gameStarted && vikingReachedBottom && !gameOver) {
+    if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
@@ -311,7 +311,13 @@ function StartPage() {
     }
   };
 
-  const handlePageTouch = e => { e.preventDefault(); handlePageClick(); };
+  const handlePageTouch = e => {
+    e.preventDefault();
+    // Only allow jump on touch start, prevent holding down
+    if (e.type === 'touchstart' && !isJumping) {
+      handlePageClick();
+    }
+  };
 
   if (error) return <div className="error">{error}</div>;
 
@@ -320,6 +326,7 @@ function StartPage() {
       className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
+      onTouchEnd={(e) => e.preventDefault()}
     >
       <div className="parallax-bg">
         <video
