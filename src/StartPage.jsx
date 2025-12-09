@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
+import { start_viking, viking_run, viking_jump, skeleton, valkyrie } from './vikingSprites';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ function StartPage() {
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
+  const [valkyries, setValkyries] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -20,6 +21,8 @@ function StartPage() {
   const animationFrameRef = useRef(null);
   const skeletonAnimationRef = useRef(null);
   const skeletonSpawnIntervalRef = useRef(null);
+  const valkyrieAnimationRef = useRef(null);
+  const valkyrieSpawnIntervalRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const scoreSubmittedRef = useRef(false);
   const velocityRef = useRef(0);
@@ -116,14 +119,15 @@ function StartPage() {
     }
   };
 
-  const checkCollision = (vPos, skeletonList, jumping) => {
+  const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 75;
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
     const vTop = vPos.top + padding + (jumping ? -225 : 0);
     const vLeft = vPos.left + padding;
 
-    return skeletonList.some(skel => {
+    // Check skeleton collisions
+    const skeletonCollision = skeletonList.some(skel => {
       const sTop = skel.top + padding;
       const sLeft = skel.left + padding;
       return (
@@ -133,6 +137,20 @@ function StartPage() {
         vTop + collisionSize > sTop
       );
     });
+
+    // Check valkyrie collisions
+    const valkyrieCollision = valkyrieList.some(valk => {
+      const sTop = valk.top + padding;
+      const sLeft = valk.left + padding;
+      return (
+        vLeft < sLeft + collisionSize &&
+        vLeft + collisionSize > sLeft &&
+        vTop < sTop + collisionSize &&
+        vTop + collisionSize > sTop
+      );
+    });
+
+    return skeletonCollision || valkyrieCollision;
   };
 
   useEffect(() => {
@@ -171,9 +189,10 @@ function StartPage() {
             .map(s => ({ ...s, left: s.left - s.speed }))
             .filter(s => s.left > -100);
 
-          if (checkCollision(vikingPositionRef.current, updated, isJumpingRef.current)) {
+          if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
             setGameOver(true);
             clearTimeout(skeletonSpawnIntervalRef.current);
+            clearTimeout(valkyrieSpawnIntervalRef.current);
             cancelAnimationFrame(animationFrameRef.current);
           }
 
@@ -192,7 +211,67 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver]);
+  }, [gameStarted, vikingReachedBottom, gameOver, valkyries]);
+
+  useEffect(() => {
+    if (gameStarted && vikingReachedBottom && !gameOver) {
+      const spawnValkyrie = () => {
+        const floorTop = window.innerHeight - getFloorHeight();
+        const valkyrieCount = 1 + Math.floor(Math.random() * 2);
+        const baseLeft = window.innerWidth + 50;
+
+        const newValkyries = Array.from({ length: valkyrieCount }, (_, i) => ({
+          id: Date.now() + Math.random() + i + 1000, // offset to avoid id conflicts with skeletons
+          left: baseLeft + i * 30,
+          top: floorTop - 150 - Math.random() * 200, // spawn at different heights above ground
+          speed: 2.5 + Math.random() * 1.5
+        }));
+
+        setValkyries(prev => [...prev, ...newValkyries]);
+      };
+
+      const scheduleValkyrieSpawn = () => {
+        valkyrieSpawnIntervalRef.current = setTimeout(() => {
+          if (!gameOver) {
+            spawnValkyrie();
+            scheduleValkyrieSpawn();
+          }
+        }, 3000 + Math.random() * 4000); // spawn less frequently than skeletons
+      };
+
+      scheduleValkyrieSpawn();
+
+      const animateValkyries = () => {
+        if (gameOver) return;
+
+        setValkyries(prev => {
+          const updated = prev
+            .map(v => ({ ...v, left: v.left - v.speed }))
+            .filter(v => v.left > -100);
+
+          if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
+            setGameOver(true);
+            clearTimeout(skeletonSpawnIntervalRef.current);
+            clearTimeout(valkyrieSpawnIntervalRef.current);
+            cancelAnimationFrame(animationFrameRef.current);
+          }
+
+          return updated;
+        });
+
+        if (!gameOver) valkyrieAnimationRef.current = requestAnimationFrame(animateValkyries);
+      };
+
+      valkyrieAnimationRef.current = requestAnimationFrame(animateValkyries);
+    } else {
+      setValkyries([]);
+    }
+
+    return () => {
+      if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
+      if (valkyrieSpawnIntervalRef.current) clearTimeout(valkyrieSpawnIntervalRef.current);
+    };
+  }, [gameStarted, vikingReachedBottom, gameOver, skeletons]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -205,6 +284,7 @@ function StartPage() {
     setIsJumping(false);
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
+    setValkyries([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
     scoreSubmittedRef.current = false;
@@ -283,6 +363,12 @@ function StartPage() {
           {skeletons.map(s => (
             <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
               <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+            </div>
+          ))}
+
+          {valkyries.map(v => (
+            <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
+              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
             </div>
           ))}
 
