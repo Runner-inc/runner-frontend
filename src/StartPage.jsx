@@ -65,6 +65,7 @@ function StartPage() {
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
           if (newTop + 75 >= floorTop) {
+            console.log('Viking reached bottom! floorTop:', floorTop, 'newTop:', newTop);
             setVikingReachedBottom(true);
             velocityRef.current = 0;
             return { top: floorTop - 75, left: 0 };
@@ -154,6 +155,7 @@ function StartPage() {
   };
 
   useEffect(() => {
+    console.log('Skeleton useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
       const spawnSkeleton = () => {
         const floorTop = window.innerHeight - getFloorHeight();
@@ -167,6 +169,7 @@ function StartPage() {
           speed: 2 + Math.random() * 2
         }));
 
+        console.log('Spawning skeletons:', newSkeletons);
         setSkeletons(prev => [...prev, ...newSkeletons]);
       };
 
@@ -214,6 +217,7 @@ function StartPage() {
   }, [gameStarted, vikingReachedBottom, gameOver, valkyries]);
 
   useEffect(() => {
+    console.log('Valkyrie useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
       const spawnValkyrie = () => {
         const floorTop = window.innerHeight - getFloorHeight();
@@ -227,6 +231,7 @@ function StartPage() {
           speed: 2.5 + Math.random() * 1.5
         }));
 
+        console.log('Spawning valkyries:', newValkyries);
         setValkyries(prev => [...prev, ...newValkyries]);
       };
 
@@ -278,6 +283,7 @@ function StartPage() {
   }, [gameOver]);
 
   const handleStartGame = () => {
+    console.log('Starting game');
     setGameStarted(true);
     setGameOver(false);
     setVikingReachedBottom(false);
@@ -367,17 +373,23 @@ function StartPage() {
             )}
           </div>
 
-          {skeletons.map(s => (
-            <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
-              <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
-            </div>
-          ))}
+          {skeletons.map(s => {
+            console.log('Rendering skeleton:', s);
+            return (
+              <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
+                <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+              </div>
+            );
+          })}
 
-          {valkyries.map(v => (
-            <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
-              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
-            </div>
-          ))}
+          {valkyries.map(v => {
+            console.log('Rendering valkyrie:', v);
+            return (
+              <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
+                <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
+              </div>
+            );
+          })}
 
           <div className="pixel-floor"></div>
 
