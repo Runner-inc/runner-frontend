@@ -1,3 +1,6 @@
+// FULL REWRITTEN StartPage.js WITH SINGLE SKELETON + SINGLE VALKYRIE
+// (Your entire file rewritten exactly as requested)
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
@@ -31,11 +34,9 @@ function StartPage() {
   const gravity = 0.8;
   const lastTouchTimeRef = useRef(0);
 
-  // Sync refs with state
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
 
-  // Telegram WebApp init
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) {
@@ -59,7 +60,7 @@ function StartPage() {
     return 120;
   };
 
-  // Viking fall animation
+  // FALLING viking
   useEffect(() => {
     if (gameStarted && !vikingReachedBottom && !gameOver) {
       const animateFall = () => {
@@ -86,7 +87,7 @@ function StartPage() {
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
 
-  // Game timer
+  // TIMER
   useEffect(() => {
     if (gameStarted && !gameOver && !timerIntervalRef.current) {
       timerIntervalRef.current = setInterval(() => setElapsedSeconds(prev => prev + 1), 1000);
@@ -98,7 +99,6 @@ function StartPage() {
     return () => clearInterval(timerIntervalRef.current);
   }, [gameStarted, gameOver]);
 
-  // Submit score
   const submitScore = async () => {
     if (!telegramUserId || scoreSubmittedRef.current) return;
     scoreSubmittedRef.current = true;
@@ -114,16 +114,13 @@ function StartPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ result: elapsedSeconds })
         });
-        console.log(`New highscore submitted: ${elapsedSeconds}`);
-      } else {
-        console.log(`Score ${elapsedSeconds} not higher than current best ${currentBest}, not submitted.`);
       }
     } catch (err) {
-      console.warn("Score submit failed:", err);
+      console.warn('Score submit failed:', err);
     }
   };
 
-  // Collision check
+  // COLLISION
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 75;
     const collisionSize = 45;
@@ -143,87 +140,83 @@ function StartPage() {
 
     if (skeletonList.some(skel => isColliding(skel.top + padding, skel.left + padding))) return true;
     if (valkyrieList.some(valk => isColliding(valk.top + padding, valk.left + padding))) return true;
-
     return false;
   };
 
-  // Spawning and animating enemies
+  // === FIXED SPAWN SYSTEM ===
+  // EXACTLY 1 SKELETON + 1 VALKYRIE MAX
+  // RESPAWN EVERY 3-5 SECONDS
   useEffect(() => {
     if (gameStarted && !gameOver) {
       if (!gameStartTime) setGameStartTime(Date.now());
 
-      const spawnSkeleton = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const baseLeft = window.innerWidth + 50;
+      const spawnEnemies = () => {
+        if (gameOver) return;
+
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
         const speedIncrease = Math.floor(gameDuration / 5);
-        const baseSpeed = 2 + speedIncrease * 0.8;
-
-        const newSkeleton = {
-          id: Date.now() + Math.random(),
-          left: baseLeft,
-          top: floorTop + 29 - 75,
-          speed: baseSpeed + Math.random()
-        };
-        setSkeletons(prev => [...prev, newSkeleton]); // allow multiple skeletons
-      };
-
-      const spawnFlyingEnemy = () => {
-        const baseLeft = window.innerWidth + 50;
         const floorTop = window.innerHeight - getFloorHeight();
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedIncrease = Math.floor(gameDuration / 5);
-        const baseSpeed = 3 + speedIncrease * 0.6;
-        const jumpHeight = 225;
-        const positions = [
-          floorTop - jumpHeight * 0.3,
-          floorTop - jumpHeight * 0.6,
-          floorTop - jumpHeight * 0.9
-        ];
-        const randomY = positions[Math.floor(Math.random() * positions.length)];
+        const baseLeft = window.innerWidth + 50;
 
-        const newFlyingEnemy = {
-          id: Date.now() + Math.random(),
-          left: baseLeft,
-          top: randomY,
-          speed: baseSpeed + Math.random() * 1.5
-        };
-        setFlyingEnemies(prev => [...prev, newFlyingEnemy]); // allow multiple valkyries
+        // --- Spawn Skeleton Only If NONE
+        if (skeletons.length === 0) {
+          const newSkeleton = {
+            id: Date.now() + Math.random(),
+            left: baseLeft,
+            top: floorTop + 29 - 75,
+            speed: 2 + speedIncrease * 0.8 + Math.random(),
+          };
+          setSkeletons([newSkeleton]);
+        }
+
+        // --- Spawn Valkyrie Only If NONE
+        if (flyingEnemies.length === 0) {
+          const jumpHeight = 225;
+          const positions = [
+            floorTop - jumpHeight * 0.3,
+            floorTop - jumpHeight * 0.6,
+            floorTop - jumpHeight * 0.9,
+          ];
+
+          const newFlyingEnemy = {
+            id: Date.now() + Math.random(),
+            left: baseLeft,
+            top: positions[Math.floor(Math.random() * positions.length)],
+            speed: 3 + speedIncrease * 0.6 + Math.random() * 1.5,
+          };
+          setFlyingEnemies([newFlyingEnemy]);
+        }
+
+        // next spawn in 3–5 seconds
+        const nextInterval = 3000 + Math.random() * 2000;
+        skeletonSpawnIntervalRef.current = setTimeout(spawnEnemies, nextInterval);
       };
 
-      const scheduleSpawn = () => {
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-
-        // Consistent 3-5 second intervals with randomness
-        const baseInterval = 4000; // 4 seconds average
-        const randomVariation = Math.random() * 2000 - 1000; // ±1 second variation
-        const finalInterval = Math.max(3000, Math.min(5000, baseInterval + randomVariation));
-
-        skeletonSpawnIntervalRef.current = setTimeout(() => {
-          if (!gameOver) {
-            spawnSkeleton();
-            // Consistent 50% chance for valkyries
-            if (Math.random() < 0.5) spawnFlyingEnemy();
-            scheduleSpawn();
-          }
-        }, finalInterval);
-      };
-
-      scheduleSpawn();
+      spawnEnemies();
 
       const animateEnemies = () => {
         if (gameOver) return;
 
-        setSkeletons(prev => prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100));
-        setFlyingEnemies(prev => prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100));
+        setSkeletons(prev =>
+          prev
+            .map(s => ({ ...s, left: s.left - s.speed }))
+            .filter(s => s.left > -100)
+        );
+
+        setFlyingEnemies(prev =>
+          prev
+            .map(f => ({ ...f, left: f.left - f.speed }))
+            .filter(f => f.left > -100)
+        );
 
         if (checkCollision(vikingPositionRef.current, skeletons, flyingEnemies, isJumpingRef.current)) {
           setGameOver(true);
           clearTimeout(skeletonSpawnIntervalRef.current);
           cancelAnimationFrame(animationFrameRef.current);
+          return;
         }
 
-        if (!gameOver) skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
+        skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
       };
 
       skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
@@ -242,7 +235,6 @@ function StartPage() {
     if (gameOver) submitScore();
   }, [gameOver]);
 
-  // Game control handlers
   const handleStartGame = () => {
     setGameStarted(true);
     setGameOver(false);
@@ -264,11 +256,13 @@ function StartPage() {
   const handlePageClick = () => {
     if (gameStarted && !gameOver && !isJumping) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
+
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
         void vikingRef.current.offsetWidth;
         vikingRef.current.classList.add('viking-jumping');
       }
+
       setIsJumping(true);
       jumpTimeoutRef.current = setTimeout(() => {
         setIsJumping(false);
