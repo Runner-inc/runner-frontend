@@ -1,5 +1,4 @@
-// FULL REWRITTEN StartPage.js WITH SINGLE SKELETON + SINGLE VALKYRIE
-// (Your entire file rewritten exactly as requested)
+// FULL FIXED StartPage.js — Buttons no longer trigger jumps or game start
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,23 +43,23 @@ function StartPage() {
       return;
     }
     tg.ready();
-    const telegramUserId = tg.initDataUnsafe?.user?.id;
-    if (telegramUserId) setTelegramUserId(String(telegramUserId));
+    const uid = tg.initDataUnsafe?.user?.id;
+    if (uid) setTelegramUserId(String(uid));
     else setError('User ID not found in Telegram WebApp data');
   }, []);
 
   const getFloorHeight = () => {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    if (width >= 1440) return 140;
-    if (width >= 769 && width <= 1024) return 100;
-    if (height <= 500) return 70;
-    if (width <= 480) return 80;
-    if (width <= 768) return 90;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (w >= 1440) return 140;
+    if (w >= 769 && w <= 1024) return 100;
+    if (h <= 500) return 70;
+    if (w <= 480) return 80;
+    if (w <= 768) return 90;
     return 120;
   };
 
-  // FALLING viking
+  // FALLING
   useEffect(() => {
     if (gameStarted && !vikingReachedBottom && !gameOver) {
       const animateFall = () => {
@@ -68,6 +67,7 @@ function StartPage() {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
+
           if (newTop + 75 >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
@@ -75,12 +75,14 @@ function StartPage() {
           }
           return { ...prev, top: newTop };
         });
+
         if (!vikingReachedBottom && !gameOver) {
           animationFrameRef.current = requestAnimationFrame(animateFall);
         }
       };
       animationFrameRef.current = requestAnimationFrame(animateFall);
     }
+
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
@@ -121,109 +123,78 @@ function StartPage() {
   };
 
   // COLLISION
-  const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
-    const spriteSize = 75;
-    const collisionSize = 45;
-    const padding = (spriteSize - collisionSize) / 2;
+  const checkCollision = (vPos, skList, vList, jumping) => {
+    const size = 75;
+    const hitSize = 45;
+    const pad = (size - hitSize) / 2;
 
-    // Collision box follows the sprite position during jumps
-    const vTop = vPos.top + padding + (jumping ? -225 : 0);
-    const vLeft = vPos.left + padding;
+    const vTop = vPos.top + pad + (jumping ? -225 : 0);
+    const vLeft = vPos.left + pad;
 
-    const isColliding = (objTop, objLeft) => {
-      const collisionX = vLeft < objLeft + collisionSize && vLeft + collisionSize > objLeft;
-      const collisionY = vTop < objTop + collisionSize && vTop + collisionSize > objTop;
+    const hit = (t, l) => (
+      vLeft < l + hitSize && vLeft + hitSize > l &&
+      vTop < t + hitSize && vTop + hitSize > t
+    );
 
-      if (collisionX && collisionY) {
-        // Determine collision direction for debugging
-        const vCenterX = vLeft + collisionSize / 2;
-        const vCenterY = vTop + collisionSize / 2;
-        const objCenterX = objLeft + collisionSize / 2;
-        const objCenterY = objTop + collisionSize / 2;
+    if (skList.some(s => hit(s.top + pad, s.left + pad))) return true;
+    if (vList.some(f => hit(f.top + pad, f.left + pad))) return true;
 
-        let direction = '';
-        if (Math.abs(vCenterX - objCenterX) > Math.abs(vCenterY - objCenterY)) {
-          direction = vCenterX < objCenterX ? 'RIGHT side' : 'LEFT side';
-        } else {
-          direction = vCenterY < objCenterY ? 'BOTTOM side' : 'TOP side';
-        }
-
-        console.log(`COLLISION from ${direction}! Viking(${vCenterX.toFixed(0)},${vCenterY.toFixed(0)}) vs Enemy(${objCenterX.toFixed(0)},${objCenterY.toFixed(0)})`);
-        return true;
-      }
-
-      return false;
-    };
-
-    if (skeletonList.some(skel => isColliding(skel.top + padding, skel.left + padding))) return true;
-    if (valkyrieList.some(valk => isColliding(valk.top + padding, valk.left + padding))) return true;
     return false;
   };
 
-  // === FIXED SPAWN SYSTEM ===
-  // EXACTLY 1 SKELETON + 1 VALKYRIE MAX
-  // RESPAWN EVERY 3-5 SECONDS
+  // SPAWN SYSTEM — EXACTLY ONE skeleton + one valkyrie
   useEffect(() => {
     if (gameStarted && !gameOver) {
       if (!gameStartTime) setGameStartTime(Date.now());
 
-      const spawnEnemies = () => {
+      const spawn = () => {
         if (gameOver) return;
 
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedIncrease = Math.floor(gameDuration / 5);
+        const duration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+        const speedUp = Math.floor(duration / 5);
         const floorTop = window.innerHeight - getFloorHeight();
         const baseLeft = window.innerWidth + 50;
 
-        // --- Spawn Skeleton Only If NONE
+        // Skeleton
         if (skeletons.length === 0) {
-          const newSkeleton = {
+          setSkeletons([{
             id: Date.now() + Math.random(),
             left: baseLeft,
             top: floorTop + 29 - 75,
-            speed: 2 + speedIncrease * 0.8 + Math.random(),
-          };
-          setSkeletons([newSkeleton]);
+            speed: 2 + speedUp * 0.8 + Math.random(),
+          }]);
         }
 
-        // --- Spawn Valkyrie Only If NONE
+        // Valkyrie
         if (flyingEnemies.length === 0) {
-          const jumpHeight = 225;
+          const jumpH = 225;
           const positions = [
-            floorTop - jumpHeight * 0.3,
-            floorTop - jumpHeight * 0.6,
-            floorTop - jumpHeight * 0.9,
+            floorTop - jumpH * 0.3,
+            floorTop - jumpH * 0.6,
+            floorTop - jumpH * 0.9
           ];
 
-          const newFlyingEnemy = {
+          setFlyingEnemies([{
             id: Date.now() + Math.random(),
             left: baseLeft,
             top: positions[Math.floor(Math.random() * positions.length)],
-            speed: 3 + speedIncrease * 0.6 + Math.random() * 1.5,
-          };
-          setFlyingEnemies([newFlyingEnemy]);
+            speed: 3 + speedUp * 0.6 + Math.random() * 1.5,
+          }]);
         }
 
-        // next spawn in 3–5 seconds
-        const nextInterval = 3000 + Math.random() * 2000;
-        skeletonSpawnIntervalRef.current = setTimeout(spawnEnemies, nextInterval);
+        skeletonSpawnIntervalRef.current = setTimeout(spawn, 3000 + Math.random() * 2000);
       };
 
-      spawnEnemies();
+      spawn();
 
-      const animateEnemies = () => {
+      const animate = () => {
         if (gameOver) return;
 
         setSkeletons(prev =>
-          prev
-            .map(s => ({ ...s, left: s.left - s.speed }))
-            .filter(s => s.left > -100)
+          prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100)
         );
-
         setFlyingEnemies(prev =>
-          prev
-            .map(f => ({ ...f, left: f.left - f.speed }))
-            .filter(f => f.left > -100)
+          prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100)
         );
 
         if (checkCollision(vikingPositionRef.current, skeletons, flyingEnemies, isJumpingRef.current)) {
@@ -233,10 +204,10 @@ function StartPage() {
           return;
         }
 
-        skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
+        skeletonAnimationRef.current = requestAnimationFrame(animate);
       };
 
-      skeletonAnimationRef.current = requestAnimationFrame(animateEnemies);
+      skeletonAnimationRef.current = requestAnimationFrame(animate);
     } else {
       setSkeletons([]);
       setFlyingEnemies([]);
@@ -252,7 +223,8 @@ function StartPage() {
     if (gameOver) submitScore();
   }, [gameOver]);
 
-  const handleStartGame = () => {
+  const handleStartGame = (e) => {
+    if (e) e.stopPropagation();
     setGameStarted(true);
     setGameOver(false);
     setVikingReachedBottom(false);
@@ -266,17 +238,19 @@ function StartPage() {
     scoreSubmittedRef.current = false;
   };
 
-  const handleRestart = () => handleStartGame();
-  const handleMainMenu = () => setGameStarted(false);
-  const handleRecords = () => {
-    console.log('StartPage: Records button clicked - navigating to /records');
-    console.log('StartPage: Current location before navigation:', window.location.pathname);
-    try {
-      navigate('/records');
-      console.log('StartPage: Navigation to /records completed');
-    } catch (error) {
-      console.error('StartPage: Navigation error:', error);
-    }
+  const handleRecords = (e) => {
+    if (e) e.stopPropagation();
+    navigate('/records');
+  };
+
+  const handleRestart = (e) => {
+    if (e) e.stopPropagation();
+    handleStartGame();
+  };
+
+  const handleMainMenu = (e) => {
+    if (e) e.stopPropagation();
+    setGameStarted(false);
   };
 
   const handlePageClick = () => {
@@ -293,7 +267,6 @@ function StartPage() {
       jumpTimeoutRef.current = setTimeout(() => {
         setIsJumping(false);
         if (vikingRef.current) vikingRef.current.classList.remove('viking-jumping');
-        jumpTimeoutRef.current = null;
       }, 800);
     }
   };
@@ -315,6 +288,7 @@ function StartPage() {
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
+
       <div className="parallax-bg">
         <div className="bg-image"></div>
       </div>
@@ -324,25 +298,48 @@ function StartPage() {
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>
+
           <div className="button-container">
-            <button className="start-button" onClick={handleStartGame}>Start Game</button>
+
+            {/* FIX: prevent propagation */}
             <button
-              className="records-button"
-              onClick={handleRecords}
+              className="start-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleStartGame(e);
+              }}
               onTouchStart={(e) => {
                 e.preventDefault();
-                handleRecords();
+                e.stopPropagation();
+                handleStartGame(e);
+              }}
+            >
+              Start Game
+            </button>
+
+            {/* FIX: prevent propagation */}
+            <button
+              className="records-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRecords(e);
+              }}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                handleRecords(e);
               }}
             >
               Records
             </button>
+
           </div>
         </>
       ) : (
         <>
           <div
             ref={vikingRef}
-            className={`viking-animation-container
+            className={`viking-animation-container 
               ${vikingReachedBottom ? 'viking-running' : 'viking-falling'}
               ${isJumping ? 'viking-jumping' : ''}`}
             style={{ top: `${vikingPosition.top}px`, left: `${vikingPosition.left}px` }}
@@ -376,8 +373,26 @@ function StartPage() {
           {gameOver && (
             <div className="game-over-overlay">
               <h2 className="game-over-text">GAME OVER</h2>
-              <button className="restart-button" onClick={handleRestart}>Restart</button>
-              <button className="restart-button" onClick={handleMainMenu}>Main Menu</button>
+
+              <button
+                className="restart-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRestart(e);
+                }}
+              >
+                Restart
+              </button>
+
+              <button
+                className="restart-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleMainMenu(e);
+                }}
+              >
+                Main Menu
+              </button>
             </div>
           )}
         </>
