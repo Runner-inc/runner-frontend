@@ -119,14 +119,15 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, enemyList) => {
-    const vWidth = 75;
-    const vHeight = 75;
+    const vWidth = 45;
+    const vHeight = 45;
     const vLeft = vPos.left;
-    const vTop = vPos.top;
+    // Adjust Viking's collision position during jump (CSS transform moves sprite up by 225px)
+    const vTop = vPos.top + (isJumping ? -225 : 0);
 
     return enemyList.some(enemy => {
-      const eWidth = 75;
-      const eHeight = 75;
+      const eWidth = 45;
+      const eHeight = 45;
       const eLeft = enemy.left;
       const eTop = enemy.top;
 
