@@ -255,7 +255,7 @@
 /* Flying enemy container */
 .flying-enemy-container {
   position: absolute;
-  z-index: 99997;
+  z-index: 9999999;
   will-change: left;
   border: none;
   outline: none;
