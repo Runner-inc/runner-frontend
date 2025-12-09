@@ -2,7 +2,7 @@
 
 .records-page {
   background-color: #000;
-  color: #ff0000;
+  color: #FFD700;
   font-family: 'Press Start 2P', cursive;
   height: 100svh; /* Чтобы весь экран без скролла */
   display: flex;
@@ -13,14 +13,51 @@
   box-sizing: border-box;
   overflow: hidden; /* Убираем скроллы */
   width: 100%;
+  position: relative;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.records-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: -1;
+}
+
+.records-bg-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background-image: url('https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/212334.jpg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJ2aWtpbmdfcnVubmVyLzIxMjMzNC5qcGciLCJpYXQiOjE3NjUzMDYyMDMsImV4cCI6Nzc1NzE0NjIwM30.0y9HKtM_bGt1SBLFoQ0HPV08a4y7CV_fmOQ_AjCHtBA');
+  background-size: auto 100%;
+  background-repeat: repeat-x;
+  background-position: 0 center;
+  animation: scrollBackground 20s linear infinite;
+}
+
+@keyframes scrollBackground {
+  from { background-position-x: 0; }
+  to { background-position-x: -100%; }
 }
 
 .records-title {
   font-size: clamp(1.4rem, 5vw, 2.2rem);
-  color: #ff0000;
+  color: #FFD700;
   text-align: center;
-  text-shadow: 3px 3px 0 rgba(255, 0, 0, 0.3);
+  text-shadow: 3px 3px 0 rgba(255, 215, 0, 0.3);
   margin: 10px 0 20px 0; /* уменьшаем отступы */
+  z-index: 10;
 }
 
 .loading-container,
@@ -44,7 +81,7 @@
 
 .error-hint {
   font-size: clamp(0.6rem, 2vw, 0.8rem);
-  color: #ff6666;
+  color: #FFA500;
   line-height: 1.4;
   text-align: center;
 }
@@ -58,13 +95,13 @@
 }
 
 .record-card {
-  background-color: rgba(255, 0, 0, 0.1);
-  border: 2px solid #ff0000;
+  background-color: rgba(255, 215, 0, 0.1);
+  border: 2px solid #FFD700;
   padding: 15px;
   width: 95%;
   max-width: 380px;
   text-align: center;
-  box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .record-label {
@@ -75,41 +112,44 @@
 .record-value {
   font-size: clamp(1.6rem, 10vw, 3rem);
   margin-bottom: 10px;
-  text-shadow: 3px 3px 0 rgba(255, 0, 0, 0.5);
+  text-shadow: 3px 3px 0 rgba(255, 215, 0, 0.5);
 }
 
 .record-username {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 0, 0, 0.3);
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
 }
 
 .username-label {
   font-size: clamp(0.6rem, 2vw, 0.9rem);
-  color: #ff6666;
+  color: #FFA500;
 }
 
 .username-value {
   font-size: clamp(0.8rem, 3vw, 1rem);
-  color: #ff0000;
+  color: #FFD700;
 }
 
 .back-button {
   background-color: #000;
-  color: #ff0000;
+  color: #FFD700;
   font-family: 'Press Start 2P', cursive;
   font-size: clamp(0.6rem, 2.5vw, 0.9rem);
   padding: 12px 18px;
-  border: 2px solid #ff0000;
+  border: 2px solid #FFD700;
   cursor: pointer;
   transition: 0.15s;
   width: 90%;
   max-width: 260px;
   margin-top: 15px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 10;
 }
 
 .back-button:hover {
-  background-color: #ff0000;
+  background-color: #FFD700;
   color: #000;
 }
 

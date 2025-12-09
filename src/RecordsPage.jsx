@@ -67,6 +67,9 @@ function RecordsPage() {
 
   return (
     <div className="records-page">
+      <div className="records-bg">
+        <div className="records-bg-image"></div>
+      </div>
       <h1 className="records-title">Records</h1>
       {loading ? (
         <div className="loading-container">

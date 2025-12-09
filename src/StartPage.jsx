@@ -151,9 +151,9 @@ function StartPage() {
         // Calculate game duration in seconds
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
 
-        // Base speed increases every 10 seconds
-        const speedIncrease = Math.floor(gameDuration / 10);
-        const baseSpeed = 2 + speedIncrease * 0.5; // Increase by 0.5 every 10 seconds
+        // Base speed increases every 5 seconds
+        const speedIncrease = Math.floor(gameDuration / 5);
+        const baseSpeed = 2 + speedIncrease * 0.8; // Increase by 0.8 every 5 seconds
 
         // Spawn exactly 1 skeleton
         const newSkeleton = {
@@ -171,11 +171,11 @@ function StartPage() {
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
 
         // Initial spawn rate: 3000ms
-        // Every 10 seconds, decrease interval by 200ms, minimum 1000ms
+        // Every 5 seconds, decrease interval by 300ms, minimum 600ms
         const baseInterval = 3000;
-        const decreasePer10Seconds = 200;
-        const maxDecreases = Math.floor(gameDuration / 10);
-        const currentInterval = Math.max(1000, baseInterval - (maxDecreases * decreasePer10Seconds));
+        const decreasePer5Seconds = 300;
+        const maxDecreases = Math.floor(gameDuration / 5);
+        const currentInterval = Math.max(600, baseInterval - (maxDecreases * decreasePer5Seconds));
 
         // Add some randomness (±500ms)
         const randomVariation = Math.random() * 1000 - 500;
@@ -278,11 +278,7 @@ function StartPage() {
       onTouchStart={handlePageTouch}
     >
       <div className="parallax-bg">
-        <video
-          className="bg-video"
-          src="https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/grok-video-417d7c90-9f51-4e07-93c7-09cd5a9be976%20(online-video-cutter.com).mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2dyb2stdmlkZW8tNDE3ZDdjOTAtOWY1MS00ZTA3LTkzYzctMDljZDVhOWJlOTc2IChvbmxpbmUtdmlkZW8tY3V0dGVyLmNvbSkubXA0IiwiaWF0IjoxNzY1MDI5NDY4LCJleHAiOjc3NTY4Njk0Njh9.T_MMv3XFjv8dldEEf5U3Zh3XO-3nPKk0pXV8Z3MAmm4"
-          autoPlay muted loop playsInline preload="auto"
-        />
+        <div className="bg-image"></div>
       </div>
 
       <div className="score-timer"> SCORE: {elapsedSeconds}</div>
