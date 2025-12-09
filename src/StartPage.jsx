@@ -215,7 +215,7 @@ function StartPage() {
   const handleRecords = () => navigate('/records');
 
   const handlePageClick = () => {
-    if (gameStarted && vikingReachedBottom && !gameOver) {
+    if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');

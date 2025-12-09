@@ -87,6 +87,8 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  border: none;
+  outline: none;
 }
 
 .viking-animation-container.viking-falling {
@@ -181,6 +183,8 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  border: none;
+  outline: none;
 }
 
 /* Game Over Overlay */
