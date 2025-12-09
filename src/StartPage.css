@@ -217,8 +217,8 @@
   pointer-events: none;
 }
 
-/* Enemy container */
-.enemy-container {
+/* Skeleton container */
+.skeleton-container {
   position: absolute;
   z-index: 99998;
   will-change: left;
@@ -233,7 +233,42 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-.enemy-container img {
+.skeleton-container img {
+  width: clamp(50px, 10vw, 75px) !important;
+  height: clamp(50px, 10vw, 75px) !important;
+  max-width: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  border: none;
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Flying enemy container */
+.flying-enemy-container {
+  position: absolute;
+  z-index: 99997;
+  will-change: left;
+  border: none;
+  outline: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.flying-enemy-container img {
   width: clamp(50px, 10vw, 75px) !important;
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;

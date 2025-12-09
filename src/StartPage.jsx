@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
+import { start_viking, viking_run, viking_jump, skeleton, valkyrie } from './vikingSprites';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -11,7 +11,8 @@ function StartPage() {
   const [isJumping, setIsJumping] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
-  const [enemies, setEnemies] = useState([]);
+  const [skeletons, setSkeletons] = useState([]);
+  const [flyingEnemies, setFlyingEnemies] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -20,7 +21,8 @@ function StartPage() {
   const vikingRef = useRef(null);
     const animationFrameRef = useRef(null);
     const enemyAnimationRef = useRef(null);
-    const enemySpawnRef = useRef(null);
+    const skeletonSpawnRef = useRef(null);
+    const valkyrieSpawnRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const scoreSubmittedRef = useRef(false);
   const velocityRef = useRef(0);
@@ -150,44 +152,74 @@ function StartPage() {
 
   useEffect(() => {
     if (!gameStarted || gameOver) {
-      setEnemies([]);
+      setSkeletons([]);
+      setFlyingEnemies([]);
       return;
     }
 
     if (!gameStartTime) setGameStartTime(Date.now());
 
-    const spawnEnemy = () => {
-      if (!gameOver && enemies.length === 0) {
+    const spawnSkeleton = () => {
+      if (!gameOver && skeletons.length === 0) {
         const floorTop = window.innerHeight - getFloorHeight();
         const baseLeft = window.innerWidth + 50;
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
         const speedIncrease = Math.floor(gameDuration / 5);
 
-        // Only ground level
-        const groundY = floorTop + 29 - 75;
-
-        const newEnemy = {
+        const newSkeleton = {
           id: Date.now() + Math.random(),
           left: baseLeft,
-          top: groundY,
+          top: floorTop + 29 - 75, // Ground level
           speed: 2 + speedIncrease * 0.8 + Math.random()
         };
 
-        setEnemies([newEnemy]);
+        setSkeletons([newSkeleton]);
       }
-
-      enemySpawnRef.current = setTimeout(spawnEnemy, 2000);
+      enemySpawnRef.current = setTimeout(spawnSkeleton, 2000);
     };
-    spawnEnemy();
+
+    const spawnValkyrie = () => {
+      if (!gameOver && flyingEnemies.length === 0) {
+        const floorTop = window.innerHeight - getFloorHeight();
+        const baseLeft = window.innerWidth + 50;
+        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+        const speedIncrease = Math.floor(gameDuration / 5);
+
+        // Different heights for valkyries
+        const positions = [
+          floorTop - 225 * 0.3, // Low jump height
+          floorTop - 225 * 0.6, // Medium jump height
+          floorTop - 225 * 0.9  // High jump height
+        ];
+
+        const randomY = positions[Math.floor(Math.random() * positions.length)];
+
+        const newValkyrie = {
+          id: Date.now() + Math.random(),
+          left: baseLeft,
+          top: randomY,
+          speed: 3 + speedIncrease * 0.6 + Math.random() * 1.5 // Faster than skeletons
+        };
+
+        setFlyingEnemies([newValkyrie]);
+      }
+      valkyrieSpawnRef.current = setTimeout(spawnValkyrie, 3000 + Math.random() * 1000); // Different timing
+    };
+
+    spawnSkeleton();
+    spawnValkyrie();
 
     const animateEnemies = () => {
       if (gameOver) return;
 
-      setEnemies(prev => prev.map(enemy => ({ ...enemy, left: enemy.left - enemy.speed })).filter(enemy => enemy.left > -100));
+      setSkeletons(prev => prev.map(skeleton => ({ ...skeleton, left: skeleton.left - skeleton.speed })).filter(skeleton => skeleton.left > -100));
+      setFlyingEnemies(prev => prev.map(valkyrie => ({ ...valkyrie, left: valkyrie.left - valkyrie.speed })).filter(valkyrie => valkyrie.left > -100));
 
-      if (checkCollision(vikingPositionRef.current, enemies)) {
+      const allEnemies = [...skeletons, ...flyingEnemies];
+      if (checkCollision(vikingPositionRef.current, allEnemies)) {
         setGameOver(true);
-        clearTimeout(enemySpawnRef.current);
+        clearTimeout(skeletonSpawnRef.current);
+        clearTimeout(valkyrieSpawnRef.current);
         cancelAnimationFrame(enemyAnimationRef.current);
         return;
       }
@@ -197,10 +229,11 @@ function StartPage() {
     enemyAnimationRef.current = requestAnimationFrame(animateEnemies);
 
     return () => {
-      clearTimeout(enemySpawnRef.current);
+      clearTimeout(skeletonSpawnRef.current);
+      clearTimeout(valkyrieSpawnRef.current);
       cancelAnimationFrame(enemyAnimationRef.current);
     };
-  }, [gameStarted, gameOver, gameStartTime, enemies]);
+  }, [gameStarted, gameOver, gameStartTime, skeletons, flyingEnemies]);
 
   useEffect(() => { if (gameOver) submitScore(); }, [gameOver]);
 
@@ -210,7 +243,8 @@ function StartPage() {
     setVikingReachedBottom(false);
     setIsJumping(false);
     setVikingPosition({ top: -100, left: 0 });
-    setEnemies([]);
+    setSkeletons([]);
+    setFlyingEnemies([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
     setGameStartTime(null);
@@ -287,9 +321,15 @@ function StartPage() {
             )}
           </div>
 
-          {enemies.map(enemy => (
-            <div key={enemy.id} className="enemy-container" style={{ top: `${enemy.top}px`, left: `${enemy.left}px` }}>
+          {skeletons.map(skeleton => (
+            <div key={skeleton.id} className="skeleton-container" style={{ top: `${skeleton.top}px`, left: `${skeleton.left}px` }}>
               <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+            </div>
+          ))}
+
+          {flyingEnemies.map(valkyrie => (
+            <div key={valkyrie.id} className="flying-enemy-container" style={{ top: `${valkyrie.top}px`, left: `${valkyrie.left}px` }}>
+              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
             </div>
           ))}
 
