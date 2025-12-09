@@ -35,7 +35,6 @@ function StartPage() {
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
 
-  // Telegram WebApp init
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
     if (!tg) {
@@ -120,7 +119,6 @@ function StartPage() {
     }
   };
 
-  // Collision detection
   const checkCollision = (vPos, allEnemies) => {
     const vWidth = 75;
     const vHeight = 75;
@@ -142,7 +140,6 @@ function StartPage() {
     });
   };
 
-  // Enemy spawn and animation
   useEffect(() => {
     if (!gameStarted || gameOver) {
       setSkeletons([]);
@@ -152,9 +149,8 @@ function StartPage() {
 
     if (!gameStartTime) setGameStartTime(Date.now());
 
-    // Спавн скелетов
     const spawnSkeleton = () => {
-      if (!gameOver && skeletons.length < 5) {
+      if (!gameOver && skeletons.length === 0) {
         const floorTop = window.innerHeight - getFloorHeight();
         const baseLeft = window.innerWidth + 50;
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
@@ -166,21 +162,16 @@ function StartPage() {
           top: floorTop + 29 - 75,
           speed: 2 + speedIncrease * 0.8 + Math.random()
         };
-        setSkeletons(prev => [...prev, newSkeleton]);
+        setSkeletons([newSkeleton]);
       }
-      const skeletonInterval = 1500; // интервал спавна скелетов
-      skeletonSpawnRef.current = setTimeout(spawnSkeleton, skeletonInterval);
+      skeletonSpawnRef.current = setTimeout(spawnSkeleton, 2000);
     };
     spawnSkeleton();
 
-    // Спавн валькирий
     const spawnValkyrie = () => {
-      if (!gameOver && flyingEnemies.length < 2) {
+      if (!gameOver && flyingEnemies.length === 0) {
         const floorTop = window.innerHeight - getFloorHeight();
         const baseLeft = window.innerWidth + 50;
-        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedIncrease = Math.floor(gameDuration / 5);
-
         const positions = [
           floorTop - 225 * 0.3,
           floorTop - 225 * 0.6,
@@ -192,12 +183,11 @@ function StartPage() {
           id: Date.now() + Math.random(),
           left: baseLeft,
           top: randomY,
-          speed: 3 + speedIncrease * 0.6 + Math.random() * 1.5
+          speed: 3 + Math.random() * 1.5
         };
-        setFlyingEnemies(prev => [...prev, newFlying]);
+        setFlyingEnemies([newFlying]);
       }
-      const valkInterval = 4000 + Math.random() * 2000; // редкий и случайный интервал
-      valkyrieSpawnRef.current = setTimeout(spawnValkyrie, valkInterval);
+      valkyrieSpawnRef.current = setTimeout(spawnValkyrie, 4000 + Math.random() * 2000);
     };
     spawnValkyrie();
 
