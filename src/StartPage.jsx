@@ -165,7 +165,7 @@ function StartPage() {
           top: floorTop + 29 - 75,
           speed: baseSpeed + Math.random()
         };
-        setSkeletons([newSkeleton]); // only 1 skeleton
+        setSkeletons(prev => [...prev, newSkeleton]); // allow multiple skeletons
       };
 
       const spawnFlyingEnemy = () => {
@@ -188,22 +188,29 @@ function StartPage() {
           top: randomY,
           speed: baseSpeed + Math.random() * 1.5
         };
-        setFlyingEnemies([newFlyingEnemy]); // only 1 valkyrie
+        setFlyingEnemies(prev => [...prev, newFlyingEnemy]); // allow multiple valkyries
       };
 
       const scheduleSpawn = () => {
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+
+        // Start slow: 3000ms, then get faster every 5 seconds
+        // Every 5 seconds, decrease interval by 400ms, minimum 500ms
         const baseInterval = 3000;
-        const decreasePer5Seconds = 300;
+        const decreasePer5Seconds = 400;
         const maxDecreases = Math.floor(gameDuration / 5);
-        const currentInterval = Math.max(600, baseInterval - (maxDecreases * decreasePer5Seconds));
-        const randomVariation = Math.random() * 1000 - 500;
-        const finalInterval = Math.max(500, currentInterval + randomVariation);
+        const currentInterval = Math.max(500, baseInterval - (maxDecreases * decreasePer5Seconds));
+
+        // Add some randomness (±300ms)
+        const randomVariation = Math.random() * 600 - 300;
+        const finalInterval = Math.max(300, currentInterval + randomVariation);
 
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             spawnSkeleton();
-            if (Math.random() < 0.5) spawnFlyingEnemy();
+            // Valkyrie chance increases over time: 30% → 90%
+            const valkyrieChance = Math.min(0.9, 0.3 + (gameDuration / 60)); // Max 90% after 60 seconds
+            if (Math.random() < valkyrieChance) spawnFlyingEnemy();
             scheduleSpawn();
           }
         }, finalInterval);
