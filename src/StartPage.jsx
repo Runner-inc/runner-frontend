@@ -169,7 +169,7 @@ function StartPage() {
 
       const spawnFlyingEnemy = () => {
         const baseLeft = window.innerWidth + 50;
-        const screenHeight = window.innerHeight;
+        const floorTop = window.innerHeight - getFloorHeight();
 
         // Calculate game duration in seconds
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
@@ -178,11 +178,12 @@ function StartPage() {
         const speedIncrease = Math.floor(gameDuration / 5);
         const baseSpeed = 3 + speedIncrease * 0.6; // Flying enemies are faster
 
-        // Different vertical positions (above ground)
+        // Position valkyries within Viking's jump range (0-225px above ground)
+        const jumpHeight = 225;
         const positions = [
-          screenHeight * 0.2, // High up
-          screenHeight * 0.35, // Medium high
-          screenHeight * 0.5   // Medium
+          floorTop - jumpHeight * 0.3, // Low in jump range
+          floorTop - jumpHeight * 0.6, // Medium in jump range
+          floorTop - jumpHeight * 0.9  // High in jump range
         ];
 
         const randomY = positions[Math.floor(Math.random() * positions.length)];
@@ -216,8 +217,8 @@ function StartPage() {
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             spawnSkeleton();
-            // Spawn flying enemy less frequently (every 3rd skeleton spawn)
-            if (Math.random() < 0.33) { // 33% chance
+            // Spawn flying enemy regularly (every 2nd skeleton spawn)
+            if (Math.random() < 0.5) { // 50% chance
               spawnFlyingEnemy();
             }
             scheduleSpawn();
