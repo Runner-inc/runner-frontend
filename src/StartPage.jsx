@@ -175,7 +175,7 @@ function StartPage() {
 
         setSkeletons([newSkeleton]);
       }
-      enemySpawnRef.current = setTimeout(spawnSkeleton, 2000);
+      skeletonSpawnRef.current = setTimeout(spawnSkeleton, 2000);
     };
 
     const spawnValkyrie = () => {
