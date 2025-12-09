@@ -268,7 +268,10 @@ function StartPage() {
 
   const handleRestart = () => handleStartGame();
   const handleMainMenu = () => setGameStarted(false);
-  const handleRecords = () => navigate('/records');
+  const handleRecords = () => {
+    console.log('Records button clicked - navigating to /records');
+    navigate('/records');
+  };
 
   const handlePageClick = () => {
     if (gameStarted && !gameOver && !isJumping) {
@@ -317,7 +320,16 @@ function StartPage() {
           <h1 className="app-title">ValhallaRunner</h1>
           <div className="button-container">
             <button className="start-button" onClick={handleStartGame}>Start Game</button>
-            <button className="records-button" onClick={handleRecords}>Records</button>
+            <button
+              className="records-button"
+              onClick={handleRecords}
+              onTouchStart={(e) => {
+                e.preventDefault();
+                handleRecords();
+              }}
+            >
+              Records
+            </button>
           </div>
         </>
       ) : (

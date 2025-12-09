@@ -63,7 +63,10 @@ function RecordsPage() {
     fetchRecord();
   }, [telegramId]);
 
-  const handleBack = () => navigate('/');
+  const handleBack = () => {
+    console.log('Back button clicked - navigating to /');
+    navigate('/');
+  };
 
   return (
     <div className="records-page">
@@ -104,7 +107,14 @@ function RecordsPage() {
         </div>
       )}
 
-      <button className="back-button" onClick={handleBack}>
+      <button
+        className="back-button"
+        onClick={handleBack}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleBack();
+        }}
+      >
         Back to Game
       </button>
     </div>

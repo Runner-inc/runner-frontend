@@ -148,7 +148,8 @@
   margin-top: 15px;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  z-index: 10;
+  position: relative;
+  z-index: 100;
 }
 
 .back-button:hover {
