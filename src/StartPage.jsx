@@ -1,10 +1,8 @@
-// FULL FIXED StartPage.js — Buttons no longer trigger jumps or game start
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking, viking_run, viking_jump, skeleton, valkyrie } from './vikingSprites';
+import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -14,11 +12,9 @@ function StartPage() {
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
-  const [flyingEnemies, setFlyingEnemies] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
-  const [gameStartTime, setGameStartTime] = useState(null);
 
   const vikingRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -31,7 +27,6 @@ function StartPage() {
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
   const gravity = 0.8;
-  const lastTouchTimeRef = useRef(0);
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
@@ -43,23 +38,22 @@ function StartPage() {
       return;
     }
     tg.ready();
-    const uid = tg.initDataUnsafe?.user?.id;
-    if (uid) setTelegramUserId(String(uid));
+    const telegramUserId = tg.initDataUnsafe?.user?.id;
+    if (telegramUserId) setTelegramUserId(String(telegramUserId));
     else setError('User ID not found in Telegram WebApp data');
   }, []);
 
   const getFloorHeight = () => {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    if (w >= 1440) return 140;
-    if (w >= 769 && w <= 1024) return 100;
-    if (h <= 500) return 70;
-    if (w <= 480) return 80;
-    if (w <= 768) return 90;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    if (width >= 1440) return 140;
+    if (width >= 769 && width <= 1024) return 100;
+    if (height <= 500) return 70;
+    if (width <= 480) return 80;
+    if (width <= 768) return 90;
     return 120;
   };
 
-  // FALLING
   useEffect(() => {
     if (gameStarted && !vikingReachedBottom && !gameOver) {
       const animateFall = () => {
@@ -67,7 +61,6 @@ function StartPage() {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
-
           if (newTop + 75 >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
@@ -75,21 +68,18 @@ function StartPage() {
           }
           return { ...prev, top: newTop };
         });
-
         if (!vikingReachedBottom && !gameOver) {
           animationFrameRef.current = requestAnimationFrame(animateFall);
         }
       };
       animationFrameRef.current = requestAnimationFrame(animateFall);
     }
-
     return () => {
       if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
 
-  // TIMER
   useEffect(() => {
     if (gameStarted && !gameOver && !timerIntervalRef.current) {
       timerIntervalRef.current = setInterval(() => setElapsedSeconds(prev => prev + 1), 1000);
@@ -106,6 +96,7 @@ function StartPage() {
     scoreSubmittedRef.current = true;
 
     try {
+      // Получаем текущий рекорд
       const res = await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`);
       const data = await res.json();
       const currentBest = data?.result || 0;
@@ -116,181 +107,146 @@ function StartPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ result: elapsedSeconds })
         });
+        console.log(`New highscore submitted: ${elapsedSeconds}`);
+      } else {
+        console.log(`Score ${elapsedSeconds} not higher than current best ${currentBest}, not submitted.`);
       }
     } catch (err) {
-      console.warn('Score submit failed:', err);
+      console.warn("Score submit failed:", err);
     }
   };
 
-  // COLLISION
-  const checkCollision = (vPos, skList, vList, jumping) => {
-    const size = 75;
-    const hitSize = 45;
-    const pad = (size - hitSize) / 2;
+  const checkCollision = (vPos, skeletonList, jumping) => {
+    const spriteSize = 75;
+    const collisionSize = 45;
+    const padding = (spriteSize - collisionSize) / 2;
+    const vTop = vPos.top + padding + (jumping ? -225 : 0);
+    const vLeft = vPos.left + padding;
 
-    const vTop = vPos.top + pad + (jumping ? -225 : 0);
-    const vLeft = vPos.left + pad;
-
-    const hit = (t, l) => (
-      vLeft < l + hitSize && vLeft + hitSize > l &&
-      vTop < t + hitSize && vTop + hitSize > t
-    );
-
-    if (skList.some(s => hit(s.top + pad, s.left + pad))) return true;
-    if (vList.some(f => hit(f.top + pad, f.left + pad))) return true;
-
-    return false;
+    return skeletonList.some(skel => {
+      const sTop = skel.top + padding;
+      const sLeft = skel.left + padding;
+      return (
+        vLeft < sLeft + collisionSize &&
+        vLeft + collisionSize > sLeft &&
+        vTop < sTop + collisionSize &&
+        vTop + collisionSize > sTop
+      );
+    });
   };
 
-  // SPAWN SYSTEM — EXACTLY ONE skeleton + one valkyrie
   useEffect(() => {
-    if (gameStarted && !gameOver) {
-      if (!gameStartTime) setGameStartTime(Date.now());
-
-      const spawn = () => {
-        if (gameOver) return;
-
-        const duration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
-        const speedUp = Math.floor(duration / 5);
+    if (gameStarted && vikingReachedBottom && !gameOver) {
+      const spawnSkeleton = () => {
         const floorTop = window.innerHeight - getFloorHeight();
+        const skeletonCount = 1 + Math.floor(Math.random() * 3);
         const baseLeft = window.innerWidth + 50;
 
-        // Skeleton
-        if (skeletons.length === 0) {
-          setSkeletons([{
-            id: Date.now() + Math.random(),
-            left: baseLeft,
-            top: floorTop + 29 - 75,
-            speed: 2 + speedUp * 0.8 + Math.random(),
-          }]);
-        }
+        const newSkeletons = Array.from({ length: skeletonCount }, (_, i) => ({
+          id: Date.now() + Math.random() + i,
+          left: baseLeft + i * 25,
+          top: floorTop + 29 - 75,
+          speed: 2 + Math.random() * 2
+        }));
 
-        // Valkyrie
-        if (flyingEnemies.length === 0) {
-          const jumpH = 225;
-          const positions = [
-            floorTop - jumpH * 0.3,
-            floorTop - jumpH * 0.6,
-            floorTop - jumpH * 0.9
-          ];
-
-          setFlyingEnemies([{
-            id: Date.now() + Math.random(),
-            left: baseLeft,
-            top: positions[Math.floor(Math.random() * positions.length)],
-            speed: 3 + speedUp * 0.6 + Math.random() * 1.5,
-          }]);
-        }
-
-        skeletonSpawnIntervalRef.current = setTimeout(spawn, 3000 + Math.random() * 2000);
+        setSkeletons(prev => [...prev, ...newSkeletons]);
       };
 
-      spawn();
+      const scheduleSpawn = () => {
+        skeletonSpawnIntervalRef.current = setTimeout(() => {
+          if (!gameOver) {
+            spawnSkeleton();
+            scheduleSpawn();
+          }
+        }, 2000 + Math.random() * 3000);
+      };
 
-      const animate = () => {
+      scheduleSpawn();
+
+      const animateSkeletons = () => {
         if (gameOver) return;
 
-        setSkeletons(prev =>
-          prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100)
-        );
-        setFlyingEnemies(prev =>
-          prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100)
-        );
+        setSkeletons(prev => {
+          const updated = prev
+            .map(s => ({ ...s, left: s.left - s.speed }))
+            .filter(s => s.left > -100);
 
-        if (checkCollision(vikingPositionRef.current, skeletons, flyingEnemies, isJumpingRef.current)) {
-          setGameOver(true);
-          clearTimeout(skeletonSpawnIntervalRef.current);
-          cancelAnimationFrame(animationFrameRef.current);
-          return;
-        }
+          if (checkCollision(vikingPositionRef.current, updated, isJumpingRef.current)) {
+            setGameOver(true);
+            clearTimeout(skeletonSpawnIntervalRef.current);
+            cancelAnimationFrame(animationFrameRef.current);
+          }
 
-        skeletonAnimationRef.current = requestAnimationFrame(animate);
+          return updated;
+        });
+
+        if (!gameOver) skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
       };
 
-      skeletonAnimationRef.current = requestAnimationFrame(animate);
+      skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
     } else {
       setSkeletons([]);
-      setFlyingEnemies([]);
     }
 
     return () => {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, gameOver, gameStartTime, skeletons, flyingEnemies]);
+  }, [gameStarted, vikingReachedBottom, gameOver]);
 
   useEffect(() => {
     if (gameOver) submitScore();
   }, [gameOver]);
 
-  const handleStartGame = (e) => {
-    if (e) e.stopPropagation();
+  const handleStartGame = () => {
     setGameStarted(true);
     setGameOver(false);
     setVikingReachedBottom(false);
     setIsJumping(false);
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
-    setFlyingEnemies([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
-    setGameStartTime(null);
     scoreSubmittedRef.current = false;
   };
 
-  const handleRecords = (e) => {
-    if (e) e.stopPropagation();
-    navigate('/records');
-  };
-
-  const handleRestart = (e) => {
-    if (e) e.stopPropagation();
-    handleStartGame();
-  };
-
-  const handleMainMenu = (e) => {
-    if (e) e.stopPropagation();
-    setGameStarted(false);
-  };
+  const handleRestart = () => handleStartGame();
+  const handleMainMenu = () => setGameStarted(false);
+  const handleRecords = () => navigate('/records');
 
   const handlePageClick = () => {
-    if (gameStarted && !gameOver && !isJumping) {
+    if (gameStarted && vikingReachedBottom && !gameOver) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
-
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
         void vikingRef.current.offsetWidth;
         vikingRef.current.classList.add('viking-jumping');
       }
-
       setIsJumping(true);
       jumpTimeoutRef.current = setTimeout(() => {
         setIsJumping(false);
         if (vikingRef.current) vikingRef.current.classList.remove('viking-jumping');
+        jumpTimeoutRef.current = null;
       }, 800);
     }
   };
 
-  const handlePageTouch = e => {
-    e.preventDefault();
-    const now = Date.now();
-    if (now - lastTouchTimeRef.current > 100) {
-      lastTouchTimeRef.current = now;
-      handlePageClick();
-    }
-  };
+  const handlePageTouch = e => { e.preventDefault(); handlePageClick(); };
 
   if (error) return <div className="error">{error}</div>;
 
   return (
     <div
-      className={`start-page ${gameStarted ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
+      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
-
       <div className="parallax-bg">
-        <div className="bg-image"></div>
+        <video
+          className="bg-video"
+          src="https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/grok-video-417d7c90-9f51-4e07-93c7-09cd5a9be976%20(online-video-cutter.com).mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2dyb2stdmlkZW8tNDE3ZDdjOTAtOWY1MS00ZTA3LTkzYzctMDljZDVhOWJlOTc2IChvbmxpbmUtdmlkZW8tY3V0dGVyLmNvbSkubXA0IiwiaWF0IjoxNzY1MDI5NDY4LCJleHAiOjc3NTY4Njk0Njh9.T_MMv3XFjv8dldEEf5U3Zh3XO-3nPKk0pXV8Z3MAmm4"
+          autoPlay muted loop playsInline preload="auto"
+        />
       </div>
 
       <div className="score-timer"> SCORE: {elapsedSeconds}</div>
@@ -298,48 +254,16 @@ function StartPage() {
       {!gameStarted ? (
         <>
           <h1 className="app-title">ValhallaRunner</h1>
-
           <div className="button-container">
-
-            {/* FIX: prevent propagation */}
-            <button
-              className="start-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleStartGame(e);
-              }}
-              onTouchStart={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleStartGame(e);
-              }}
-            >
-              Start Game
-            </button>
-
-            {/* FIX: prevent propagation */}
-            <button
-              className="records-button"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRecords(e);
-              }}
-              onTouchStart={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleRecords(e);
-              }}
-            >
-              Records
-            </button>
-
+            <button className="start-button" onClick={handleStartGame}>Start Game</button>
+            <button className="records-button" onClick={handleRecords}>Records</button>
           </div>
         </>
       ) : (
         <>
           <div
             ref={vikingRef}
-            className={`viking-animation-container 
+            className={`viking-animation-container
               ${vikingReachedBottom ? 'viking-running' : 'viking-falling'}
               ${isJumping ? 'viking-jumping' : ''}`}
             style={{ top: `${vikingPosition.top}px`, left: `${vikingPosition.left}px` }}
@@ -362,37 +286,13 @@ function StartPage() {
             </div>
           ))}
 
-          {flyingEnemies.map(enemy => (
-            <div key={enemy.id} className="flying-enemy-container" style={{ top: `${enemy.top}px`, left: `${enemy.left}px` }}>
-              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
-            </div>
-          ))}
-
           <div className="pixel-floor"></div>
 
           {gameOver && (
             <div className="game-over-overlay">
               <h2 className="game-over-text">GAME OVER</h2>
-
-              <button
-                className="restart-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRestart(e);
-                }}
-              >
-                Restart
-              </button>
-
-              <button
-                className="restart-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleMainMenu(e);
-                }}
-              >
-                Main Menu
-              </button>
+              <button className="restart-button" onClick={handleRestart}>Restart</button>
+              <button className="restart-button" onClick={handleMainMenu}>Main Menu</button>
             </div>
           )}
         </>
