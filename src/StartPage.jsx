@@ -139,7 +139,7 @@ function StartPage() {
   };
 
   useEffect(() => {
-    if (gameStarted && vikingReachedBottom && !gameOver) {
+    if (gameStarted && !gameOver) {
       // Set game start time if not set
       if (!gameStartTime) {
         setGameStartTime(Date.now());
@@ -268,7 +268,7 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver, gameStartTime]);
+  }, [gameStarted, gameOver, gameStartTime]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -293,7 +293,7 @@ function StartPage() {
   const handleRecords = () => navigate('/records');
 
   const handlePageClick = () => {
-    if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
+    if (gameStarted && !gameOver && !isJumping) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
@@ -322,7 +322,7 @@ function StartPage() {
 
   return (
     <div
-      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
+      className={`start-page ${gameStarted ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
