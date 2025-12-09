@@ -121,16 +121,18 @@ function StartPage() {
 
   // Collision detection
   const checkCollision = (vPos, allEnemies) => {
-    const vWidth = 45;
-    const vHeight = 45;
-    const vLeft = vPos.left;
-    const vTop = vPos.top + (isJumpingRef.current ? -225 : 0);
+    // Use larger collision boxes that match the sprite size for easier collision
+    const vWidth = 60;
+    const vHeight = 60;
+    const vLeft = vPos.left + 7.5; // Center the collision box in the 75px sprite (75-60)/2 = 7.5
+    const vTop = vPos.top + 7.5 + (isJumpingRef.current ? -225 : 0);
 
     return allEnemies.some(enemy => {
-      const eWidth = 45;
-      const eHeight = 45;
-      const eLeft = enemy.left;
-      const eTop = enemy.top;
+      const eWidth = 60;
+      const eHeight = 60;
+      const eLeft = enemy.left + 7.5; // Center collision box in enemy sprite
+      const eTop = enemy.top + 7.5;
+
       return (
         vLeft < eLeft + eWidth &&
         vLeft + vWidth > eLeft &&
