@@ -98,7 +98,7 @@
 /* Viking animation container */
 .viking-animation-container {
   position: absolute;
-  z-index: 99999;
+  z-index: 99997;
   left: 20px;
   will-change: top;
   border: none;
