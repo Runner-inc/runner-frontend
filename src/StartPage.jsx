@@ -15,6 +15,7 @@ function StartPage() {
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
+  const [gameStartTime, setGameStartTime] = useState(null);
 
   const vikingRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -138,28 +139,54 @@ function StartPage() {
 
   useEffect(() => {
     if (gameStarted && vikingReachedBottom && !gameOver) {
+      // Set game start time if not set
+      if (!gameStartTime) {
+        setGameStartTime(Date.now());
+      }
+
       const spawnSkeleton = () => {
         const floorTop = window.innerHeight - getFloorHeight();
-        const skeletonCount = 1 + Math.floor(Math.random() * 3);
         const baseLeft = window.innerWidth + 50;
 
-        const newSkeletons = Array.from({ length: skeletonCount }, (_, i) => ({
-          id: Date.now() + Math.random() + i,
-          left: baseLeft + i * 25,
-          top: floorTop + 29 - 75,
-          speed: 2 + Math.random() * 2
-        }));
+        // Calculate game duration in seconds
+        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
 
-        setSkeletons(prev => [...prev, ...newSkeletons]);
+        // Base speed increases every 10 seconds
+        const speedIncrease = Math.floor(gameDuration / 10);
+        const baseSpeed = 2 + speedIncrease * 0.5; // Increase by 0.5 every 10 seconds
+
+        // Spawn exactly 1 skeleton
+        const newSkeleton = {
+          id: Date.now() + Math.random(),
+          left: baseLeft,
+          top: floorTop + 29 - 75,
+          speed: baseSpeed + Math.random() * 1 // Some random variation
+        };
+
+        setSkeletons(prev => [...prev, newSkeleton]);
       };
 
       const scheduleSpawn = () => {
+        // Calculate game duration in seconds
+        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+
+        // Initial spawn rate: 3000ms
+        // Every 10 seconds, decrease interval by 200ms, minimum 1000ms
+        const baseInterval = 3000;
+        const decreasePer10Seconds = 200;
+        const maxDecreases = Math.floor(gameDuration / 10);
+        const currentInterval = Math.max(1000, baseInterval - (maxDecreases * decreasePer10Seconds));
+
+        // Add some randomness (±500ms)
+        const randomVariation = Math.random() * 1000 - 500;
+        const finalInterval = Math.max(500, currentInterval + randomVariation);
+
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             spawnSkeleton();
             scheduleSpawn();
           }
-        }, 2000 + Math.random() * 3000);
+        }, finalInterval);
       };
 
       scheduleSpawn();
@@ -193,7 +220,7 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver]);
+  }, [gameStarted, vikingReachedBottom, gameOver, gameStartTime]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -208,6 +235,7 @@ function StartPage() {
     setSkeletons([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
+    setGameStartTime(null); // Reset game start time
     scoreSubmittedRef.current = false;
   };
 
