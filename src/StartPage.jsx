@@ -131,12 +131,28 @@ function StartPage() {
     const vLeft = vPos.left + padding;
 
     const isColliding = (objTop, objLeft) => {
-      return (
-        vLeft < objLeft + collisionSize &&
-        vLeft + collisionSize > objLeft &&
-        vTop < objTop + collisionSize &&
-        vTop + collisionSize > objTop
-      );
+      const collisionX = vLeft < objLeft + collisionSize && vLeft + collisionSize > objLeft;
+      const collisionY = vTop < objTop + collisionSize && vTop + collisionSize > objTop;
+
+      if (collisionX && collisionY) {
+        // Determine collision direction for debugging
+        const vCenterX = vLeft + collisionSize / 2;
+        const vCenterY = vTop + collisionSize / 2;
+        const objCenterX = objLeft + collisionSize / 2;
+        const objCenterY = objTop + collisionSize / 2;
+
+        let direction = '';
+        if (Math.abs(vCenterX - objCenterX) > Math.abs(vCenterY - objCenterY)) {
+          direction = vCenterX < objCenterX ? 'RIGHT side' : 'LEFT side';
+        } else {
+          direction = vCenterY < objCenterY ? 'BOTTOM side' : 'TOP side';
+        }
+
+        console.log(`COLLISION from ${direction}! Viking(${vCenterX.toFixed(0)},${vCenterY.toFixed(0)}) vs Enemy(${objCenterX.toFixed(0)},${objCenterY.toFixed(0)})`);
+        return true;
+      }
+
+      return false;
     };
 
     if (skeletonList.some(skel => isColliding(skel.top + padding, skel.left + padding))) return true;
