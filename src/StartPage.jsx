@@ -190,6 +190,8 @@ function StartPage() {
         }, 2000 + Math.random() * 3000);
       };
 
+      // Spawn first skeleton immediately
+      spawnSkeleton();
       scheduleSpawn();
 
       const animateSkeletons = () => {
@@ -222,7 +224,7 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver, valkyries]);
+  }, [gameStarted, vikingReachedBottom, gameOver]);
 
   useEffect(() => {
     console.log('Valkyrie useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
@@ -263,6 +265,8 @@ function StartPage() {
         }, 3000 + Math.random() * 4000); // spawn less frequently than skeletons
       };
 
+      // Spawn first valkyrie immediately
+      spawnValkyrie();
       scheduleValkyrieSpawn();
 
       const animateValkyries = () => {
@@ -295,7 +299,7 @@ function StartPage() {
       if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
       if (valkyrieSpawnIntervalRef.current) clearTimeout(valkyrieSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver, skeletons]);
+  }, [gameStarted, vikingReachedBottom, gameOver]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -393,7 +397,7 @@ function StartPage() {
           </div>
 
           {skeletons.map(s => {
-            console.log('Rendering skeleton on screen:', s);
+            console.log('Rendering skeleton on screen:', s, 'Total skeletons:', skeletons.length);
             return (
               <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
                 <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
@@ -402,7 +406,7 @@ function StartPage() {
           })}
 
           {valkyries.map(v => {
-            console.log('Rendering valkyrie on screen:', v);
+            console.log('Rendering valkyrie on screen:', v, 'Total valkyries:', valkyries.length);
             return (
               <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
                 <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />

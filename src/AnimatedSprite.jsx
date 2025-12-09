@@ -35,6 +35,8 @@ function AnimatedSprite({
           width: width || 'auto',
           height: height || 'auto'
         }}
+        onLoad={() => console.log(`Image loaded: ${images[currentFrame]}`)}
+        onError={(e) => console.error(`Image failed to load: ${images[currentFrame]}`, e)}
       />
     </div>
   );
