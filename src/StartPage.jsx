@@ -166,8 +166,8 @@ function StartPage() {
       };
       setSkeletons(prev => [...prev, newSkeleton]);
 
-      // Flying enemy (валькирия)
-      if (Math.random() < 0.5) {
+      // Flying enemy (валькирия) — максимум 2 на экране
+      if (Math.random() < 0.5 && flyingEnemies.length < 2) {
         const jumpHeight = 225;
         const positions = [
           floorTop - jumpHeight * 0.3,
