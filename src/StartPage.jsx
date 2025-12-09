@@ -194,23 +194,16 @@ function StartPage() {
       const scheduleSpawn = () => {
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
 
-        // Start slow: 3000ms, then get faster every 5 seconds
-        // Every 5 seconds, decrease interval by 400ms, minimum 500ms
-        const baseInterval = 3000;
-        const decreasePer5Seconds = 400;
-        const maxDecreases = Math.floor(gameDuration / 5);
-        const currentInterval = Math.max(500, baseInterval - (maxDecreases * decreasePer5Seconds));
-
-        // Add some randomness (±300ms)
-        const randomVariation = Math.random() * 600 - 300;
-        const finalInterval = Math.max(300, currentInterval + randomVariation);
+        // Consistent 3-5 second intervals with randomness
+        const baseInterval = 4000; // 4 seconds average
+        const randomVariation = Math.random() * 2000 - 1000; // ±1 second variation
+        const finalInterval = Math.max(3000, Math.min(5000, baseInterval + randomVariation));
 
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             spawnSkeleton();
-            // Valkyrie chance increases over time: 30% → 90%
-            const valkyrieChance = Math.min(0.9, 0.3 + (gameDuration / 60)); // Max 90% after 60 seconds
-            if (Math.random() < valkyrieChance) spawnFlyingEnemy();
+            // Consistent 50% chance for valkyries
+            if (Math.random() < 0.5) spawnFlyingEnemy();
             scheduleSpawn();
           }
         }, finalInterval);
