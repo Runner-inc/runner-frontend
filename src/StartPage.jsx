@@ -199,10 +199,21 @@ function StartPage() {
 
         setSkeletons(prev => {
           const updated = prev
-            .map(s => ({ ...s, left: s.left - s.speed }))
-            .filter(s => s.left > -100);
+            .map(s => {
+              const newLeft = s.left - s.speed;
+              console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft}`);
+              return { ...s, left: newLeft };
+            })
+            .filter(s => {
+              const keep = s.left > -100;
+              if (!keep) console.log(`Skeleton ${s.id} removed (off-screen)`);
+              return keep;
+            });
+
+          console.log(`Total skeletons after animation: ${updated.length}`);
 
           if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
+            console.log('Collision detected! Game over.');
             setGameOver(true);
             clearTimeout(skeletonSpawnIntervalRef.current);
             clearTimeout(valkyrieSpawnIntervalRef.current);
@@ -274,10 +285,21 @@ function StartPage() {
 
         setValkyries(prev => {
           const updated = prev
-            .map(v => ({ ...v, left: v.left - v.speed }))
-            .filter(v => v.left > -100);
+            .map(v => {
+              const newLeft = v.left - v.speed;
+              console.log(`Valkyrie ${v.id} moving from ${v.left} to ${newLeft}`);
+              return { ...v, left: newLeft };
+            })
+            .filter(v => {
+              const keep = v.left > -100;
+              if (!keep) console.log(`Valkyrie ${v.id} removed (off-screen)`);
+              return keep;
+            });
+
+          console.log(`Total valkyries after animation: ${updated.length}`);
 
           if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
+            console.log('Collision detected! Game over.');
             setGameOver(true);
             clearTimeout(skeletonSpawnIntervalRef.current);
             clearTimeout(valkyrieSpawnIntervalRef.current);

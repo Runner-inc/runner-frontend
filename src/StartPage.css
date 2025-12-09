@@ -106,7 +106,7 @@
 /* Viking animation container */
 .viking-animation-container {
   position: absolute;
-  z-index: 99997;
+  z-index: 100002;
   left: 20px;
   will-change: top;
   border: none !important;
@@ -236,7 +236,7 @@
 /* Skeleton container */
 .skeleton-container {
   position: absolute;
-  z-index: 99998;
+  z-index: 100001;
   will-change: left;
   border: none !important;
   outline: none !important;
@@ -279,7 +279,7 @@
 /* Flying enemy container */
 .flying-enemy-container {
   position: absolute;
-  z-index: 99997;
+  z-index: 100002;
   will-change: left;
   border: none !important;
   outline: none !important;
