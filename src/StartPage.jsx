@@ -201,10 +201,21 @@ function StartPage() {
     const animateEnemies = () => {
       if (gameOver) return;
 
-      setSkeletons(prev => prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100));
-      setFlyingEnemies(prev => prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100));
+      let updatedSkeletons = [];
+      let updatedFlying = [];
 
-      const allEnemies = [...skeletons, ...flyingEnemies];
+      setSkeletons(prev => {
+        updatedSkeletons = prev.map(s => ({ ...s, left: s.left - s.speed })).filter(s => s.left > -100);
+        return updatedSkeletons;
+      });
+
+      setFlyingEnemies(prev => {
+        updatedFlying = prev.map(f => ({ ...f, left: f.left - f.speed })).filter(f => f.left > -100);
+        return updatedFlying;
+      });
+
+      // Check collision with ALL updated enemy positions
+      const allEnemies = [...updatedSkeletons, ...updatedFlying];
       if (checkCollision(vikingPositionRef.current, allEnemies)) {
         setGameOver(true);
         clearTimeout(spawnIntervalRef.current);
