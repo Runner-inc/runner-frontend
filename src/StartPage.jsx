@@ -122,7 +122,7 @@ function StartPage() {
     const spriteSize = 75;
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
-    const vTop = vPos.top + padding; // убрали прыжок
+    const vTop = vPos.top + padding;
     const vLeft = vPos.left + padding;
 
     return enemyList.some(enemy => {
@@ -138,7 +138,7 @@ function StartPage() {
   };
 
   useEffect(() => {
-    if (gameStarted && vikingReachedBottom && !gameOver) {
+    if (gameStarted && !gameOver) {
       if (!gameStartTime) setGameStartTime(Date.now());
 
       const spawnSkeleton = () => {
@@ -152,7 +152,7 @@ function StartPage() {
           id: Date.now() + Math.random(),
           left: baseLeft,
           top: floorTop + 29 - 75,
-          speed: baseSpeed + Math.random() * 1
+          speed: baseSpeed + Math.random()
         };
         setSkeletons(prev => [...prev, newSkeleton]);
       };
@@ -238,7 +238,7 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver, gameStartTime]);
+  }, [gameStarted, gameOver, gameStartTime]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -263,7 +263,7 @@ function StartPage() {
   const handleRecords = () => navigate('/records');
 
   const handlePageClick = () => {
-    if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
+    if (gameStarted && !gameOver && !isJumping) {
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
@@ -292,7 +292,7 @@ function StartPage() {
 
   return (
     <div
-      className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
+      className={`start-page ${gameStarted ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
       onTouchStart={handlePageTouch}
     >
