@@ -249,7 +249,7 @@ function StartPage() {
         />
       </div>
 
-      <div className="score-timer">{elapsedSeconds}s</div>
+      <div className="score-timer"> SCORE: {elapsedSeconds}</div>
 
       {!gameStarted ? (
         <>
