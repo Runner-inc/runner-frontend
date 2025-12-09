@@ -118,16 +118,17 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, allEnemies) => {
-    const vWidth = 75;
-    const vHeight = 75;
+    const vWidth = 45;
+    const vHeight = 45;
     const vLeft = vPos.left;
-    const vTop = vPos.top;
+    // Account for jump animation (CSS transform moves sprite up by 225px)
+    const vTop = vPos.top + (isJumping ? -225 : 0);
 
     return allEnemies.some(enemy => {
       const eLeft = enemy.left;
       const eTop = enemy.top;
-      const eWidth = 75;
-      const eHeight = 75;
+      const eWidth = 45;
+      const eHeight = 45;
 
       return (
         vLeft < eLeft + eWidth &&
