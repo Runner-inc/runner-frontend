@@ -31,3 +31,9 @@ export const skeleton = [
   'https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/skeleton.png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL3NrZWxldG9uLnBuZyIsImlhdCI6MTc2NDk0NzU3NSwiZXhwIjo3NzU2Nzg3NTc1fQ.WXxpr7-TLpC4FniUuqLedKT6B92Wo9-aB3PD81S7iho'
 ];
 
+// Flying enemy sprites (Valkyries)
+export const valkyrie = [
+  'https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/valk1%20(1).png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL3ZhbGsxICgxKS5wbmciLCJpYXQiOjE3NjUzMDkxODMsImV4cCI6Nzc1NzE0OTE4M30.0rZeTOrWe0CU1b6aFR9I33nE-TigcL1lqI2E_t4KZAg',
+  'https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/valk2%20(1).png?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL3ZhbGsyICgxKS5wbmciLCJpYXQiOjE3NjUzMDkxOTYsImV4cCI6Nzc1NzE0OTE5Nn0.ryqqiDRWvXXzHUy-x8ZF0ITHoJNZxxZ91wBtIiM3PM0'
+];
+

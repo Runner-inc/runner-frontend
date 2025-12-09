@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StartPage.css';
 import AnimatedSprite from './AnimatedSprite';
-import { start_viking, viking_run, viking_jump, skeleton } from './vikingSprites';
+import { start_viking, viking_run, viking_jump, skeleton, valkyrie } from './vikingSprites';
 
 function StartPage() {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ function StartPage() {
   const [gameOver, setGameOver] = useState(false);
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
+  const [flyingEnemies, setFlyingEnemies] = useState([]);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -166,6 +167,37 @@ function StartPage() {
         setSkeletons(prev => [...prev, newSkeleton]);
       };
 
+      const spawnFlyingEnemy = () => {
+        const baseLeft = window.innerWidth + 50;
+        const screenHeight = window.innerHeight;
+
+        // Calculate game duration in seconds
+        const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
+
+        // Base speed increases every 5 seconds
+        const speedIncrease = Math.floor(gameDuration / 5);
+        const baseSpeed = 3 + speedIncrease * 0.6; // Flying enemies are faster
+
+        // Different vertical positions (above ground)
+        const positions = [
+          screenHeight * 0.2, // High up
+          screenHeight * 0.35, // Medium high
+          screenHeight * 0.5   // Medium
+        ];
+
+        const randomY = positions[Math.floor(Math.random() * positions.length)];
+
+        // Spawn exactly 1 flying enemy
+        const newFlyingEnemy = {
+          id: Date.now() + Math.random(),
+          left: baseLeft,
+          top: randomY,
+          speed: baseSpeed + Math.random() * 1.5 // Some random variation
+        };
+
+        setFlyingEnemies(prev => [...prev, newFlyingEnemy]);
+      };
+
       const scheduleSpawn = () => {
         // Calculate game duration in seconds
         const gameDuration = Math.floor((Date.now() - (gameStartTime || Date.now())) / 1000);
@@ -184,6 +216,10 @@ function StartPage() {
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             spawnSkeleton();
+            // Spawn flying enemy less frequently (every 3rd skeleton spawn)
+            if (Math.random() < 0.33) { // 33% chance
+              spawnFlyingEnemy();
+            }
             scheduleSpawn();
           }
         }, finalInterval);
@@ -199,11 +235,21 @@ function StartPage() {
             .map(s => ({ ...s, left: s.left - s.speed }))
             .filter(s => s.left > -100);
 
-          if (checkCollision(vikingPositionRef.current, updated, isJumpingRef.current)) {
-            setGameOver(true);
-            clearTimeout(skeletonSpawnIntervalRef.current);
-            cancelAnimationFrame(animationFrameRef.current);
-          }
+          setFlyingEnemies(flyingPrev => {
+            const flyingUpdated = flyingPrev
+              .map(enemy => ({ ...enemy, left: enemy.left - enemy.speed }))
+              .filter(enemy => enemy.left > -100);
+
+            // Check collision with both updated skeletons and flying enemies
+            const allEnemies = [...updated, ...flyingUpdated];
+            if (checkCollision(vikingPositionRef.current, allEnemies, isJumpingRef.current)) {
+              setGameOver(true);
+              clearTimeout(skeletonSpawnIntervalRef.current);
+              cancelAnimationFrame(animationFrameRef.current);
+            }
+
+            return flyingUpdated;
+          });
 
           return updated;
         });
@@ -214,6 +260,7 @@ function StartPage() {
       skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
     } else {
       setSkeletons([]);
+      setFlyingEnemies([]);
     }
 
     return () => {
@@ -233,6 +280,7 @@ function StartPage() {
     setIsJumping(false);
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
+    setFlyingEnemies([]);
     velocityRef.current = 0;
     setElapsedSeconds(0);
     setGameStartTime(null); // Reset game start time
@@ -315,6 +363,12 @@ function StartPage() {
           {skeletons.map(s => (
             <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
               <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+            </div>
+          ))}
+
+          {flyingEnemies.map(enemy => (
+            <div key={enemy.id} className="flying-enemy-container" style={{ top: `${enemy.top}px`, left: `${enemy.left}px` }}>
+              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
             </div>
           ))}
 
