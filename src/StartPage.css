@@ -51,7 +51,10 @@
   z-index: 10;
   line-height: 1.4;
   word-wrap: break-word;
-  padding: 0 10px;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  display: inline-block;
 }
 
 .button-container {
@@ -167,7 +170,7 @@
 
 @keyframes scrollBackground {
   from { background-position-x: 0; }
-  to { background-position-x: -100%; }
+  to { background-position-x: 100%; }
 }
 
 .parallax-layer {
@@ -273,6 +276,10 @@
   text-shadow: 4px 4px 0 rgba(255, 215, 0, 0.5);
   margin: 0;
   animation: gameOverPulse 1s ease-in-out infinite;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 20px 30px;
+  border-radius: 15px;
+  display: inline-block;
 }
 
 @keyframes gameOverPulse {
