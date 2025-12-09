@@ -85,10 +85,10 @@
   max-width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
-  border: none;
-  outline: none;
+  /* image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges; */
+  /* border: none;
+  outline: none; */
 }
 
 .viking-animation-container.viking-falling {
@@ -180,11 +180,11 @@
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
   object-fit: contain;
-  image-rendering: pixelated;
+  /* image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   border: none;
-  outline: none;
+  outline: none; */
 }
 
 /* Game Over Overlay */
