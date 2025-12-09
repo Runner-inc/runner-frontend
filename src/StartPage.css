@@ -83,8 +83,8 @@
   width: clamp(50px, 10vw, 75px) !important;
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
-  object-fit: contain;
-  image-rendering: pixelated;
+  /* object-fit: contain;
+  image-rendering: pixelated; */
   /* image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges; */
   /* border: none;
@@ -179,7 +179,7 @@
   width: clamp(50px, 10vw, 75px) !important;
   height: clamp(50px, 10vw, 75px) !important;
   max-width: 100%;
-  object-fit: contain;
+  /* object-fit: contain; */
   /* image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
