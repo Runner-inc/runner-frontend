@@ -269,8 +269,14 @@ function StartPage() {
   const handleRestart = () => handleStartGame();
   const handleMainMenu = () => setGameStarted(false);
   const handleRecords = () => {
-    console.log('Records button clicked - navigating to /records');
-    navigate('/records');
+    console.log('StartPage: Records button clicked - navigating to /records');
+    console.log('StartPage: Current location before navigation:', window.location.pathname);
+    try {
+      navigate('/records');
+      console.log('StartPage: Navigation to /records completed');
+    } catch (error) {
+      console.error('StartPage: Navigation error:', error);
+    }
   };
 
   const handlePageClick = () => {

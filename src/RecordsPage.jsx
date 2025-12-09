@@ -10,50 +10,67 @@ function RecordsPage() {
   const [telegramId, setTelegramId] = useState(null);
 
   useEffect(() => {
+    console.log('RecordsPage: Initializing...');
+
     const tg = window.Telegram?.WebApp;
+    console.log('RecordsPage: Telegram WebApp available:', !!tg);
 
     if (!tg) {
+      console.log('RecordsPage: Telegram WebApp not available');
       setError('Telegram WebApp API is unavailable. Please open this app in Telegram.');
       setLoading(false);
       return;
     }
 
     tg.ready();
+    console.log('RecordsPage: Telegram WebApp ready');
 
     const telegramUserId = tg.initDataUnsafe?.user?.id;
+    console.log('RecordsPage: User ID found:', !!telegramUserId, telegramUserId);
 
     if (telegramUserId) {
       setTelegramId(String(telegramUserId));
+      console.log('RecordsPage: Set telegramId to:', telegramUserId);
     } else {
+      console.log('RecordsPage: No user ID found');
       setError('User ID not found in Telegram WebApp data');
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    if (!telegramId) return;
+    console.log('RecordsPage: useEffect triggered with telegramId:', telegramId);
+    if (!telegramId) {
+      console.log('RecordsPage: No telegramId, skipping fetch');
+      return;
+    }
 
     const fetchRecord = async () => {
       try {
+        console.log('RecordsPage: Starting fetch for user:', telegramId);
         setLoading(true);
         setError(null);
 
         const response = await fetch(
           `https://runner-backend-sandy.vercel.app/api/users/${telegramId}`
         );
+        console.log('RecordsPage: Fetch response status:', response.status);
 
         if (!response.ok) {
-          setError(response.status === 404
+          const errorMsg = response.status === 404
             ? 'No record found for this user'
-            : 'Failed to fetch record');
+            : 'Failed to fetch record';
+          console.log('RecordsPage: Fetch error:', errorMsg);
+          setError(errorMsg);
           return;
         }
 
         const data = await response.json();
+        console.log('RecordsPage: Fetched data:', data);
         setRecord(data);
 
       } catch (err) {
-        console.error('Error fetching record:', err);
+        console.error('RecordsPage: Error fetching record:', err);
         setError('Error fetching record. Please try again.');
       } finally {
         setLoading(false);
@@ -64,8 +81,14 @@ function RecordsPage() {
   }, [telegramId]);
 
   const handleBack = () => {
-    console.log('Back button clicked - navigating to /');
-    navigate('/');
+    console.log('RecordsPage: Back button clicked - navigating to /');
+    console.log('RecordsPage: Current location before navigation:', window.location.pathname);
+    try {
+      navigate('/');
+      console.log('RecordsPage: Navigation to / completed');
+    } catch (error) {
+      console.error('RecordsPage: Navigation error:', error);
+    }
   };
 
   return (
