@@ -14,6 +14,7 @@ function StartPage() {
   const [skeletons, setSkeletons] = useState([]);
   const [valkyries, setValkyries] = useState([]);
   const [nextEnemyType, setNextEnemyType] = useState('skeleton'); // 'skeleton' or 'valkyrie'
+  const enemiesOnScreenRef = useRef(0);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -246,28 +247,25 @@ function StartPage() {
         }
       };
 
-      const scheduleSpawn = () => {
+      const checkAndSpawn = () => {
+        // Only spawn if no enemies are currently on screen
+        if (enemiesOnScreenRef.current === 0) {
+          console.log('No enemies on screen, spawning new enemy');
+          spawnEnemy();
+        } else {
+          console.log('Enemies still on screen, waiting...');
+        }
+
+        // Always schedule next check
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
-            console.log('Spawning next enemy');
-            spawnEnemy();
-            // Schedule next spawn with current elapsed time
-            const nextDelay = nextEnemyType === 'skeleton' ?
-              getSpawnDelay(2000, 5000, elapsedSeconds) :
-              getSpawnDelay(3000, 7000, elapsedSeconds);
-            console.log(`Scheduling next ${nextEnemyType} spawn in ${nextDelay}ms (elapsed: ${elapsedSeconds}s)`);
-            scheduleSpawn();
-          } else {
-            console.log('Game over, stopping enemy spawns');
+            checkAndSpawn();
           }
-        }, nextEnemyType === 'skeleton' ?
-          getSpawnDelay(2000, 5000, elapsedSeconds) :
-          getSpawnDelay(3000, 7000, elapsedSeconds));
+        }, 500); // Check every 500ms
       };
 
-      // Spawn first enemy immediately
-      spawnEnemy();
-      scheduleSpawn();
+      // Start checking for spawn opportunities
+      checkAndSpawn();
 
       const animateSkeletons = () => {
         if (gameOver) return;
@@ -286,6 +284,9 @@ function StartPage() {
             });
 
           console.log(`Total skeletons after animation: ${updated.length}`);
+
+          // Update enemy count ref
+          enemiesOnScreenRef.current = updated.length + valkyries.length;
 
           if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
             console.log('Collision detected! Game over.');
@@ -311,7 +312,7 @@ function StartPage() {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver, nextEnemyType, elapsedSeconds]);
+  }, [gameStarted, vikingReachedBottom, gameOver]);
 
   useEffect(() => {
     if (gameStarted && vikingReachedBottom && !gameOver) {
@@ -332,6 +333,9 @@ function StartPage() {
             });
 
           console.log(`Total valkyries after animation: ${updated.length}`);
+
+          // Update enemy count ref
+          enemiesOnScreenRef.current = skeletons.length + updated.length;
 
           if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
             console.log('Collision detected! Game over.');
@@ -371,6 +375,7 @@ function StartPage() {
     setSkeletons([]);
     setValkyries([]);
     setNextEnemyType('skeleton');
+    enemiesOnScreenRef.current = 0;
     velocityRef.current = 0;
     setElapsedSeconds(0);
     scoreSubmittedRef.current = false;
