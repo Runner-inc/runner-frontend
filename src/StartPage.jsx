@@ -174,30 +174,30 @@ function StartPage() {
     });
 
     // Check valkyrie collisions
-const valkyrieCollision = valkyrieList.some(valk => {
-  const valTop = valk.top + padding;
-  const valLeft = valk.left + padding;
-  const valRight = valLeft + collisionSize;
-  const valBottom = valTop + collisionSize;
+    const valkyrieCollision = valkyrieList.some(valk => {
+      const valTop = valk.top + padding;
+      const valLeft = valk.left + padding;
+      const valRight = valLeft + collisionSize;
+      const valBottom = valTop + collisionSize;
 
-  const collision = !(
-    vRight < valLeft &&
-    vLeft > valRight &&
-    vBottom < valTop &&
-    vTop > valBottom
-    
-  );
+      const collision = !(
+        vRight < valLeft &&
+        vLeft > valRight &&
+        vBottom < valTop &&
+        vTop > valBottom
+        
+      );
 
-  if (collision) {
-    console.log('COLLISION with valkyrie:', {
-      valk,
-      viking: { vLeft, vTop, vRight, vBottom },
-      valkyrie: { valLeft, valTop, valRight, valBottom }
+      if (collision) {
+        console.log('COLLISION with valkyrie:', {
+          valk,
+          viking: { vLeft, vTop, vRight, vBottom },
+          valkyrie: { valLeft, valTop, valRight, valBottom }
+        });
+      }
+
+      return collision;
     });
-  }
-
-  return collision;
-});
 
     return skeletonCollision || valkyrieCollision;
   };
