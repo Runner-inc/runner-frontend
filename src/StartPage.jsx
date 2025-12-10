@@ -192,7 +192,7 @@ const valkyrieCollision = valkyrieList.some(valk => {
     console.log('COLLISION with valkyrie:', {
       valk,
       viking: { vLeft, vTop, vRight, vBottom },
-      valkyrie: { sLeft, sTop, sRight, sBottom }
+      valkyrie: { valLeft, valTop, valRight, valBottom }
     });
   }
 
