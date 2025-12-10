@@ -175,20 +175,17 @@ function StartPage() {
 
     // Check valkyrie collisions
 const valkyrieCollision = valkyrieList.some(valk => {
-  const sTop = valk.top + padding;
-  const sLeft = valk.left + padding;
-  const sRight = sLeft + collisionSize;
-  const sBottom = sTop + collisionSize;
+  const valTop = valk.top + padding;
+  const valLeft = valk.left + padding;
+  const valRight = valLeft + collisionSize;
+  const valBottom = valTop + collisionSize;
 
   const collision = !(
-    vRight < sLeft &&
-    vLeft > sRight &&
-    vBottom < sTop &&
-    vTop > sBottom &&
-    vLeft < sRight &&    // Viking left < Skeleton right
-    vRight > sLeft &&    // Viking right > Skeleton left
-    vTop < sBottom &&    // Viking top < Skeleton bottom
-    vBottom > sTop  
+    vRight < valLeft &&
+    vLeft > valRight &&
+    vBottom < valTop &&
+    vTop > valBottom
+    
   );
 
   if (collision) {
