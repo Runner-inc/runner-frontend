@@ -13,6 +13,7 @@ function StartPage() {
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
   const [valkyries, setValkyries] = useState([]);
+  const [nextEnemyType, setNextEnemyType] = useState('skeleton'); // 'skeleton' or 'valkyrie'
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -197,51 +198,85 @@ function StartPage() {
   };
 
   useEffect(() => {
-    console.log('Skeleton useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
+    console.log('Enemies useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
-      console.log('Starting skeleton spawning');
-      const spawnSkeleton = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const minLeft = 0;
-        const maxLeft = window.innerWidth - 75; // ensure visible
-        const skeletonCount = 1 + Math.floor(Math.random() * 3);
-        console.log(`Creating ${skeletonCount} skeletons`);
-        const baseLeft = window.innerWidth + 50;
+      console.log('Starting enemy spawning');
+      const spawnEnemy = () => {
+        if (nextEnemyType === 'skeleton') {
+          const floorTop = window.innerHeight - getFloorHeight();
+          const minLeft = 0;
+          const maxLeft = window.innerWidth - 75; // ensure visible
+          const skeletonCount = 1 + Math.floor(Math.random() * 3);
+          console.log(`Creating ${skeletonCount} skeletons`);
+          const baseLeft = window.innerWidth + 50;
 
-        const newSkeletons = Array.from({ length: skeletonCount }, (_, i) => {
-          const rawLeft = baseLeft + i * 25;
-          const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
-          const top = floorTop + 29 - 75;
-          console.log('Skeleton created at', left, top);
-          return {
-            id: Date.now() + Math.random() + i,
-            left,
-            top,
-            speed: 2 + Math.random() * 2
-          };
-        });
+          const newSkeletons = Array.from({ length: skeletonCount }, (_, i) => {
+            const rawLeft = baseLeft + i * 25;
+            const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
+            const top = floorTop + 29 - 75;
+            console.log('Skeleton created at', left, top);
+            return {
+              id: Date.now() + Math.random() + i,
+              left,
+              top,
+              speed: 2 + Math.random() * 2
+            };
+          });
 
-        console.log('Spawning skeletons:', newSkeletons);
-        setSkeletons(prev => [...prev, ...newSkeletons]);
+          console.log('Spawning skeletons:', newSkeletons);
+          setSkeletons(prev => [...prev, ...newSkeletons]);
+          setNextEnemyType('valkyrie');
+        } else {
+          const floorTop = window.innerHeight - getFloorHeight();
+          const minLeft = 0;
+          const maxLeft = window.innerWidth - 75;
+          const minTop = 30; // clamp above ground
+          const maxTop = floorTop - 80; // so they don't overlap pixel floor
+          const valkyrieCount = 1 + Math.floor(Math.random() * 2);
+          console.log(`Creating ${valkyrieCount} valkyries`);
+          const baseLeft = window.innerWidth + 50;
+
+          const newValkyries = Array.from({ length: valkyrieCount }, (_, i) => {
+            const rawLeft = baseLeft + i * 30;
+            const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
+            let rawTop = floorTop - 150 - Math.random() * 200;
+            rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
+            console.log('Valkyrie created at', left, rawTop);
+            return {
+              id: Date.now() + Math.random() + i + 1000,
+              left,
+              top: rawTop,
+              speed: 2.5 + Math.random() * 1.5
+            };
+          });
+
+          console.log('Spawning valkyries:', newValkyries);
+          setValkyries(prev => [...prev, ...newValkyries]);
+          setNextEnemyType('skeleton');
+        }
       };
 
       const scheduleSpawn = () => {
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
-            console.log('Spawning next batch of skeletons');
-            spawnSkeleton();
+            console.log('Spawning next enemy');
+            spawnEnemy();
             // Schedule next spawn with current elapsed time
-            const nextDelay = getSpawnDelay(2000, 5000, elapsedSeconds);
-            console.log(`Scheduling next skeleton spawn in ${nextDelay}ms (elapsed: ${elapsedSeconds}s)`);
+            const nextDelay = nextEnemyType === 'skeleton' ?
+              getSpawnDelay(2000, 5000, elapsedSeconds) :
+              getSpawnDelay(3000, 7000, elapsedSeconds);
+            console.log(`Scheduling next ${nextEnemyType} spawn in ${nextDelay}ms (elapsed: ${elapsedSeconds}s)`);
             scheduleSpawn();
           } else {
-            console.log('Game over, stopping skeleton spawns');
+            console.log('Game over, stopping enemy spawns');
           }
-        }, getSpawnDelay(2000, 5000, elapsedSeconds));
+        }, nextEnemyType === 'skeleton' ?
+          getSpawnDelay(2000, 5000, elapsedSeconds) :
+          getSpawnDelay(3000, 7000, elapsedSeconds));
       };
 
-      // Spawn first skeleton immediately
-      spawnSkeleton();
+      // Spawn first enemy immediately
+      spawnEnemy();
       scheduleSpawn();
 
       const animateSkeletons = () => {
@@ -279,65 +314,17 @@ function StartPage() {
       skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
     } else {
       setSkeletons([]);
+      setNextEnemyType('skeleton'); // Reset for next game
     }
 
     return () => {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver]);
+  }, [gameStarted, vikingReachedBottom, gameOver, nextEnemyType, elapsedSeconds]);
 
   useEffect(() => {
-    console.log('Valkyrie useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
-      console.log('Starting valkyrie spawning');
-      const spawnValkyrie = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const minLeft = 0;
-        const maxLeft = window.innerWidth - 75;
-        const minTop = 30; // clamp above ground
-        const maxTop = floorTop - 80; // so they don't overlap pixel floor
-        const valkyrieCount = 1 + Math.floor(Math.random() * 2);
-        console.log(`Creating ${valkyrieCount} valkyries`);
-        const baseLeft = window.innerWidth + 50;
-
-        const newValkyries = Array.from({ length: valkyrieCount }, (_, i) => {
-          const rawLeft = baseLeft + i * 30;
-          const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
-          let rawTop = floorTop - 150 - Math.random() * 200;
-          rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
-          console.log('Valkyrie created at', left, rawTop);
-          return {
-            id: Date.now() + Math.random() + i + 1000,
-            left,
-            top: rawTop,
-            speed: 2.5 + Math.random() * 1.5
-          };
-        });
-
-        console.log('Spawning valkyries:', newValkyries);
-        setValkyries(prev => [...prev, ...newValkyries]);
-      };
-
-      const scheduleValkyrieSpawn = () => {
-        valkyrieSpawnIntervalRef.current = setTimeout(() => {
-          if (!gameOver) {
-            console.log('Spawning next batch of valkyries');
-            spawnValkyrie();
-            // Schedule next spawn with current elapsed time
-            const nextDelay = getSpawnDelay(3000, 7000, elapsedSeconds);
-            console.log(`Scheduling next valkyrie spawn in ${nextDelay}ms (elapsed: ${elapsedSeconds}s)`);
-            scheduleValkyrieSpawn();
-          } else {
-            console.log('Game over, stopping valkyrie spawns');
-          }
-        }, getSpawnDelay(3000, 7000, elapsedSeconds)); // spawn less frequently than skeletons
-      };
-
-      // Spawn first valkyrie immediately
-      spawnValkyrie();
-      scheduleValkyrieSpawn();
-
       const animateValkyries = () => {
         if (gameOver) return;
 
@@ -377,9 +364,8 @@ function StartPage() {
 
     return () => {
       if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
-      if (valkyrieSpawnIntervalRef.current) clearTimeout(valkyrieSpawnIntervalRef.current);
     };
-  }, [gameStarted, vikingReachedBottom, gameOver]);
+  }, [gameStarted, vikingReachedBottom, gameOver, skeletons]);
 
   useEffect(() => {
     if (gameOver) submitScore();
@@ -394,6 +380,7 @@ function StartPage() {
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
     setValkyries([]);
+    setNextEnemyType('skeleton');
     velocityRef.current = 0;
     setElapsedSeconds(0);
     scoreSubmittedRef.current = false;
