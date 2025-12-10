@@ -181,9 +181,9 @@ function StartPage() {
       const sBottom = sTop + collisionSize;
 
       const collision = !(
-        vRight < sLeft &&
-        vLeft > sRight &&
-        vBottom < sTop &&
+        vRight < sLeft ||
+        vLeft > sRight ||
+        vBottom < sTop ||
         vTop > sBottom
         
       );
