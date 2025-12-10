@@ -227,16 +227,19 @@ function StartPage() {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
           const maxLeft = window.innerWidth - 75; // ensure visible
+          const minTop = 30; // clamp above ground
+          const maxTop = floorTop - 80; // so they don't overlap pixel floor
           const baseLeft = window.innerWidth + 50;
           const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-          const top = floorTop + 29 - 75;
+          let rawTop = floorTop - 150 - Math.random() * 200; // Random height between ground and upper limit
+          rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
           console.log('Creating 1 valkyrie');
-          console.log('Valkyrie created at', left, top);
+          console.log('Valkyrie created at', left, rawTop);
           const newValkyrie = {
             id: Date.now() + Math.random() + 1000,
             left,
-            top,
-            speed: 2 + Math.random() * 2
+            top: rawTop,
+            speed: 2.5 + Math.random() * 1.5 // Slightly faster than skeletons
           };
 
           console.log('Spawning valkyrie:', newValkyrie);
@@ -465,7 +468,7 @@ function StartPage() {
           {valkyries.map(v => {
             console.log('Rendering valkyrie on screen:', v, 'Total valkyries:', valkyries.length);
             return (
-              <div key={v.id} className="skeleton-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
+              <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
                 <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
               </div>
             );
