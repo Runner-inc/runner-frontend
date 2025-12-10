@@ -13,7 +13,6 @@ function StartPage() {
   const [vikingPosition, setVikingPosition] = useState({ top: -100, left: 0 });
   const [skeletons, setSkeletons] = useState([]);
   const [valkyries, setValkyries] = useState([]);
-  const [nextEnemyType, setNextEnemyType] = useState('skeleton'); // 'skeleton' or 'valkyrie'
   const enemiesOnScreenRef = useRef(0);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
@@ -203,7 +202,10 @@ function StartPage() {
     if (gameStarted && vikingReachedBottom && !gameOver) {
       console.log('Starting enemy spawning');
       const spawnEnemy = () => {
-        if (nextEnemyType === 'skeleton') {
+        // Randomly choose between skeleton and valkyrie (50% chance each)
+        const enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
+
+        if (enemyType === 'skeleton') {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
           const maxLeft = window.innerWidth - 75; // ensure visible
@@ -221,7 +223,6 @@ function StartPage() {
 
           console.log('Spawning skeleton:', newSkeleton);
           setSkeletons(prev => [...prev, newSkeleton]);
-          setNextEnemyType('valkyrie');
         } else {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
@@ -240,7 +241,6 @@ function StartPage() {
 
           console.log('Spawning valkyrie:', newValkyrie);
           setValkyries(prev => [...prev, newValkyrie]);
-          setNextEnemyType('skeleton');
         }
       };
 
@@ -302,7 +302,6 @@ function StartPage() {
       skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
     } else {
       setSkeletons([]);
-      setNextEnemyType('skeleton'); // Reset for next game
     }
 
     return () => {
@@ -371,7 +370,6 @@ function StartPage() {
     setVikingPosition({ top: -100, left: 0 });
     setSkeletons([]);
     setValkyries([]);
-    setNextEnemyType('skeleton');
     enemiesOnScreenRef.current = 0;
     velocityRef.current = 0;
     setElapsedSeconds(0);
