@@ -181,12 +181,18 @@ function StartPage() {
       const sBottom = sTop + collisionSize;
 
       const collision = (
-        vRight < sLeft &&
-        vLeft > sRight &&
-        vBottom < sTop &&
-        vTop > sBottom
-        
+        vLeft < sRight &&    // Viking left < Skeleton right
+        vRight > sLeft &&    // Viking right > Skeleton left
+        vTop < sBottom &&    // Viking top < Skeleton bottom
+        vBottom > sTop       // Viking bottom > Skeleton top
       );
+      // const collision = (
+      //   vRight < sLeft &&
+      //   vLeft > sRight &&
+      //   vBottom < sTop &&
+      //   vTop > sBottom
+        
+      // );
 
       if (collision) {
         console.log('COLLISION with valkyrie:', {
