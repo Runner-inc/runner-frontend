@@ -142,7 +142,7 @@ function StartPage() {
     const padding = (spriteSize - collisionSize) / 2;
 
     // Viking collision box (adjusted for jumping)
-    const vTop = vPos.top + padding;
+    const vTop = vPos.top + padding + (jumping ? -225 : 0);
     const vLeft = vPos.left + padding;
     const vRight = vLeft + collisionSize ;
     const vBottom = vTop + collisionSize ;
@@ -175,7 +175,7 @@ function StartPage() {
 
     // Check valkyrie collisions
     const valkyrieCollision = valkyrieList.some(valk => {
-      const sTop = valk.top + padding;
+      const vTop = vPos.top + padding + (jumping ? -225 : 0);
       const sLeft = valk.left + padding;
       const sRight = sLeft + collisionSize;
       const sBottom = sTop + collisionSize;
