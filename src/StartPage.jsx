@@ -137,14 +137,16 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
-    const spriteWidth = 75;   // ширина спрайта
-    const spriteHeight = 75;  // высота спрайта
-    const collisionPadding = 15; // отступ от краёв спрайта
-    
-    const vTop = vPos.top + collisionPadding;
-    const vLeft = vPos.left + collisionPadding;
-    const vRight = vLeft + spriteWidth - 2*collisionPadding;
-    const vBottom = vTop + spriteHeight - 2*collisionPadding;
+    const spriteSize = 75;
+    const collisionSize = 45;
+    const padding = (spriteSize - collisionSize) / 2;
+
+    // Viking collision box (adjusted for jumping)
+    const vTop = vPos.top + padding + (jumping ? -190 : 0 );
+    const vLeft = vPos.left + padding;
+    const vRight = vLeft + collisionSize ;
+    const vBottom = vTop + collisionSize ;
+
     // Debug: Show collision boxes (remove in production)
     console.log('Viking collision box:', { vLeft, vTop, vRight, vBottom });
 
