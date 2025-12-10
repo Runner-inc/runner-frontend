@@ -140,13 +140,15 @@ function StartPage() {
     const spriteSize = 75;
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
-
-    // Viking collision box (adjusted for jumping)
-    const vTop = vPos.top + padding + (jumping ? -225 : 0);
+    
+    // Viking collision box
+    // Теперь смещение вверх зависит от того, находится ли он в воздухе
+    const verticalOffset = isAirborne ? -225 : 0;
+    
+    const vTop = vPos.top + padding + verticalOffset;
     const vLeft = vPos.left + padding;
     const vRight = vLeft + collisionSize;
     const vBottom = vTop + collisionSize;
-
     // Debug: Show collision boxes (remove in production)
     console.log('Viking collision box:', { vLeft, vTop, vRight, vBottom });
 
