@@ -199,7 +199,7 @@ function StartPage() {
       return collision;
     });
 
-    return skeletonCollision && valkyrieCollision;
+    return skeletonCollision || valkyrieCollision;
   };
 
   useEffect(() => {
