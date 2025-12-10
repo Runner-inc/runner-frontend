@@ -140,15 +140,13 @@ function StartPage() {
     const spriteSize = 75;
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
-    
-    // Viking collision box
-    // Теперь смещение вверх зависит от того, находится ли он в воздухе
-    const verticalOffset = isAirborne ? -225 : 0;
-    
-    const vTop = vPos.top + padding + verticalOffset;
+
+    // Viking collision box (adjusted for jumping)
+    const vTop = vPos.top + padding + (jumping ? -225 : 0);
     const vLeft = vPos.left + padding;
-    const vRight = vLeft + collisionSize;
-    const vBottom = vTop + collisionSize;
+    const vRight = vLeft + collisionSize + padding;
+    const vBottom = vTop + collisionSize + padding;
+
     // Debug: Show collision boxes (remove in production)
     console.log('Viking collision box:', { vLeft, vTop, vRight, vBottom });
 
@@ -176,29 +174,29 @@ function StartPage() {
     });
 
     // Check valkyrie collisions
-    const valkyrieCollision = valkyrieList.some(valk => {
-      const sTop = valk.top + padding;
-      const sLeft = valk.left + padding;
-      const sRight = sLeft + collisionSize;
-      const sBottom = sTop + collisionSize;
-    
-      const collision = !(
-        vRight < sLeft ||
-        vLeft > sRight ||
-        vBottom < sTop ||
-        vTop > sBottom
-      );
-    
-      if (collision) {
-        console.log('COLLISION with valkyrie:', {
-          valk,
-          viking: { vLeft, vTop, vRight, vBottom },
-          valkyrie: { sLeft, sTop, sRight, sBottom }
-        });
-      }
-    
-      return collision;
+const valkyrieCollision = valkyrieList.some(valk => {
+  const sTop = valk.top + padding;
+  const sLeft = valk.left + padding;
+  const sRight = sLeft + collisionSize;
+  const sBottom = sTop + collisionSize;
+
+  const collision = !(
+    vRight < sLeft ||
+    vLeft > sRight ||
+    vBottom < sTop ||
+    vTop > sBottom
+  );
+
+  if (collision) {
+    console.log('COLLISION with valkyrie:', {
+      valk,
+      viking: { vLeft, vTop, vRight, vBottom },
+      valkyrie: { sLeft, sTop, sRight, sBottom }
     });
+  }
+
+  return collision;
+});
 
     return skeletonCollision || valkyrieCollision;
   };
