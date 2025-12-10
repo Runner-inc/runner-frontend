@@ -183,8 +183,8 @@ function StartPage() {
       const collision = (
         vLeft < sRight &&    // Viking left < Skeleton right
         vRight > sLeft &&    // Viking right > Skeleton left
-        vTop < sBottom &&    // Viking top < Skeleton bottom
-        vBottom > sTop       // Viking bottom > Skeleton top
+        vTop > sBottom &&    // Viking top < Skeleton bottom
+        vBottom < sTop       // Viking bottom > Skeleton top
       );
       // const collision = (
       //   vRight < sLeft &&
