@@ -206,25 +206,20 @@ function StartPage() {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
           const maxLeft = window.innerWidth - 75; // ensure visible
-          const skeletonCount = 1 + Math.floor(Math.random() * 3);
-          console.log(`Creating ${skeletonCount} skeletons`);
           const baseLeft = window.innerWidth + 50;
+          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+          const top = floorTop + 29 - 75;
+          console.log('Creating 1 skeleton');
+          console.log('Skeleton created at', left, top);
+          const newSkeleton = {
+            id: Date.now() + Math.random(),
+            left,
+            top,
+            speed: 2 + Math.random() * 2
+          };
 
-          const newSkeletons = Array.from({ length: skeletonCount }, (_, i) => {
-            const rawLeft = baseLeft + i * 25;
-            const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
-            const top = floorTop + 29 - 75;
-            console.log('Skeleton created at', left, top);
-            return {
-              id: Date.now() + Math.random() + i,
-              left,
-              top,
-              speed: 2 + Math.random() * 2
-            };
-          });
-
-          console.log('Spawning skeletons:', newSkeletons);
-          setSkeletons(prev => [...prev, ...newSkeletons]);
+          console.log('Spawning skeleton:', newSkeleton);
+          setSkeletons(prev => [...prev, newSkeleton]);
           setNextEnemyType('valkyrie');
         } else {
           const floorTop = window.innerHeight - getFloorHeight();
@@ -232,26 +227,21 @@ function StartPage() {
           const maxLeft = window.innerWidth - 75;
           const minTop = 30; // clamp above ground
           const maxTop = floorTop - 80; // so they don't overlap pixel floor
-          const valkyrieCount = 1 + Math.floor(Math.random() * 2);
-          console.log(`Creating ${valkyrieCount} valkyries`);
           const baseLeft = window.innerWidth + 50;
+          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+          let rawTop = floorTop - 150 - Math.random() * 200;
+          rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
+          console.log('Creating 1 valkyrie');
+          console.log('Valkyrie created at', left, rawTop);
+          const newValkyrie = {
+            id: Date.now() + Math.random() + 1000,
+            left,
+            top: rawTop,
+            speed: 2.5 + Math.random() * 1.5
+          };
 
-          const newValkyries = Array.from({ length: valkyrieCount }, (_, i) => {
-            const rawLeft = baseLeft + i * 30;
-            const left = Math.min(Math.max(rawLeft, minLeft), maxLeft);
-            let rawTop = floorTop - 150 - Math.random() * 200;
-            rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
-            console.log('Valkyrie created at', left, rawTop);
-            return {
-              id: Date.now() + Math.random() + i + 1000,
-              left,
-              top: rawTop,
-              speed: 2.5 + Math.random() * 1.5
-            };
-          });
-
-          console.log('Spawning valkyries:', newValkyries);
-          setValkyries(prev => [...prev, ...newValkyries]);
+          console.log('Spawning valkyrie:', newValkyrie);
+          setValkyries(prev => [...prev, newValkyrie]);
           setNextEnemyType('skeleton');
         }
       };
