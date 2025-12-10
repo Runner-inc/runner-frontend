@@ -245,12 +245,12 @@ function StartPage() {
       };
 
       const checkAndSpawn = () => {
-        // Only spawn if no enemies are currently on screen
-        if (enemiesOnScreenRef.current === 0) {
-          console.log('No enemies on screen, spawning new enemy');
+        // Spawn enemy if there are less than 2 enemies on screen
+        if (enemiesOnScreenRef.current < 2) {
+          console.log(`Enemies on screen: ${enemiesOnScreenRef.current}, spawning new enemy`);
           spawnEnemy();
         } else {
-          console.log('Enemies still on screen, waiting...');
+          console.log('Maximum enemies on screen, waiting...');
         }
 
         // Always schedule next check
