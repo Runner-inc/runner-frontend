@@ -32,20 +32,8 @@ function StartPage() {
   const isJumpingRef = useRef(isJumping);
   const gravity = 0.8;
 
-  // Calculate spawn rate - gets faster every 10 seconds
-  const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
-    const intervals = Math.floor(elapsedSeconds / 10); // Every 10 seconds
-    const speedIncrease = intervals * 0.3; // 30% faster each interval
-    const minDelay = Math.max(baseMin * (1 - speedIncrease), 500); // Minimum 500ms
-    const maxDelay = Math.max(baseMax * (1 - speedIncrease), 800); // Minimum 800ms
-    return minDelay + Math.random() * (maxDelay - minDelay);
-  };
-
-  // Calculate current difficulty multiplier for display
-  const getDifficultyMultiplier = (elapsedSeconds) => {
-    const intervals = Math.floor(elapsedSeconds / 10);
-    return (1 + intervals * 0.3).toFixed(1);
-  };
+  const spriteSize = 75;        // Размер спрайта викинга
+  const collisionPadding = 15;  // Отступ для коллизии
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
@@ -80,11 +68,10 @@ function StartPage() {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
-          if (newTop + 75 >= floorTop) {
-            console.log('Viking reached bottom! floorTop:', floorTop, 'newTop:', newTop);
+          if (newTop + spriteSize >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
-            return { top: floorTop - 75, left: 0 };
+            return { top: floorTop - spriteSize, left: 0 };
           }
           return { ...prev, top: newTop };
         });
@@ -116,7 +103,6 @@ function StartPage() {
     scoreSubmittedRef.current = true;
 
     try {
-      // Получаем текущий рекорд
       const res = await fetch(`https://runner-backend-sandy.vercel.app/api/users/${telegramUserId}`);
       const data = await res.json();
       const currentBest = data?.result || 0;
@@ -127,256 +113,123 @@ function StartPage() {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ result: elapsedSeconds })
         });
-        console.log(`New highscore submitted: ${elapsedSeconds}`);
-      } else {
-        console.log(`Score ${elapsedSeconds} not higher than current best ${currentBest}, not submitted.`);
       }
     } catch (err) {
       console.warn("Score submit failed:", err);
     }
   };
 
-  const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
-    const spriteSize = 75;
-    const collisionSize = 45;
-    const padding = (spriteSize - collisionSize) / 2;
+  const checkCollision = (vPos, skeletonList, valkyrieList) => {
+    const vTop = vPos.top + collisionPadding;
+    const vLeft = vPos.left + collisionPadding;
+    const vRight = vLeft + spriteSize - 2 * collisionPadding;
+    const vBottom = vTop + spriteSize - 2 * collisionPadding;
 
-    // Viking collision box (adjusted for jumping)
-    const vTop = vPos.top + padding + (jumping ? -190 : 0 );
-    const vLeft = vPos.left + padding;
-    const vRight = vLeft + collisionSize ;
-    const vBottom = vTop + collisionSize ;
+    const checkRectCollision = (rect1, rect2) => (
+      rect1.left < rect2.right &&
+      rect1.right > rect2.left &&
+      rect1.top < rect2.bottom &&
+      rect1.bottom > rect2.top
+    );
 
-    // Debug: Show collision boxes (remove in production)
-    console.log('Viking collision box:', { vLeft, vTop, vRight, vBottom });
-
-    console.log('Checking collision - Viking box:', { vLeft, vTop, vRight, vBottom, jumping }, 'Skeletons:', skeletonList.length, 'Valkyries:', valkyrieList.length);
-
-    // Check skeleton collisions
     const skeletonCollision = skeletonList.some(skel => {
-      const sTop = skel.top + padding;
-      const sLeft = skel.left + padding;
-      const sRight = sLeft + collisionSize;
-      const sBottom = sTop + collisionSize;
-
-      const collision = (
-        vLeft < sRight &&    // Viking left < Skeleton right
-        vRight > sLeft &&    // Viking right > Skeleton left
-        vTop < sBottom &&    // Viking top < Skeleton bottom
-        vBottom > sTop       // Viking bottom > Skeleton top
-      );
-
-      if (collision) {
-        console.log('COLLISION with skeleton:', { skel, viking: { vLeft, vTop, vRight, vBottom }, skeleton: { sLeft, sTop, sRight, sBottom } });
-      }
-
-      return collision;
+      const skelRect = {
+        top: skel.top + collisionPadding,
+        left: skel.left + collisionPadding,
+        right: skel.left + spriteSize - collisionPadding,
+        bottom: skel.top + spriteSize - collisionPadding
+      };
+      return checkRectCollision({ top: vTop, left: vLeft, right: vRight, bottom: vBottom }, skelRect);
     });
 
-    // Check valkyrie collisions
     const valkyrieCollision = valkyrieList.some(valk => {
-      const sTop = valk.top + padding;
-      const sLeft = valk.left + padding;
-      const sRight = sLeft + collisionSize;
-      const sBottom = sTop + collisionSize;
-
-      const collision = (
-        vLeft < sRight &&    // Viking left < Skeleton right
-        vRight > sLeft &&    // Viking right > Skeleton left
-        vTop < sBottom &&    // Viking top < Skeleton bottom
-        vBottom > sTop       // Viking bottom > Skeleton top
-      );
-      // const collision = (
-      //   vRight < sLeft &&
-      //   vLeft > sRight &&
-      //   vBottom < sTop &&
-      //   vTop > sBottom
-        
-      // );
-
-      if (collision) {
-        console.log('COLLISION with valkyrie:', {
-          valk,
-          viking: { vLeft, vTop, vRight, vBottom },
-          valkyrie: { sLeft, sTop, sRight, sBottom }
-        });
-      }
-
-      return collision;
+      const valkRect = {
+        top: valk.top + collisionPadding,
+        left: valk.left + collisionPadding,
+        right: valk.left + spriteSize - collisionPadding,
+        bottom: valk.top + spriteSize - collisionPadding
+      };
+      return checkRectCollision({ top: vTop, left: vLeft, right: vRight, bottom: vBottom }, valkRect);
     });
 
     return skeletonCollision || valkyrieCollision;
   };
 
+  // --- Spawn and animate skeletons ---
   useEffect(() => {
-    console.log('Enemies useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
-      console.log('Starting enemy spawning');
-      const spawnEnemy = () => {
-        // Randomly choose between skeleton and valkyrie (50% chance each)
-        const enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
-
-        if (enemyType === 'skeleton') {
+      const spawnSkeleton = () => {
+        if (skeletons.length === 0 && enemiesOnScreenRef.current < 2) {
           const floorTop = window.innerHeight - getFloorHeight();
-          const minLeft = 0;
-          const maxLeft = window.innerWidth - 75; // ensure visible
-          const baseLeft = window.innerWidth + 50;
-          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-          const top = floorTop + 29 - 75;
-          console.log('Creating 1 skeleton');
-          console.log('Skeleton created at', left, top);
-          const newSkeleton = {
-            id: Date.now() + Math.random(),
-            left,
-            top,
-            speed: 2 + Math.random() * 2
-          };
-
-          console.log('Spawning skeleton:', newSkeleton);
-          setSkeletons(prev => [...prev, newSkeleton]);
-        } else {
-          const floorTop = window.innerHeight - getFloorHeight();
-          const minLeft = 0;
-          const maxLeft = window.innerWidth - 75; // ensure visible
-          const minTop = 30; // clamp above ground
-          const maxTop = floorTop - 80; // so they don't overlap pixel floor
-          const baseLeft = window.innerWidth + 50;
-          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-          let rawTop = floorTop - 150 - Math.random() * 200; // Random height between ground and upper limit
-          rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
-          console.log('Creating 1 valkyrie');
-          console.log('Valkyrie created at', left, rawTop);
-          const newValkyrie = {
-            id: Date.now() + Math.random() + 1000,
-            left,
-            top: rawTop,
-            speed: 2.5 + Math.random() * 1.5 // Slightly faster than skeletons
-          };
-
-          console.log('Spawning valkyrie:', newValkyrie);
-          setValkyries(prev => [...prev, newValkyrie]);
+          const left = window.innerWidth + 50;
+          const top = floorTop + 29 - spriteSize;
+          const newSkeleton = { id: Date.now(), top, left, speed: 2 + Math.random() * 2 };
+          setSkeletons([newSkeleton]);
+          enemiesOnScreenRef.current += 1;
         }
       };
-
-      const checkAndSpawn = () => {
-        // Spawn enemy if there are less than 2 enemies on screen
-        if (enemiesOnScreenRef.current < 2) {
-          console.log(`Enemies on screen: ${enemiesOnScreenRef.current}, spawning new enemy`);
-          spawnEnemy();
-        } else {
-          console.log('Maximum enemies on screen, waiting...');
-        }
-
-        // Always schedule next check
-        skeletonSpawnIntervalRef.current = setTimeout(() => {
-          if (!gameOver) {
-            checkAndSpawn();
-          }
-        }, 500); // Check every 500ms
-      };
-
-      // Start checking for spawn opportunities
-      checkAndSpawn();
 
       const animateSkeletons = () => {
-        if (gameOver) return;
+        setSkeletons(prev => prev
+          .map(s => ({ ...s, left: s.left - s.speed }))
+          .filter(s => s.left > -100)
+        );
 
-        setSkeletons(prev => {
-          const updated = prev
-            .map(s => {
-              const newLeft = s.left - s.speed;
-              console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft}`);
-              return { ...s, left: newLeft };
-            })
-            .filter(s => {
-              const keep = s.left > -100;
-              if (!keep) console.log(`Skeleton ${s.id} removed (off-screen)`);
-              return keep;
-            });
-
-          console.log(`Total skeletons after animation: ${updated.length}`);
-
-          // Update enemy count ref
-          enemiesOnScreenRef.current = updated.length + valkyries.length;
-
-          if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
-            console.log('Collision detected! Game over.');
-            setGameOver(true);
-            clearTimeout(skeletonSpawnIntervalRef.current);
-            clearTimeout(valkyrieSpawnIntervalRef.current);
-            cancelAnimationFrame(animationFrameRef.current);
-          }
-
-          return updated;
-        });
+        if (checkCollision(vikingPositionRef.current, skeletons, valkyries)) {
+          setGameOver(true);
+        }
 
         if (!gameOver) skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
       };
 
+      spawnSkeleton();
       skeletonAnimationRef.current = requestAnimationFrame(animateSkeletons);
-    } else {
-      setSkeletons([]);
+
+      return () => {
+        if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
+      };
     }
+  }, [gameStarted, vikingReachedBottom, gameOver, skeletons, valkyries]);
 
-    return () => {
-      if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
-      if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
-    };
-  }, [gameStarted, vikingReachedBottom, gameOver]);
-
+  // --- Spawn and animate valkyries ---
   useEffect(() => {
     if (gameStarted && vikingReachedBottom && !gameOver) {
+      const spawnValkyrie = () => {
+        if (valkyries.length === 0 && enemiesOnScreenRef.current < 2) {
+          const floorTop = window.innerHeight - getFloorHeight();
+          const left = window.innerWidth + 50;
+          const top = Math.max(30, floorTop - 150 - Math.random() * 200);
+          const newValk = { id: Date.now() + 1000, top, left, speed: 2.5 + Math.random() * 1.5 };
+          setValkyries([newValk]);
+          enemiesOnScreenRef.current += 1;
+        }
+      };
+
       const animateValkyries = () => {
-        if (gameOver) return;
+        setValkyries(prev => prev
+          .map(v => ({ ...v, left: v.left - v.speed }))
+          .filter(v => v.left > -100)
+        );
 
-        setValkyries(prev => {
-          const updated = prev
-            .map(v => {
-              const newLeft = v.left - v.speed;
-              console.log(`Valkyrie ${v.id} moving from ${v.left} to ${newLeft}`);
-              return { ...v, left: newLeft };
-            })
-            .filter(v => {
-              const keep = v.left > -100;
-              if (!keep) console.log(`Valkyrie ${v.id} removed (off-screen)`);
-              return keep;
-            });
-
-          console.log(`Total valkyries after animation: ${updated.length}`);
-
-          // Update enemy count ref
-          enemiesOnScreenRef.current = skeletons.length + updated.length;
-
-          if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
-            console.log('Collision detected! Game over.');
-            setGameOver(true);
-            clearTimeout(skeletonSpawnIntervalRef.current);
-            clearTimeout(valkyrieSpawnIntervalRef.current);
-            cancelAnimationFrame(animationFrameRef.current);
-          }
-
-          return updated;
-        });
+        if (checkCollision(vikingPositionRef.current, skeletons, valkyries)) {
+          setGameOver(true);
+        }
 
         if (!gameOver) valkyrieAnimationRef.current = requestAnimationFrame(animateValkyries);
       };
 
+      spawnValkyrie();
       valkyrieAnimationRef.current = requestAnimationFrame(animateValkyries);
-    } else {
-      setValkyries([]);
+
+      return () => {
+        if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
+      };
     }
+  }, [gameStarted, vikingReachedBottom, gameOver, skeletons, valkyries]);
 
-    return () => {
-      if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
-    };
-  }, [gameStarted, vikingReachedBottom, gameOver, skeletons]);
-
-  useEffect(() => {
-    if (gameOver) submitScore();
-  }, [gameOver]);
+  useEffect(() => { if (gameOver) submitScore(); }, [gameOver]);
 
   const handleStartGame = () => {
-    console.log('Starting game');
     setGameStarted(true);
     setGameOver(false);
     setVikingReachedBottom(false);
@@ -413,10 +266,7 @@ function StartPage() {
 
   const handlePageTouch = e => {
     e.preventDefault();
-    // Only allow jump on touch start, prevent holding down
-    if (e.type === 'touchstart' && !isJumping) {
-      handlePageClick();
-    }
+    if (e.type === 'touchstart' && !isJumping) handlePageClick();
   };
 
   if (error) return <div className="error">{error}</div>;
@@ -431,7 +281,7 @@ function StartPage() {
       <div className="parallax-bg">
         <video
           className="bg-video"
-          src="https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/grok-video-417d7c90-9f51-4e07-93c7-09cd5a9be976%20(online-video-cutter.com).mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2dyb2stdmlkZW8tNDE3ZDdjOTAtOWY1MS00ZTA3LTkzYzctMDljZDVhOWJlOTc2IChvbmxpbmUtdmlkZW8tY3V0dGVyLmNvbSkubXA0IiwiaWF0IjoxNzY1MDI5NDY4LCJleHAiOjc3NTY4Njk0Njh9.T_MMv3XFjv8dldEEf5U3Zh3XO-3nPKk0pXV8Z3MAmm4"
+          src="https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/grok-video-417d7c90-9f51-4e07-93c7-09cd5a9be976%20(online-video-cutter.com).mp4"
           autoPlay muted loop playsInline preload="auto"
         />
       </div>
@@ -467,23 +317,17 @@ function StartPage() {
             )}
           </div>
 
-          {skeletons.map(s => {
-            console.log('Rendering skeleton on screen:', s, 'Total skeletons:', skeletons.length);
-            return (
-              <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
-                <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
-              </div>
-            );
-          })}
+          {skeletons.map(s => (
+            <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
+              <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+            </div>
+          ))}
 
-          {valkyries.map(v => {
-            console.log('Rendering valkyrie on screen:', v, 'Total valkyries:', valkyries.length);
-            return (
-              <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
-                <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
-              </div>
-            );
-          })}
+          {valkyries.map(v => (
+            <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
+              <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
+            </div>
+          ))}
 
           <div className="pixel-floor"></div>
 
