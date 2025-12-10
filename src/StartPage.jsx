@@ -175,7 +175,7 @@ function StartPage() {
 
     // Check valkyrie collisions
     const valkyrieCollision = valkyrieList.some(valk => {
-      const vTop = vPos.top + padding + (jumping ? -225 : 0);
+      const sTop = vPos.top + padding + (jumping ? -225 : 0);
       const sLeft = valk.left + padding;
       const sRight = sLeft + collisionSize;
       const sBottom = sTop + collisionSize;
