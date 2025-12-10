@@ -175,16 +175,16 @@ function StartPage() {
 
     // Check valkyrie collisions
     const valkyrieCollision = valkyrieList.some(valk => {
-      const valTop = valk.top + padding;
-      const valLeft = valk.left + padding;
-      const valRight = valLeft + collisionSize;
-      const valBottom = valTop + collisionSize;
+      const sTop = valk.top + padding;
+      const sLeft = valk.left + padding;
+      const sRight = sLeft + collisionSize;
+      const sBottom = sTop + collisionSize;
 
       const collision = !(
-        vRight < valLeft &&
-        vLeft > valRight &&
-        vBottom < valTop &&
-        vTop > valBottom
+        vRight < sLeft &&
+        vLeft > sRight &&
+        vBottom < sTop &&
+        vTop > sBottom
         
       );
 
@@ -192,7 +192,7 @@ function StartPage() {
         console.log('COLLISION with valkyrie:', {
           valk,
           viking: { vLeft, vTop, vRight, vBottom },
-          valkyrie: { valLeft, valTop, valRight, valBottom }
+          valkyrie: { sLeft, sTop, sRight, sBottom }
         });
       }
 
