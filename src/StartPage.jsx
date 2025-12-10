@@ -14,6 +14,7 @@ function StartPage() {
   const [skeletons, setSkeletons] = useState([]);
   const [valkyries, setValkyries] = useState([]);
   const enemiesOnScreenRef = useRef(0);
+  const collisionAnimationRef = useRef(null);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -272,6 +273,29 @@ function StartPage() {
       // Start checking for spawn opportunities
       checkAndSpawn();
 
+      // Separate collision detection loop that runs continuously
+      const checkCollisions = () => {
+        if (gameOver) return;
+
+        if (checkCollision(vikingPositionRef.current, skeletons, valkyries, isJumpingRef.current)) {
+          console.log('Collision detected! Game over.');
+          setGameOver(true);
+          clearTimeout(skeletonSpawnIntervalRef.current);
+          clearTimeout(valkyrieSpawnIntervalRef.current);
+          cancelAnimationFrame(skeletonAnimationRef.current);
+          cancelAnimationFrame(valkyrieAnimationRef.current);
+          cancelAnimationFrame(collisionAnimationRef.current);
+          return; // Exit early to prevent restarting the loop
+        }
+
+        if (!gameOver) {
+          collisionAnimationRef.current = requestAnimationFrame(checkCollisions);
+        }
+      };
+
+      // Start collision detection loop
+      collisionAnimationRef.current = requestAnimationFrame(checkCollisions);
+
       const animateSkeletons = () => {
         if (gameOver) return;
 
@@ -293,14 +317,6 @@ function StartPage() {
           // Update enemy count ref
           enemiesOnScreenRef.current = updated.length + valkyries.length;
 
-          if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
-            console.log('Collision detected! Game over.');
-            setGameOver(true);
-            clearTimeout(skeletonSpawnIntervalRef.current);
-            clearTimeout(valkyrieSpawnIntervalRef.current);
-            cancelAnimationFrame(animationFrameRef.current);
-          }
-
           return updated;
         });
 
@@ -314,6 +330,8 @@ function StartPage() {
 
     return () => {
       if (skeletonAnimationRef.current) cancelAnimationFrame(skeletonAnimationRef.current);
+      if (valkyrieAnimationRef.current) cancelAnimationFrame(valkyrieAnimationRef.current);
+      if (collisionAnimationRef.current) cancelAnimationFrame(collisionAnimationRef.current);
       if (skeletonSpawnIntervalRef.current) clearTimeout(skeletonSpawnIntervalRef.current);
     };
   }, [gameStarted, vikingReachedBottom, gameOver]);
@@ -340,14 +358,6 @@ function StartPage() {
 
           // Update enemy count ref
           enemiesOnScreenRef.current = skeletons.length + updated.length;
-
-          if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
-            console.log('Collision detected! Game over.');
-            setGameOver(true);
-            clearTimeout(skeletonSpawnIntervalRef.current);
-            clearTimeout(valkyrieSpawnIntervalRef.current);
-            cancelAnimationFrame(animationFrameRef.current);
-          }
 
           return updated;
         });
