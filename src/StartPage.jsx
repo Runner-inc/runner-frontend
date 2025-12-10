@@ -142,7 +142,7 @@ function StartPage() {
     const padding = (spriteSize - collisionSize) / 2;
 
     // Viking collision box (adjusted for jumping)
-    const vTop = vPos.top + padding + (jumping ? 120 : 0 );
+    const vTop = vPos.top + padding + (jumping ? -120 : 0 );
     const vLeft = vPos.left + padding;
     const vRight = vLeft + collisionSize ;
     const vBottom = vTop + collisionSize ;
