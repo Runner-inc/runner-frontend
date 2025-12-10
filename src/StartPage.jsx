@@ -179,18 +179,22 @@ function StartPage() {
       const sLeft = valk.left + padding;
       const sRight = sLeft + collisionSize;
       const sBottom = sTop + collisionSize;
-
-      const collision = (
-        vLeft < sRight &&    // Viking left < Valkyrie right
-        vRight > sLeft &&    // Viking right > Valkyrie left
-        vTop < sBottom &&    // Viking top < Valkyrie bottom
-        vBottom > sTop       // Viking bottom > Valkyrie top
+    
+      const collision = !(
+        vRight < sLeft ||
+        vLeft > sRight ||
+        vBottom < sTop ||
+        vTop > sBottom
       );
-
+    
       if (collision) {
-        console.log('COLLISION with valkyrie:', { valk, viking: { vLeft, vTop, vRight, vBottom }, valkyrie: { sLeft, sTop, sRight, sBottom } });
+        console.log('COLLISION with valkyrie:', {
+          valk,
+          viking: { vLeft, vTop, vRight, vBottom },
+          valkyrie: { sLeft, sTop, sRight, sBottom }
+        });
       }
-
+    
       return collision;
     });
 
