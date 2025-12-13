@@ -14,6 +14,8 @@ function StartPage() {
   const [skeletons, setSkeletons] = useState([]);
   const [valkyries, setValkyries] = useState([]);
   const enemiesOnScreenRef = useRef(0);
+  const skeletonCountRef = useRef(0);
+  const valkyrieCountRef = useRef(0);
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
@@ -56,6 +58,8 @@ function StartPage() {
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
+  useEffect(() => { skeletonCountRef.current = skeletons.length; }, [skeletons]);
+  useEffect(() => { valkyrieCountRef.current = valkyries.length; }, [valkyries]);
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
@@ -230,8 +234,8 @@ function StartPage() {
       console.log('Starting enemy spawning');
       const spawnEnemy = (canSpawnSkeleton, canSpawnValkyrie) => {
         // Double-check current counts to ensure no duplicates
-        const currentSkeletonCount = skeletons.length;
-        const currentValkyrieCount = valkyries.length;
+        const currentSkeletonCount = skeletonCountRef.current;
+        const currentValkyrieCount = valkyrieCountRef.current;
 
         // Choose enemy type based on availability and current counts
         let enemyType;
@@ -290,9 +294,9 @@ function StartPage() {
       };
 
       const checkAndSpawn = () => {
-        // Get current enemy counts (need to check both arrays since they update separately)
-        const currentSkeletonCount = skeletons.length;
-        const currentValkyrieCount = valkyries.length;
+        // Get current enemy counts from refs (always up-to-date)
+        const currentSkeletonCount = skeletonCountRef.current;
+        const currentValkyrieCount = valkyrieCountRef.current;
         const totalEnemies = currentSkeletonCount + currentValkyrieCount;
 
         // Spawn enemy if there are less than 2 enemies on screen AND specific type is not already present
@@ -336,7 +340,7 @@ function StartPage() {
           console.log(`Total skeletons after animation: ${updated.length}`);
 
           // Update enemy count ref
-          enemiesOnScreenRef.current = updated.length + valkyries.length;
+          enemiesOnScreenRef.current = updated.length + valkyrieCountRef.current;
 
           if (checkCollision(vikingPositionRef.current, updated, valkyries, isJumpingRef.current)) {
             console.log('Collision detected! Game over.');
@@ -384,7 +388,7 @@ function StartPage() {
           console.log(`Total valkyries after animation: ${updated.length}`);
 
           // Update enemy count ref
-          enemiesOnScreenRef.current = skeletons.length + updated.length;
+          enemiesOnScreenRef.current = skeletonCountRef.current + updated.length;
 
           if (checkCollision(vikingPositionRef.current, skeletons, updated, isJumpingRef.current)) {
             console.log('Collision detected! Game over.');
