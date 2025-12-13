@@ -186,7 +186,7 @@
 
 @keyframes scrollBackground {
   from { background-position-x: 0; }
-  to { background-position-x: 100%; }
+  to { background-position-x: -1000px; }
 }
 
 .parallax-layer {
