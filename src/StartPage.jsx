@@ -37,7 +37,7 @@ function StartPage() {
   // Calculate spawn rate - gets faster every 5 seconds
   const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
     const intervals = Math.floor(elapsedSeconds / 5); // Every 5 seconds
-    const speedIncrease = intervals * 0.3; // 30% faster each interval
+    const speedIncrease = intervals * 0.6; // 30% faster each interval
     const minDelay = Math.max(baseMin * (1 - speedIncrease), 800); // Minimum 800ms (start slower)
     const maxDelay = Math.max(baseMax * (1 - speedIncrease), 1200); // Minimum 1200ms (start slower)
     return minDelay + Math.random() * (maxDelay - minDelay);
