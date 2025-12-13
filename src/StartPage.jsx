@@ -435,7 +435,7 @@ function StartPage() {
       // Use JavaScript animation instead of CSS for dynamic height control
       if (vikingRef.current) {
         let startTime = null;
-        const duration = 1000; // 800ms jump duration
+        const duration = 2000; // 800ms jump duration
 
         const animateJump = (timestamp) => {
           if (!startTime) startTime = timestamp;
