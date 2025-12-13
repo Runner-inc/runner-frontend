@@ -32,12 +32,12 @@ function StartPage() {
   const isJumpingRef = useRef(isJumping);
   const gravity = 0.8;
 
-  // Calculate spawn rate - gets faster every 10 seconds
+  // Calculate spawn rate - gets faster every 5 seconds
   const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
-    const intervals = Math.floor(elapsedSeconds / 10); // Every 10 seconds
+    const intervals = Math.floor(elapsedSeconds / 5); // Every 5 seconds
     const speedIncrease = intervals * 0.3; // 30% faster each interval
-    const minDelay = Math.max(baseMin * (1 - speedIncrease), 500); // Minimum 500ms
-    const maxDelay = Math.max(baseMax * (1 - speedIncrease), 800); // Minimum 800ms
+    const minDelay = Math.max(baseMin * (1 - speedIncrease), 800); // Minimum 800ms (start slower)
+    const maxDelay = Math.max(baseMax * (1 - speedIncrease), 1200); // Minimum 1200ms (start slower)
     return minDelay + Math.random() * (maxDelay - minDelay);
   };
 
