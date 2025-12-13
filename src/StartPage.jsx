@@ -46,14 +46,14 @@ function StartPage() {
   // Calculate enemy speed based on elapsed time - increases every 5 seconds
   const getEnemySpeed = (baseSpeed, elapsedSeconds) => {
     const intervals = Math.floor(elapsedSeconds / 5); // Every 5 seconds
-    const speedMultiplier = 1 + intervals * 10; // 50% faster each interval for more aggressive difficulty
+    const speedMultiplier = 1 + intervals * 100; // 50% faster each interval for more aggressive difficulty
     return baseSpeed * speedMultiplier;
   };
 
   // Calculate current difficulty multiplier for display
   const getDifficultyMultiplier = (elapsedSeconds) => {
     const intervals = Math.floor(elapsedSeconds / 10);
-    return (1 + intervals * 10).toFixed(1);
+    return (1 + intervals * 100).toFixed(1);
   };
 
   useEffect(() => { vikingPositionRef.current = vikingPosition; }, [vikingPosition]);
