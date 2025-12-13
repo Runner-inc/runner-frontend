@@ -153,7 +153,7 @@ function StartPage() {
 
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 100;
-    const collisionSize = 32;
+    const collisionSize = 45;
     const padding = (spriteSize - collisionSize);
 
     // Get the actual viking position from DOM (including CSS transforms)
