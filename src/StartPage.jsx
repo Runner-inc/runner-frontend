@@ -46,7 +46,7 @@ function StartPage() {
   // Calculate enemy speed based on elapsed time - increases every 5 seconds
   const getEnemySpeed = (baseSpeed, elapsedSeconds) => {
     const intervals = Math.floor(elapsedSeconds / 5); // Every 5 seconds
-    const speedMultiplier = 1 + intervals * 0.3; // 30% faster each interval
+    const speedMultiplier = 1 + intervals * 0.5; // 50% faster each interval for more aggressive difficulty
     return baseSpeed * speedMultiplier;
   };
 
