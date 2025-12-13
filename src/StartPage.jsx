@@ -442,8 +442,8 @@ function StartPage() {
           const elapsed = timestamp - startTime;
           const progress = Math.min(elapsed / duration, 1);
 
-          // Sine wave for smooth jump arc
-          const jumpProgress = Math.sin(progress * Math.PI);
+          // Quadratic curve for smoother jump arc (peaks at 0.5, slower descent)
+          const jumpProgress = 4 * progress * (1 - progress);
           const currentHeight = calculatedHeight * jumpProgress;
 
           vikingRef.current.style.transform = `translateY(-${currentHeight}px)`;
