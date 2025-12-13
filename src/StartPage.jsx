@@ -328,7 +328,7 @@ function StartPage() {
           const updated = prev
             .map(s => {
               // Update speed based on current elapsed time
-              const currentSpeed = getEnemySpeed(2, elapsedSeconds);
+              const currentSpeed = getEnemySpeed(2.5, elapsedSeconds);
               const newLeft = s.left - currentSpeed;
               console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft} with speed ${currentSpeed}`);
               return { ...s, left: newLeft, speed: currentSpeed };
