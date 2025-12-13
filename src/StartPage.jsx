@@ -428,6 +428,9 @@ function StartPage() {
       const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
 
+      // Fixed jump width of 120px
+      const jumpWidth = 120;
+
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
 
       setIsJumping(true);
@@ -446,7 +449,10 @@ function StartPage() {
           const jumpProgress = Math.sin(progress * Math.PI);
           const currentHeight = calculatedHeight * jumpProgress;
 
-          vikingRef.current.style.transform = `translateY(-${currentHeight}px)`;
+          // Linear horizontal movement for jump width
+          const currentWidth = jumpWidth * progress;
+
+          vikingRef.current.style.transform = `translateY(-${currentHeight}px) translateX(${currentWidth}px)`;
 
           if (progress < 1) {
             requestAnimationFrame(animateJump);
