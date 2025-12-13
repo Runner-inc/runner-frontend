@@ -81,12 +81,12 @@ function StartPage() {
   const getFloorHeight = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    if (width >= 1440) return 180;
-    if (width >= 769 && width <= 1024) return 130;
-    if (height <= 500) return 90;
-    if (width <= 480) return 105;
-    if (width <= 768) return 115;
-    return 400;
+    if (width >= 1440) return 270;
+    if (width >= 769 && width <= 1024) return 195;
+    if (height <= 500) return 135;
+    if (width <= 480) return 158;
+    if (width <= 768) return 173;
+    return 600;
   };
 
   useEffect(() => {
@@ -96,10 +96,10 @@ function StartPage() {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
           const floorTop = window.innerHeight - getFloorHeight() + 29;
-          if (newTop + 75 >= floorTop) {
+          if (newTop + 120 >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
-            return { top: floorTop - 75, left: 0 };
+            return { top: floorTop - 120, left: 0 };
           }
           return { ...prev, top: newTop };
         });
@@ -152,8 +152,8 @@ function StartPage() {
   };
 
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
-    const spriteSize = 75;
-    const collisionSize = 25;
+    const spriteSize = 120;
+    const collisionSize = 40;
     const padding = (spriteSize - collisionSize);
 
     // Get the actual viking position from DOM (including CSS transforms)
@@ -253,10 +253,10 @@ function StartPage() {
         if (enemyType === 'skeleton') {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
-          const maxLeft = window.innerWidth - 75; // ensure visible
+          const maxLeft = window.innerWidth - 120; // ensure visible
           const baseLeft = window.innerWidth + 50;
           const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-          const top = floorTop + 29 - 75;
+          const top = floorTop + 29 - 120;
           const newSkeleton = {
             id: Date.now() + Math.random(),
             left,
@@ -268,9 +268,9 @@ function StartPage() {
         } else {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
-          const maxLeft = window.innerWidth - 75; // ensure visible
+          const maxLeft = window.innerWidth - 120; // ensure visible
           const minTop = 30; // clamp above ground
-          const maxTop = floorTop - 85; // so they don't overlap pixel floor
+          const maxTop = floorTop - 140; // so they don't overlap pixel floor
           const baseLeft = window.innerWidth + 50;
           const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
           let rawTop = floorTop - 150 - Math.random() * 200; // Random height between ground and upper limit
@@ -530,13 +530,13 @@ function StartPage() {
             style={{ top: `${vikingPosition.top}px`, left: `${vikingPosition.left}px` }}
           >
             {!vikingReachedBottom ? (
-              <AnimatedSprite images={start_viking} frameDuration={200} width="75px" height="75px" />
+              <AnimatedSprite images={start_viking} frameDuration={200} width="120px" height="120px" />
             ) : (
               <AnimatedSprite
                 images={isJumping ? viking_jump : viking_run}
                 frameDuration={isJumping ? 120 : 150}
-                width="75px"
-                height="75px"
+                width="120px"
+                height="120px"
               />
             )}
           </div>
@@ -544,7 +544,7 @@ function StartPage() {
           {skeletons.map(s => {
             return (
               <div key={s.id} className="skeleton-container" style={{ top: `${s.top}px`, left: `${s.left}px` }}>
-                <AnimatedSprite images={skeleton} frameDuration={200} width="75px" height="75px" />
+                <AnimatedSprite images={skeleton} frameDuration={200} width="120px" height="120px" />
               </div>
             );
           })}
@@ -552,7 +552,7 @@ function StartPage() {
           {valkyries.map(v => {
             return (
               <div key={v.id} className="flying-enemy-container" style={{ top: `${v.top}px`, left: `${v.left}px` }}>
-                <AnimatedSprite images={valkyrie} frameDuration={150} width="75px" height="75px" />
+                <AnimatedSprite images={valkyrie} frameDuration={150} width="120px" height="120px" />
               </div>
             );
           })}
