@@ -423,7 +423,7 @@ function StartPage() {
   const performJump = (pressure = 0.5) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       // Calculate jump height based on pressure (0-1 scale, mapped to minJump-maxJump)
-      const minJump = 150;
+      const minJump = 120;
       const maxJump = 400;
       const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
