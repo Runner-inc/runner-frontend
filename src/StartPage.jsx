@@ -422,8 +422,8 @@ function StartPage() {
 
   const performJump = (force = 1) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
-      // Calculate jump height based on force (1-3 scale, mapped to 150-300px)
-      const calculatedHeight = Math.min(300, Math.max(150, 150 + (force - 1) * 75));
+      // Calculate jump height based on force (1-3 scale, mapped to 200-400px)
+      const calculatedHeight = Math.min(400, Math.max(200, 200 + (force - 1) * 100));
       setCurrentJumpHeight(calculatedHeight);
 
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
