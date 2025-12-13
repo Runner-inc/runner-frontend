@@ -81,12 +81,12 @@ function StartPage() {
   const getFloorHeight = () => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    if (width >= 1440) return 140;
-    if (width >= 769 && width <= 1024) return 100;
-    if (height <= 500) return 70;
-    if (width <= 480) return 80;
-    if (width <= 768) return 90;
-    return 120;
+    if (width >= 1440) return 180;
+    if (width >= 769 && width <= 1024) return 130;
+    if (height <= 500) return 90;
+    if (width <= 480) return 105;
+    if (width <= 768) return 115;
+    return 160;
   };
 
   useEffect(() => {
