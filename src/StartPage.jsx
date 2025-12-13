@@ -41,6 +41,13 @@ function StartPage() {
     return minDelay + Math.random() * (maxDelay - minDelay);
   };
 
+  // Calculate enemy speed based on elapsed time - increases every 5 seconds
+  const getEnemySpeed = (baseSpeed, elapsedSeconds) => {
+    const intervals = Math.floor(elapsedSeconds / 5); // Every 5 seconds
+    const speedMultiplier = 1 + intervals * 0.3; // 30% faster each interval
+    return baseSpeed * speedMultiplier;
+  };
+
   // Calculate current difficulty multiplier for display
   const getDifficultyMultiplier = (elapsedSeconds) => {
     const intervals = Math.floor(elapsedSeconds / 10);
@@ -221,9 +228,20 @@ function StartPage() {
     console.log('Enemies useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
       console.log('Starting enemy spawning');
-      const spawnEnemy = () => {
-        // Randomly choose between skeleton and valkyrie (50% chance each)
-        const enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
+      const spawnEnemy = (canSpawnSkeleton, canSpawnValkyrie) => {
+        // Choose enemy type based on availability
+        let enemyType;
+        if (canSpawnSkeleton && canSpawnValkyrie) {
+          // Both available, randomly choose
+          enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
+        } else if (canSpawnSkeleton) {
+          enemyType = 'skeleton';
+        } else if (canSpawnValkyrie) {
+          enemyType = 'valkyrie';
+        } else {
+          // Should not happen due to check above, but fallback
+          return;
+        }
 
         if (enemyType === 'skeleton') {
           const floorTop = window.innerHeight - getFloorHeight();
@@ -238,7 +256,7 @@ function StartPage() {
             id: Date.now() + Math.random(),
             left,
             top,
-            speed: 2 + Math.random() * 2
+            speed: getEnemySpeed(2, elapsedSeconds)
           };
 
           console.log('Spawning skeleton:', newSkeleton);
@@ -259,7 +277,7 @@ function StartPage() {
             id: Date.now() + Math.random() + 1000,
             left,
             top: rawTop,
-            speed: 2.5 + Math.random() * 1.5 // Slightly faster than skeletons
+            speed: getEnemySpeed(2.5, elapsedSeconds) // Slightly faster than skeletons
           };
 
           console.log('Spawning valkyrie:', newValkyrie);
@@ -268,12 +286,20 @@ function StartPage() {
       };
 
       const checkAndSpawn = () => {
-        // Spawn enemy if there are less than 2 enemies on screen
-        if (enemiesOnScreenRef.current < 2) {
-          console.log(`Enemies on screen: ${enemiesOnScreenRef.current}, spawning new enemy`);
-          spawnEnemy();
+        // Get current enemy counts (need to check both arrays since they update separately)
+        const currentSkeletonCount = skeletons.length;
+        const currentValkyrieCount = valkyries.length;
+        const totalEnemies = currentSkeletonCount + currentValkyrieCount;
+
+        // Spawn enemy if there are less than 2 enemies on screen AND specific type is not already present
+        const canSpawnSkeleton = currentSkeletonCount === 0;
+        const canSpawnValkyrie = currentValkyrieCount === 0;
+
+        if (totalEnemies < 2 && (canSpawnSkeleton || canSpawnValkyrie)) {
+          console.log(`Enemies on screen: ${totalEnemies}, skeletons: ${currentSkeletonCount}, valkyries: ${currentValkyrieCount}, spawning new enemy`);
+          spawnEnemy(canSpawnSkeleton, canSpawnValkyrie);
         } else {
-          console.log('Maximum enemies on screen, waiting...');
+          console.log('Cannot spawn: max enemies reached or specific types already present');
         }
 
         // Always schedule next check
