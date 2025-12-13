@@ -86,7 +86,7 @@ function StartPage() {
     if (height <= 500) return 90;
     if (width <= 480) return 105;
     if (width <= 768) return 115;
-    return 160;
+    return 500;
   };
 
   useEffect(() => {
