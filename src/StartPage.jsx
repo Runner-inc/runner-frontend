@@ -175,16 +175,16 @@ function StartPage() {
 
     // Check valkyrie collisions
     const valkyrieCollision = valkyrieList.some(valk => {
-      const sTop = valk.top + padding;
-      const sLeft = valk.left + padding;
-      const sRight = sLeft + collisionSize;
-      const sBottom = sTop + collisionSize;
+      const valkTop = valk.top + padding;
+      const valkLeft = valk.left + padding;
+      const valkRight = valkLeft + collisionSize;
+      const valkBottom = valkTop + collisionSize;
 
       const collision = (
-        vLeft < sRight &&    // Viking left < Skeleton right
-        vRight > sLeft &&    // Viking right > Skeleton left
-        vTop < sBottom &&    // Viking top < Skeleton bottom
-        vBottom > sTop       // Viking bottom > Skeleton top
+        vLeft < valkRight &&    // Viking left < Skeleton right
+        vRight > valkLeft &&    // Viking right > Skeleton left
+        vTop < valkBottom &&    // Viking top < Skeleton bottom
+        vBottom > valkTop       // Viking bottom > Skeleton top
       );
       // const collision = (
       //   vRight < sLeft &&
@@ -194,13 +194,13 @@ function StartPage() {
         
       // );
 
-      if (collision) {
-        console.log('COLLISION with valkyrie:', {
-          valk,
-          viking: { vLeft, vTop, vRight, vBottom },
-          valkyrie: { sLeft, sTop, sRight, sBottom }
-        });
-      }
+      // if (collision) {
+      //   console.log('COLLISION with valkyrie:', {
+      //     valk,
+      //     viking: { vLeft, vTop, vRight, vBottom },
+      //     valkyrie: { sLeft, sTop, sRight, sBottom }
+      //   });
+      // }
 
       return collision;
     });
