@@ -435,15 +435,15 @@ function StartPage() {
       // Use JavaScript animation instead of CSS for dynamic height control
       if (vikingRef.current) {
         let startTime = null;
-        const duration = 800; // 800ms jump duration
+        const duration = 1000; // 800ms jump duration
 
         const animateJump = (timestamp) => {
           if (!startTime) startTime = timestamp;
           const elapsed = timestamp - startTime;
-          const progress = Math.min(elapsed / duration, 2);
+          const progress = Math.min(elapsed / duration, 1);
 
           // Quadratic curve for smoother jump arc (peaks at 0.5, slower descent)
-          const jumpProgress = 7 * progress * (1 - progress);
+          const jumpProgress = 4 * progress * (1 - progress);
           const currentHeight = calculatedHeight * jumpProgress;
 
           vikingRef.current.style.transform = `translateY(-${currentHeight}px)`;
