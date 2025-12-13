@@ -19,6 +19,7 @@ function StartPage() {
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
+  const elapsedSecondsRef = useRef(0);
 
   const vikingRef = useRef(null);
   const animationFrameRef = useRef(null);
@@ -60,6 +61,7 @@ function StartPage() {
   useEffect(() => { isJumpingRef.current = isJumping; }, [isJumping]);
   useEffect(() => { skeletonCountRef.current = skeletons.length; }, [skeletons]);
   useEffect(() => { valkyrieCountRef.current = valkyries.length; }, [valkyries]);
+  useEffect(() => { elapsedSecondsRef.current = elapsedSeconds; }, [elapsedSeconds]);
 
   useEffect(() => {
     const tg = window.Telegram?.WebApp;
@@ -328,7 +330,7 @@ function StartPage() {
           const updated = prev
             .map(s => {
               // Update speed based on current elapsed time
-              const currentSpeed = getEnemySpeed(2, elapsedSeconds);
+              const currentSpeed = getEnemySpeed(2, elapsedSecondsRef.current);
               const newLeft = s.left - currentSpeed;
               console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft} with speed ${currentSpeed}`);
               return { ...s, left: newLeft, speed: currentSpeed };
@@ -378,7 +380,7 @@ function StartPage() {
           const updated = prev
             .map(v => {
               // Update speed based on current elapsed time
-              const currentSpeed = getEnemySpeed(2.5, elapsedSeconds);
+              const currentSpeed = getEnemySpeed(2.5, elapsedSecondsRef.current);
               const newLeft = v.left - currentSpeed;
               console.log(`Valkyrie ${v.id} moving from ${v.left} to ${newLeft} with speed ${currentSpeed}`);
               return { ...v, left: newLeft, speed: currentSpeed };
