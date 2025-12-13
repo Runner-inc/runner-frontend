@@ -221,69 +221,67 @@ function StartPage() {
     console.log('Enemies useEffect triggered:', { gameStarted, vikingReachedBottom, gameOver });
     if (gameStarted && vikingReachedBottom && !gameOver) {
       console.log('Starting enemy spawning');
+      const spawnEnemy = () => {
+        // Randomly choose between skeleton and valkyrie (50% chance each)
+        const enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
 
-      const spawnSkeleton = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const baseLeft = window.innerWidth + 50; // Always spawn outside screen
-        const top = floorTop + 29 - 75;
-        console.log('Creating 1 skeleton');
-        console.log('Skeleton created at', baseLeft, top);
-        const newSkeleton = {
-          id: Date.now() + Math.random(),
-          left: baseLeft,
-          top,
-          speed: 2 + Math.random() * 2
-        };
+        if (enemyType === 'skeleton') {
+          const floorTop = window.innerHeight - getFloorHeight();
+          const minLeft = 0;
+          const maxLeft = window.innerWidth - 75; // ensure visible
+          const baseLeft = window.innerWidth + 50;
+          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+          const top = floorTop + 29 - 75;
+          console.log('Creating 1 skeleton');
+          console.log('Skeleton created at', left, top);
+          const newSkeleton = {
+            id: Date.now() + Math.random(),
+            left,
+            top,
+            speed: 2 + Math.random() * 2
+          };
 
-        console.log('Spawning skeleton:', newSkeleton);
-        setSkeletons(prev => [...prev, newSkeleton]);
-      };
+          console.log('Spawning skeleton:', newSkeleton);
+          setSkeletons(prev => [...prev, newSkeleton]);
+        } else {
+          const floorTop = window.innerHeight - getFloorHeight();
+          const minLeft = 0;
+          const maxLeft = window.innerWidth - 75; // ensure visible
+          const minTop = 30; // clamp above ground
+          const maxTop = floorTop - 80; // so they don't overlap pixel floor
+          const baseLeft = window.innerWidth + 50;
+          const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
+          let rawTop = floorTop - 150 - Math.random() * 200; // Random height between ground and upper limit
+          rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
+          console.log('Creating 1 valkyrie');
+          console.log('Valkyrie created at', left, rawTop);
+          const newValkyrie = {
+            id: Date.now() + Math.random() + 1000,
+            left,
+            top: rawTop,
+            speed: 2.5 + Math.random() * 1.5 // Slightly faster than skeletons
+          };
 
-      const spawnValkyrie = () => {
-        const floorTop = window.innerHeight - getFloorHeight();
-        const minTop = 30; // clamp above ground
-        const maxTop = floorTop - 80; // so they don't overlap pixel floor
-        const baseLeft = window.innerWidth + 50; // Always spawn outside screen
-        let rawTop = floorTop - 150 - Math.random() * 200; // Random height between ground and upper limit
-        rawTop = Math.max(Math.min(rawTop, maxTop), minTop);
-        console.log('Creating 1 valkyrie');
-        console.log('Valkyrie created at', baseLeft, rawTop);
-        const newValkyrie = {
-          id: Date.now() + Math.random() + 1000,
-          left: baseLeft,
-          top: rawTop,
-          speed: 2.5 + Math.random() * 1.5 // Slightly faster than skeletons
-        };
-
-        console.log('Spawning valkyrie:', newValkyrie);
-        setValkyries(prev => [...prev, newValkyrie]);
+          console.log('Spawning valkyrie:', newValkyrie);
+          setValkyries(prev => [...prev, newValkyrie]);
+        }
       };
 
       const checkAndSpawn = () => {
-        const currentSkeletons = skeletons.length;
-        const currentValkyries = valkyries.length;
-
-        // Spawn skeleton if no skeletons on screen
-        if (currentSkeletons === 0) {
-          console.log('No skeletons on screen, spawning skeleton');
-          spawnSkeleton();
-        }
-        // Spawn valkyrie if no valkyries on screen
-        else if (currentValkyries === 0) {
-          console.log('No valkyries on screen, spawning valkyrie');
-          spawnValkyrie();
+        // Spawn enemy if there are less than 2 enemies on screen
+        if (enemiesOnScreenRef.current < 2) {
+          console.log(`Enemies on screen: ${enemiesOnScreenRef.current}, spawning new enemy`);
+          spawnEnemy();
         } else {
-          console.log('Both enemy types present, waiting...');
+          console.log('Maximum enemies on screen, waiting...');
         }
 
-        // Schedule next check with dynamic delay based on elapsed time
-        const spawnDelay = getSpawnDelay(1000, 2000, elapsedSeconds); // Base delay 1-2 seconds, gets faster
-        console.log(`Next spawn check in ${spawnDelay}ms (elapsed: ${elapsedSeconds}s)`);
+        // Always schedule next check
         skeletonSpawnIntervalRef.current = setTimeout(() => {
           if (!gameOver) {
             checkAndSpawn();
           }
-        }, spawnDelay);
+        }, 500); // Check every 500ms
       };
 
       // Start checking for spawn opportunities
