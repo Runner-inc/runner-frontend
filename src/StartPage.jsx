@@ -36,7 +36,7 @@ function StartPage() {
   const jumpTimeoutRef = useRef(null);
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
-  const gravity = 0.8;
+  const gravity = 0.6;
 
   // Calculate spawn rate - gets faster every 5 seconds
   const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
