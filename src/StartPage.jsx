@@ -19,6 +19,9 @@ function StartPage() {
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
+  const [touchStartTime, setTouchStartTime] = useState(null);
+  const [touchForce, setTouchForce] = useState(1);
+  const [jumpHeight, setJumpHeight] = useState(225);
   const elapsedSecondsRef = useRef(0);
 
   const vikingRef = useRef(null);
@@ -443,12 +446,18 @@ function StartPage() {
   const handleMainMenu = () => setGameStarted(false);
   const handleRecords = () => navigate('/records');
 
-  const handlePageClick = () => {
+  const performJump = (force = 1) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
+      // Calculate jump height based on force (1-3 scale, mapped to 150-300px)
+      const calculatedHeight = Math.min(300, Math.max(150, 150 + (force - 1) * 75));
+      setJumpHeight(calculatedHeight);
+
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
       if (vikingRef.current) {
         vikingRef.current.classList.remove('viking-jumping');
         void vikingRef.current.offsetWidth;
+        // Set custom property for dynamic jump height
+        vikingRef.current.style.setProperty('--jump-height', `${calculatedHeight}px`);
         vikingRef.current.classList.add('viking-jumping');
       }
       setIsJumping(true);
@@ -460,11 +469,27 @@ function StartPage() {
     }
   };
 
+  const handlePageClick = () => {
+    performJump(touchForce);
+  };
+
   const handlePageTouch = e => {
     e.preventDefault();
-    // Only allow jump on touch start, prevent holding down
+
     if (e.type === 'touchstart' && !isJumping) {
-      handlePageClick();
+      // Track touch start time and initial force
+      setTouchStartTime(Date.now());
+      const touch = e.touches[0];
+      const initialForce = touch.force || 1; // fallback to 1 if force not supported
+      setTouchForce(initialForce);
+    } else if (e.type === 'touchend' && touchStartTime && !isJumping) {
+      // Calculate force based on duration and touch force
+      const duration = Date.now() - touchStartTime;
+      const durationForce = Math.min(3, Math.max(1, duration / 300)); // 300ms = max force
+      const finalForce = Math.max(touchForce, durationForce);
+      performJump(finalForce);
+      setTouchStartTime(null);
+      setTouchForce(1);
     }
   };
 
@@ -474,8 +499,8 @@ function StartPage() {
     <div
       className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
-      onTouchStart={handlePageTouch}
-      onTouchEnd={(e) => e.preventDefault()}
+      onTouchStart={(e) => handlePageTouch({ ...e, type: 'touchstart' })}
+      onTouchEnd={(e) => handlePageTouch({ ...e, type: 'touchend' })}
     >
       <div className="parallax-bg bg-image"></div>
 
