@@ -443,7 +443,7 @@ function StartPage() {
           const progress = Math.min(elapsed / duration, 2);
 
           // Quadratic curve for smoother jump arc (peaks at 0.5, slower descent)
-          const jumpProgress = 4 * progress * (1 - progress);
+          const jumpProgress = 7 * progress * (1 - progress);
           const currentHeight = calculatedHeight * jumpProgress;
 
           vikingRef.current.style.transform = `translateY(-${currentHeight}px)`;
