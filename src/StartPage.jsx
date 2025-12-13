@@ -95,7 +95,7 @@ function StartPage() {
         setVikingPosition(prev => {
           const newTop = prev.top + velocityRef.current;
           velocityRef.current += gravity;
-          const floorTop = window.innerHeight - getFloorHeight() - 29;
+          const floorTop = window.innerHeight - getFloorHeight() + 50;
           if (newTop + 120 >= floorTop) {
             setVikingReachedBottom(true);
             velocityRef.current = 0;
@@ -256,7 +256,7 @@ function StartPage() {
           const maxLeft = window.innerWidth - 120; // ensure visible
           const baseLeft = window.innerWidth + 50;
           const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
-          const top = floorTop - 150;
+          const top = floorTop + 50 - 120;
           const newSkeleton = {
             id: Date.now() + Math.random(),
             left,
