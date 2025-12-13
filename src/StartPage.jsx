@@ -141,11 +141,20 @@ function StartPage() {
     const collisionSize = 45;
     const padding = (spriteSize - collisionSize) / 2;
 
-    // Viking collision box (adjusted for jumping)
-    const vTop = vPos.top + padding + (jumping ? -190 : 0 );
-    const vLeft = vPos.left + padding;
-    const vRight = vLeft + collisionSize ;
-    const vBottom = vTop + collisionSize ;
+    // Get the actual viking position from DOM (including CSS transforms)
+    let vTop, vLeft;
+    if (vikingRef.current) {
+      const rect = vikingRef.current.getBoundingClientRect();
+      vTop = rect.top + padding;
+      vLeft = rect.left + padding;
+    } else {
+      // Fallback to position-based calculation if ref not available
+      vTop = vPos.top + padding + (jumping ? -190 : 0);
+      vLeft = vPos.left + padding;
+    }
+
+    const vRight = vLeft + collisionSize;
+    const vBottom = vTop + collisionSize;
 
     // Debug: Show collision boxes (remove in production)
     console.log('Viking collision box:', { vLeft, vTop, vRight, vBottom });
