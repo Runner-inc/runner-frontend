@@ -19,8 +19,7 @@ function StartPage() {
   const [telegramUserId, setTelegramUserId] = useState(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
-  const [touchStartTime, setTouchStartTime] = useState(null);
-  const [touchForce, setTouchForce] = useState(1);
+  const [pointerPressure, setPointerPressure] = useState(0.5);
   const [currentJumpHeight, setCurrentJumpHeight] = useState(225);
   const elapsedSecondsRef = useRef(0);
 
@@ -420,10 +419,12 @@ function StartPage() {
   const handleMainMenu = () => setGameStarted(false);
   const handleRecords = () => navigate('/records');
 
-  const performJump = (force = 1) => {
+  const performJump = (pressure = 0.5) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
-      // Calculate jump height based on force (1-3 scale, mapped to 200-400px)
-      const calculatedHeight = Math.min(400, Math.max(200, 200 + (force - 1) * 100));
+      // Calculate jump height based on pressure (0-1 scale, mapped to minJump-maxJump)
+      const minJump = 200;
+      const maxJump = 400;
+      const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
 
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
@@ -465,37 +466,26 @@ function StartPage() {
     }
   };
 
-  const handlePageClick = (e) => {
-    // Only perform jump on page click if not clicking on buttons
-    if (e.target.tagName === 'BUTTON') return;
-    performJump(touchForce);
-  };
-
-  const handleTouchStart = (e) => {
-    // Only handle touch for jumping if not clicking on buttons
+  const handlePointerDown = (e) => {
+    // Only handle pointer for jumping if not clicking on buttons
     if (e.target.tagName === 'BUTTON') return;
 
     e.preventDefault();
     if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
-      setTouchStartTime(Date.now());
-      const touch = e.touches[0];
-      const initialForce = touch.force || 1;
-      setTouchForce(initialForce);
+      // Capture pressure, use fallback if not supported
+      const pressure = e.pressure !== undefined ? e.pressure : 0.5;
+      setPointerPressure(pressure);
     }
   };
 
-  const handleTouchEnd = (e) => {
-    // Only handle touch for jumping if not clicking on buttons
+  const handlePointerUp = (e) => {
+    // Only handle pointer for jumping if not clicking on buttons
     if (e.target.tagName === 'BUTTON') return;
 
     e.preventDefault();
-    if (touchStartTime && !isJumping && gameStarted && vikingReachedBottom && !gameOver) {
-      const duration = Date.now() - touchStartTime;
-      const durationForce = Math.min(3, Math.max(1, duration / 300));
-      const finalForce = Math.max(touchForce, durationForce);
-      performJump(finalForce);
-      setTouchStartTime(null);
-      setTouchForce(1);
+    if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
+      performJump(pointerPressure);
+      setPointerPressure(0.5);
     }
   };
 
@@ -504,9 +494,9 @@ function StartPage() {
   return (
     <div
       className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
-      onClick={handlePageClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      style={{ touchAction: 'none' }}
     >
       <div className="parallax-bg bg-image"></div>
 
