@@ -465,11 +465,16 @@ function StartPage() {
     }
   };
 
-  const handlePageClick = () => {
+  const handlePageClick = (e) => {
+    // Only perform jump on page click if not clicking on buttons
+    if (e.target.tagName === 'BUTTON') return;
     performJump(touchForce);
   };
 
   const handleTouchStart = (e) => {
+    // Only handle touch for jumping if not clicking on buttons
+    if (e.target.tagName === 'BUTTON') return;
+
     e.preventDefault();
     if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
       setTouchStartTime(Date.now());
@@ -480,6 +485,9 @@ function StartPage() {
   };
 
   const handleTouchEnd = (e) => {
+    // Only handle touch for jumping if not clicking on buttons
+    if (e.target.tagName === 'BUTTON') return;
+
     e.preventDefault();
     if (touchStartTime && !isJumping && gameStarted && vikingReachedBottom && !gameOver) {
       const duration = Date.now() - touchStartTime;
