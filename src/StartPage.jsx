@@ -36,7 +36,7 @@ function StartPage() {
   const jumpTimeoutRef = useRef(null);
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
-  const gravity = 0.6;
+  const gravity = 0.2;
 
   // Calculate spawn rate - gets faster every 5 seconds
   const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
@@ -423,7 +423,7 @@ function StartPage() {
   const performJump = (pressure = 0.5) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       // Calculate jump height based on pressure (0-1 scale, mapped to minJump-maxJump)
-      const minJump = 110;
+      const minJump = 90;
       const maxJump = 400;
       const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
