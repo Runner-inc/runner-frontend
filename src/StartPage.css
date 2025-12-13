@@ -125,8 +125,8 @@
 }
 
 .viking-animation-container img {
-  width: clamp(50px, 10vw, 75px) !important;
-  height: clamp(50px, 10vw, 75px) !important;
+  width: clamp(65px, 13vw, 100px) !important;
+  height: clamp(65px, 13vw, 100px) !important;
   max-width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
@@ -250,8 +250,8 @@
 }
 
 .skeleton-container img {
-  width: clamp(50px, 10vw, 75px) !important;
-  height: clamp(50px, 10vw, 75px) !important;
+  width: clamp(65px, 13vw, 100px) !important;
+  height: clamp(65px, 13vw, 100px) !important;
   max-width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
@@ -293,8 +293,8 @@
 }
 
 .flying-enemy-container img {
-  width: clamp(50px, 10vw, 75px) !important;
-  height: clamp(50px, 10vw, 75px) !important;
+  width: clamp(65px, 13vw, 100px) !important;
+  height: clamp(65px, 13vw, 100px) !important;
   max-width: 100%;
   object-fit: contain;
   image-rendering: pixelated;
@@ -399,8 +399,8 @@
   }
 
   .viking-animation-container img {
-    width: clamp(60px, 8vw, 75px) !important;
-    height: clamp(60px, 8vw, 75px) !important;
+    width: clamp(80px, 10vw, 100px) !important;
+    height: clamp(80px, 10vw, 100px) !important;
   }
 
   .pixel-floor {
@@ -451,8 +451,8 @@
   }
 
   .viking-animation-container img {
-    width: clamp(50px, 12vw, 65px) !important;
-    height: clamp(50px, 12vw, 65px) !important;
+    width: clamp(65px, 15vw, 85px) !important;
+    height: clamp(65px, 15vw, 85px) !important;
   }
 
   .pixel-floor {
@@ -494,8 +494,8 @@
   }
 
   .viking-animation-container img {
-    width: clamp(40px, 15vw, 55px) !important;
-    height: clamp(40px, 15vw, 55px) !important;
+    width: clamp(55px, 18vw, 75px) !important;
+    height: clamp(55px, 18vw, 75px) !important;
   }
 
   .pixel-floor {
@@ -538,8 +538,8 @@
   }
 
   .viking-animation-container img {
-    width: clamp(35px, 10vh, 50px) !important;
-    height: clamp(35px, 10vh, 50px) !important;
+    width: clamp(50px, 12vh, 70px) !important;
+    height: clamp(50px, 12vh, 70px) !important;
   }
 
   .pixel-floor {
@@ -584,8 +584,8 @@
   }
 
   .viking-animation-container img {
-    width: 85px !important;
-    height: 85px !important;
+    width: 110px !important;
+    height: 110px !important;
   }
 
   .pixel-floor {
