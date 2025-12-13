@@ -109,19 +109,12 @@
   z-index: 100002;
   left: 20px;
   will-change: top, transform;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 .viking-animation-container img {
@@ -132,19 +125,6 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 .viking-animation-container.viking-falling {
@@ -234,19 +214,6 @@
   position: absolute;
   z-index: 100001;
   will-change: left;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 .skeleton-container img {
@@ -257,19 +224,6 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 /* Flying enemy container */
@@ -277,19 +231,6 @@
   position: absolute;
   z-index: 100002;
   will-change: left;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 .flying-enemy-container img {
@@ -300,19 +241,6 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-focus-ring-color: transparent;
-  -moz-focus-ring-color: transparent;
-  focus-ring-color: transparent;
 }
 
 /* Game Over Overlay */
