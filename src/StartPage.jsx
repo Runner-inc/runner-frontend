@@ -327,9 +327,11 @@ function StartPage() {
         setSkeletons(prev => {
           const updated = prev
             .map(s => {
-              const newLeft = s.left - s.speed;
-              console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft}`);
-              return { ...s, left: newLeft };
+              // Update speed based on current elapsed time
+              const currentSpeed = getEnemySpeed(2, elapsedSeconds);
+              const newLeft = s.left - currentSpeed;
+              console.log(`Skeleton ${s.id} moving from ${s.left} to ${newLeft} with speed ${currentSpeed}`);
+              return { ...s, left: newLeft, speed: currentSpeed };
             })
             .filter(s => {
               const keep = s.left > -100;
@@ -375,9 +377,11 @@ function StartPage() {
         setValkyries(prev => {
           const updated = prev
             .map(v => {
-              const newLeft = v.left - v.speed;
-              console.log(`Valkyrie ${v.id} moving from ${v.left} to ${newLeft}`);
-              return { ...v, left: newLeft };
+              // Update speed based on current elapsed time
+              const currentSpeed = getEnemySpeed(2.5, elapsedSeconds);
+              const newLeft = v.left - currentSpeed;
+              console.log(`Valkyrie ${v.id} moving from ${v.left} to ${newLeft} with speed ${currentSpeed}`);
+              return { ...v, left: newLeft, speed: currentSpeed };
             })
             .filter(v => {
               const keep = v.left > -100;
