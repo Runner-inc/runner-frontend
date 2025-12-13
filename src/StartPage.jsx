@@ -440,7 +440,7 @@ function StartPage() {
         const animateJump = (timestamp) => {
           if (!startTime) startTime = timestamp;
           const elapsed = timestamp - startTime;
-          const progress = Math.min(elapsed / duration, 1);
+          const progress = Math.min(elapsed / duration, 2);
 
           // Quadratic curve for smoother jump arc (peaks at 0.5, slower descent)
           const jumpProgress = 4 * progress * (1 - progress);
