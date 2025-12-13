@@ -229,17 +229,21 @@ function StartPage() {
     if (gameStarted && vikingReachedBottom && !gameOver) {
       console.log('Starting enemy spawning');
       const spawnEnemy = (canSpawnSkeleton, canSpawnValkyrie) => {
-        // Choose enemy type based on availability
+        // Double-check current counts to ensure no duplicates
+        const currentSkeletonCount = skeletons.length;
+        const currentValkyrieCount = valkyries.length;
+
+        // Choose enemy type based on availability and current counts
         let enemyType;
-        if (canSpawnSkeleton && canSpawnValkyrie) {
-          // Both available, randomly choose
+        if (canSpawnSkeleton && canSpawnValkyrie && currentSkeletonCount === 0 && currentValkyrieCount === 0) {
+          // Both available and confirmed no existing enemies, randomly choose
           enemyType = Math.random() < 0.5 ? 'skeleton' : 'valkyrie';
-        } else if (canSpawnSkeleton) {
+        } else if (canSpawnSkeleton && currentSkeletonCount === 0) {
           enemyType = 'skeleton';
-        } else if (canSpawnValkyrie) {
+        } else if (canSpawnValkyrie && currentValkyrieCount === 0) {
           enemyType = 'valkyrie';
         } else {
-          // Should not happen due to check above, but fallback
+          // Cannot spawn this type or type already exists
           return;
         }
 
