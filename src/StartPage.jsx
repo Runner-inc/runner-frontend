@@ -20,6 +20,7 @@ function StartPage() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [error, setError] = useState(null);
   const [pointerPressure, setPointerPressure] = useState(0.5);
+  const [pointerDownTime, setPointerDownTime] = useState(null);
   const [currentJumpHeight, setCurrentJumpHeight] = useState(225);
   const elapsedSecondsRef = useRef(0);
 
@@ -472,9 +473,10 @@ function StartPage() {
 
     e.preventDefault();
     if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
-      // Capture pressure, use fallback if not supported
+      // Capture pressure and timestamp
       const pressure = e.pressure !== undefined ? e.pressure : 0.5;
       setPointerPressure(pressure);
+      setPointerDownTime(Date.now());
     }
   };
 
@@ -483,9 +485,17 @@ function StartPage() {
     if (e.target.tagName === 'BUTTON') return;
 
     e.preventDefault();
-    if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
-      performJump(pointerPressure);
+    if (pointerDownTime && !isJumping && gameStarted && vikingReachedBottom && !gameOver) {
+      // Calculate duration-based pressure as fallback
+      const duration = Date.now() - pointerDownTime;
+      const durationPressure = Math.min(1, Math.max(0, duration / 1000)); // Scale to 0-1 over 1 second
+
+      // Use the maximum of pressure and duration-based pressure
+      const finalPressure = Math.max(pointerPressure, durationPressure);
+
+      performJump(finalPressure);
       setPointerPressure(0.5);
+      setPointerDownTime(null);
     }
   };
 
