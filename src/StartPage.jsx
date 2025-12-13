@@ -471,13 +471,7 @@ function StartPage() {
       onTouchStart={handlePageTouch}
       onTouchEnd={(e) => e.preventDefault()}
     >
-      <div className="parallax-bg bg-image">
-        <video
-          className="bg-video"
-          src="https://hwkaeeogqacgsfvbnfss.supabase.co/storage/v1/object/sign/viking_runner/grok-video-417d7c90-9f51-4e07-93c7-09cd5a9be976%20(online-video-cutter.com).mp4?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV8xNjk2MjFhNC04ZjgxLTRhMWItODNhZC0yMzRkNzBmODFjYWIiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJ2aWtpbmdfcnVubmVyL2dyb2stdmlkZW8tNDE3ZDdjOTAtOWY1MS00ZTA3LTkzYzctMDljZDVhOWJlOTc2IChvbmxpbmUtdmlkZW8tY3V0dGVyLmNvbSkubXA0IiwiaWF0IjoxNzY1MDI5NDY4LCJleHAiOjc3NTY4Njk0Njh9.T_MMv3XFjv8dldEEf5U3Zh3XO-3nPKk0pXV8Z3MAmm4"
-          autoPlay muted loop playsInline preload="auto"
-        />
-      </div>
+      <div className="parallax-bg bg-image"></div>
 
       <div className="score-timer"> SCORE: {elapsedSeconds}</div>
 
