@@ -21,7 +21,7 @@ function StartPage() {
   const [error, setError] = useState(null);
   const [touchStartTime, setTouchStartTime] = useState(null);
   const [touchForce, setTouchForce] = useState(1);
-  const [jumpHeight, setJumpHeight] = useState(225);
+  const [currentJumpHeight, setCurrentJumpHeight] = useState(225);
   const elapsedSecondsRef = useRef(0);
 
   const vikingRef = useRef(null);
@@ -450,20 +450,42 @@ function StartPage() {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       // Calculate jump height based on force (1-3 scale, mapped to 150-300px)
       const calculatedHeight = Math.min(300, Math.max(150, 150 + (force - 1) * 75));
-      setJumpHeight(calculatedHeight);
+      setCurrentJumpHeight(calculatedHeight);
 
       if (jumpTimeoutRef.current) clearTimeout(jumpTimeoutRef.current);
-      if (vikingRef.current) {
-        vikingRef.current.classList.remove('viking-jumping');
-        void vikingRef.current.offsetWidth;
-        // Set custom property for dynamic jump height
-        vikingRef.current.style.setProperty('--jump-height', `${calculatedHeight}px`);
-        vikingRef.current.classList.add('viking-jumping');
-      }
+
       setIsJumping(true);
+
+      // Use JavaScript animation instead of CSS for dynamic height control
+      if (vikingRef.current) {
+        let startTime = null;
+        const duration = 800; // 800ms jump duration
+
+        const animateJump = (timestamp) => {
+          if (!startTime) startTime = timestamp;
+          const elapsed = timestamp - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+
+          // Sine wave for smooth jump arc
+          const jumpProgress = Math.sin(progress * Math.PI);
+          const currentHeight = calculatedHeight * jumpProgress;
+
+          vikingRef.current.style.transform = `translateY(-${currentHeight}px)`;
+
+          if (progress < 1) {
+            requestAnimationFrame(animateJump);
+          } else {
+            // Jump finished
+            vikingRef.current.style.transform = '';
+            setIsJumping(false);
+          }
+        };
+
+        requestAnimationFrame(animateJump);
+      }
+
       jumpTimeoutRef.current = setTimeout(() => {
         setIsJumping(false);
-        if (vikingRef.current) vikingRef.current.classList.remove('viking-jumping');
         jumpTimeoutRef.current = null;
       }, 800);
     }
@@ -473,19 +495,21 @@ function StartPage() {
     performJump(touchForce);
   };
 
-  const handlePageTouch = e => {
+  const handleTouchStart = (e) => {
     e.preventDefault();
-
-    if (e.type === 'touchstart' && !isJumping) {
-      // Track touch start time and initial force
+    if (!isJumping && gameStarted && vikingReachedBottom && !gameOver) {
       setTouchStartTime(Date.now());
       const touch = e.touches[0];
-      const initialForce = touch.force || 1; // fallback to 1 if force not supported
+      const initialForce = touch.force || 1;
       setTouchForce(initialForce);
-    } else if (e.type === 'touchend' && touchStartTime && !isJumping) {
-      // Calculate force based on duration and touch force
+    }
+  };
+
+  const handleTouchEnd = (e) => {
+    e.preventDefault();
+    if (touchStartTime && !isJumping && gameStarted && vikingReachedBottom && !gameOver) {
       const duration = Date.now() - touchStartTime;
-      const durationForce = Math.min(3, Math.max(1, duration / 300)); // 300ms = max force
+      const durationForce = Math.min(3, Math.max(1, duration / 300));
       const finalForce = Math.max(touchForce, durationForce);
       performJump(finalForce);
       setTouchStartTime(null);
@@ -499,8 +523,8 @@ function StartPage() {
     <div
       className={`start-page ${gameStarted && vikingReachedBottom ? 'game-active' : ''} ${gameOver ? 'game-paused' : ''}`}
       onClick={handlePageClick}
-      onTouchStart={(e) => handlePageTouch({ ...e, type: 'touchstart' })}
-      onTouchEnd={(e) => handlePageTouch({ ...e, type: 'touchend' })}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="parallax-bg bg-image"></div>
 
