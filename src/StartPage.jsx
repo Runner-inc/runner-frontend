@@ -253,7 +253,7 @@ function StartPage() {
         if (enemyType === 'skeleton') {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
-          const maxLeft = window.innerWidth - 150; // ensure visible
+          const maxLeft = window.innerWidth; // ensure visible
           const baseLeft = window.innerWidth + 50;
           const left = Math.min(Math.max(baseLeft, minLeft), maxLeft);
           const top = floorTop + 50 - 120;
@@ -268,7 +268,7 @@ function StartPage() {
         } else {
           const floorTop = window.innerHeight - getFloorHeight();
           const minLeft = 0;
-          const maxLeft = window.innerWidth - 170; // ensure visible
+          const maxLeft = window.innerWidth; // ensure visible
           const minTop = 30; // clamp above ground
           const maxTop = floorTop - 140; // so they don't overlap pixel floor
           const baseLeft = window.innerWidth + 50;
