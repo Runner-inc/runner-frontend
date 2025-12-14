@@ -36,7 +36,7 @@ function StartPage() {
   const jumpTimeoutRef = useRef(null);
   const vikingPositionRef = useRef(vikingPosition);
   const isJumpingRef = useRef(isJumping);
-  const gravity = 0.2;
+  const gravity = 0.7;
 
   // Calculate spawn rate - gets faster every 5 seconds
   const getSpawnDelay = (baseMin, baseMax, elapsedSeconds) => {
@@ -153,8 +153,8 @@ function StartPage() {
 
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 75;
-    const collisionSize = 45;
-    const padding = (spriteSize - collisionSize);
+    const collisionSize = 25;
+    const padding = (spriteSize - collisionSiz - 25);
 
     // Get the actual viking position from DOM (including CSS transforms)
     let vTop, vLeft;
@@ -423,7 +423,7 @@ function StartPage() {
   const performJump = (pressure = 0.5) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       // Calculate jump height based on pressure (0-1 scale, mapped to minJump-maxJump)
-      const minJump = 76;
+      const minJump = 20;
       const maxJump = 400;
       const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
