@@ -382,11 +382,13 @@
 
   .viking-animation-container {
     left: 15px;
+    pointer-events: none;
   }
 
   .viking-animation-container img {
     width: clamp(75px, 18vw, 98px) !important;
     height: clamp(75px, 18vw, 98px) !important;
+    pointer-events: none;
   }
 
   .pixel-floor {
@@ -471,11 +473,13 @@
 
   .viking-animation-container {
     left: 5%;
+    pointer-events: none;
   }
 
   .viking-animation-container img {
     width: clamp(53px, 15vh, 75px) !important;
     height: clamp(53px, 15vh, 75px) !important;
+    pointer-events: none;
   }
 
   .pixel-floor {
@@ -517,11 +521,13 @@
 
   .viking-animation-container {
     left: 12%;
+    pointer-events: none;
   }
 
   .viking-animation-container img {
     width: 135px !important;
     height: 135px !important;
+    pointer-events: none;
   }
 
   .pixel-floor {
