@@ -8,13 +8,11 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  pointer-events: none;
 }
 
 *:focus {
   outline: none !important;
   -webkit-tap-highlight-color: transparent;
-
 }
 
 /* Base styles for the start page */
