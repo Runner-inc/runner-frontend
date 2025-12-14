@@ -153,7 +153,7 @@ function StartPage() {
 
   const checkCollision = (vPos, skeletonList, valkyrieList, jumping) => {
     const spriteSize = 75;
-    const collisionSize = 35;
+    const collisionSize = 25;
     const padding = (spriteSize - collisionSize - 25);
 
     // Get the actual viking position from DOM (including CSS transforms)
@@ -423,7 +423,7 @@ function StartPage() {
   const performJump = (pressure = 0.5) => {
     if (gameStarted && vikingReachedBottom && !gameOver && !isJumping) {
       // Calculate jump height based on pressure (0-1 scale, mapped to minJump-maxJump)
-      const minJump = 20;
+      const minJump = 25;
       const maxJump = 400;
       const calculatedHeight = minJump + pressure * (maxJump - minJump);
       setCurrentJumpHeight(calculatedHeight);
