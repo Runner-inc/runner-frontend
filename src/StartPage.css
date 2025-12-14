@@ -115,6 +115,7 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  pointer-events: none;
 }
 
 .viking-animation-container img {
@@ -125,14 +126,17 @@
   image-rendering: pixelated;
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
+  pointer-events: none;
 }
 
 .viking-animation-container.viking-falling {
   transition: none;
+  pointer-events: none;
 }
 
 .viking-animation-container.viking-running {
   transition: transform 0.3s ease;
+  pointer-events: none;
 }
 
 
@@ -324,11 +328,13 @@
 
   .viking-animation-container {
     left: 15px;
+    pointer-events: none;
   }
 
   .viking-animation-container img {
     width: clamp(90px, 12vw, 120px) !important;
     height: clamp(90px, 12vw, 120px) !important;
+    pointer-events: none;
   }
 
   .pixel-floor {
@@ -419,11 +425,13 @@
 
   .viking-animation-container {
     left: 15px;
+    pointer-events: none;
   }
 
   .viking-animation-container img {
     width: clamp(60px, 22vw, 83px) !important;
     height: clamp(60px, 22vw, 83px) !important;
+    pointer-events: none;
   }
 
   .pixel-floor {
